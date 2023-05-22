@@ -11,6 +11,7 @@ import { Subscription } from 'rxjs';
 export class RecipeListComponent implements OnInit, OnDestroy {
   private subscriptions: Subscription[] = [];
   recipes: Recipe[] = [];
+  isShowingAdd = false;
 
   constructor(private recipeService: RecipeService) {}
   ngOnDestroy(): void {
@@ -24,5 +25,9 @@ export class RecipeListComponent implements OnInit, OnDestroy {
       },
     });
     this.subscriptions.push(recipeSub);
+  }
+
+  onAddClicked(): void {
+    this.isShowingAdd = !this.isShowingAdd;
   }
 }
