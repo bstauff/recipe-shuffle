@@ -1,0 +1,20 @@
+<form (ngSubmit)="onSubmit()" [formGroup]="recipeForm">
+  <input type="text" id="recipeName" required formControlName="name" />
+  <label for="recipeName">Name</label>
+  <input type="text" id="recipeUrl" required formControlName="url" />
+  <label for="recipeUrl">URL</label>
+  <h4>Ingredients</h4>
+  <div formGroupName="ingredient">
+    <input type="text" formControlName="name" />
+    <label for="ingredientName">Name</label>
+    <input type="number" formControlName="quantity" />
+    <label for="ingredientQuantity">Quantity</label>
+    <button type="button" (click)="onAddIngredient()">Add</button>
+    <ul>
+      <li *ngFor="let ingredient of this.recipe?.ingredients">
+        {{ ingredient.name }} - {{ ingredient.quantity }}
+      </li>
+    </ul>
+  </div>
+  <button type="submit">Save</button>
+</form>

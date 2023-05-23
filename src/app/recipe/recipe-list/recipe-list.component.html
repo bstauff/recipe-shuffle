@@ -1,7 +1,7 @@
 <h1>Recipes</h1>
 <button (click)="onAddClicked()">Add</button>
 <div *ngIf="this.isShowingAdd">
-  <p>add goes here</p>
+  <app-add-recipe></app-add-recipe>
 </div>
 <ul>
   <li *ngFor="let recipe of recipes">
