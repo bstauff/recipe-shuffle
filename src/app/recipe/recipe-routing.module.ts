@@ -5,7 +5,7 @@ import { RecipeListComponent } from './recipe-list/recipe-list.component';
 const routes: Routes = [{ path: '', component: RecipeListComponent }];
 
 @NgModule({
-  imports: [RouterModule.forRoot(routes)],
+  imports: [RouterModule.forChild(routes)],
   exports: [RouterModule],
 })
 export class RecipeRoutingModule {}

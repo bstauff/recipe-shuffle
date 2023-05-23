@@ -1,9 +1,8 @@
 import { Injectable } from '@angular/core';
 import { Recipe } from './models/recipe';
 import { BehaviorSubject } from 'rxjs';
-import { RecipeModule } from './recipe.module';
 
-@Injectable({ providedIn: RecipeModule })
+@Injectable()
 export class RecipeService {
   private recipes: Recipe[] = [
     {
