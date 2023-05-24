@@ -1,5 +1,7 @@
 import { Component } from '@angular/core';
 import { RecipeService } from '../recipe.service';
+import { Recipe } from '../models/recipe';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-recipe-list',
@@ -10,7 +12,7 @@ import { RecipeService } from '../recipe.service';
       <app-edit-recipe></app-edit-recipe>
     </div>
     <ul>
-      <li *ngFor="let recipe of recipeService.recipesChanged | async">
+      <li *ngFor="let recipe of recipes | async">
         {{ recipe.name }}
       </li>
     </ul>
@@ -18,8 +20,9 @@ import { RecipeService } from '../recipe.service';
 })
 export class RecipeListComponent {
   isShowingAdd = false;
+  recipes: Observable<Recipe[]> = this.recipeService.recipesChanged;
 
-  constructor(public recipeService: RecipeService) {}
+  constructor(private recipeService: RecipeService) {}
 
   onAddClicked(): void {
     this.isShowingAdd = !this.isShowingAdd;

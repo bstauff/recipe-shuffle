@@ -4,23 +4,7 @@ import { ReplaySubject } from 'rxjs';
 
 @Injectable()
 export class RecipeService {
-  private recipes: Recipe[] = [
-    {
-      name: 'Test Recipe 0',
-      ingredients: [],
-      url: '',
-    },
-    {
-      name: 'Test Recipe 1',
-      ingredients: [],
-      url: '',
-    },
-    {
-      name: 'Test Recipe 2',
-      ingredients: [],
-      url: '',
-    },
-  ];
+  private recipes: Recipe[] = [];
 
   recipesChanged = new ReplaySubject<Recipe[]>(1);
 
@@ -28,8 +12,11 @@ export class RecipeService {
     this.recipesChanged.next(this.recipes.slice());
   }
 
-  deleteRecipe(index: number): void {
-    this.recipes.splice(index, 1);
+  deleteRecipe(recipe: Recipe): void {
+    const recipeIndex = this.recipes.findIndex(
+      (rec) => rec.name === recipe.name
+    );
+    this.recipes.splice(recipeIndex, 1);
     this.recipesChanged.next(this.recipes.slice());
   }
 

@@ -7,17 +7,32 @@ import {
 
 import { RecipeListComponent } from './recipe-list.component';
 import { RecipeService } from '../recipe.service';
+import { of } from 'rxjs';
 
 describe('RecipeListComponent', () => {
   let component: RecipeListComponent;
   let fixture: ComponentFixture<RecipeListComponent>;
 
   beforeEach(() => {
+    const recipeService = jasmine.createSpyObj('RecipeService', [], {
+      recipesChanged: of([
+        {
+          name: 'Test Recipe 1',
+          url: '',
+          ingredients: [],
+        },
+        {
+          name: 'Test Recipe 2',
+          url: '',
+          ingredients: [],
+        },
+      ]),
+    });
+
     TestBed.configureTestingModule({
       declarations: [RecipeListComponent],
-      providers: [RecipeService],
+      providers: [{ provide: RecipeService, useValue: recipeService }],
     });
-    TestBed.inject(RecipeService);
     fixture = TestBed.createComponent(RecipeListComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
@@ -26,17 +41,12 @@ describe('RecipeListComponent', () => {
   it('should create', () => {
     expect(component).toBeTruthy();
   });
-
-  it('should load initial values and render them', fakeAsync(() => {
+  it('should load initial values and render them', () => {
     fixture.detectChanges();
-    tick();
-    fixture.detectChanges();
-    expect(component.recipes.length).toBe(3);
-
     const recipeListItems = fixture.nativeElement.querySelectorAll(
       'li'
     ) as NodeListOf<HTMLLIElement>;
 
-    expect(recipeListItems.length).toBe(3);
-  }));
+    expect(recipeListItems.length).toBe(2);
+  });
 });
