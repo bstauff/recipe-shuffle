@@ -1,31 +1,25 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
-import { Recipe } from '../models/recipe';
+import { Component } from '@angular/core';
 import { RecipeService } from '../recipe.service';
-import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-recipe-list',
-  templateUrl: './recipe-list.component.html',
-  styleUrls: ['./recipe-list.component.scss'],
+  template: `
+    <h1>Recipes</h1>
+    <button (click)="onAddClicked()">Add</button>
+    <div *ngIf="this.isShowingAdd">
+      <app-edit-recipe></app-edit-recipe>
+    </div>
+    <ul>
+      <li *ngFor="let recipe of recipeService.recipesChanged | async">
+        {{ recipe.name }}
+      </li>
+    </ul>
+  `,
 })
-export class RecipeListComponent implements OnInit, OnDestroy {
-  private subscriptions: Subscription[] = [];
-  recipes: Recipe[] = [];
+export class RecipeListComponent {
   isShowingAdd = false;
 
-  constructor(private recipeService: RecipeService) {}
-  ngOnDestroy(): void {
-    this.subscriptions.forEach((subscription) => subscription.unsubscribe());
-  }
-
-  ngOnInit(): void {
-    const recipeSub = this.recipeService.recipesChanged.subscribe({
-      next: (recipes: Recipe[]) => {
-        this.recipes = recipes;
-      },
-    });
-    this.subscriptions.push(recipeSub);
-  }
+  constructor(public recipeService: RecipeService) {}
 
   onAddClicked(): void {
     this.isShowingAdd = !this.isShowingAdd;

@@ -2,15 +2,20 @@ import { Component, Input, OnInit } from '@angular/core';
 import { Recipe } from '../models/recipe';
 import { FormBuilder, Validators } from '@angular/forms';
 import { Ingredient } from '../models/ingredient';
+import { RecipeService } from '../recipe.service';
 
 @Component({
-  selector: 'app-add-recipe',
-  templateUrl: './add-recipe.component.html',
-  styleUrls: ['./add-recipe.component.scss'],
+  selector: 'app-edit-recipe',
+  templateUrl: './edit-recipe.component.html',
+  styleUrls: ['./edit-recipe.component.scss'],
 })
-export class AddRecipeComponent implements OnInit {
+export class EditRecipeComponent implements OnInit {
   @Input()
-  recipe: Recipe | undefined;
+  recipe: Recipe = {
+    name: '',
+    url: '',
+    ingredients: [],
+  };
 
   recipeForm = this.formBuilder.group({
     name: this.formBuilder.control('', { validators: [Validators.required] }),
@@ -23,30 +28,21 @@ export class AddRecipeComponent implements OnInit {
     }),
   });
 
-  constructor(private formBuilder: FormBuilder) {}
+  constructor(
+    private formBuilder: FormBuilder,
+    private recipeService: RecipeService
+  ) {}
 
   ngOnInit(): void {
-    if (!this.recipe) {
-      this.recipe = {
-        name: '',
-        url: '',
-        ingredients: [],
-      };
-    }
+    this.recipeForm.patchValue(this.recipe);
   }
 
   onSubmit(): void {
-    console.log('you submitted the form');
+    this.recipeService.upsertRecipe(this.recipeForm.value as Recipe);
 
-    const newRecipe = this.recipeForm.value as Recipe;
-
-    if (this.recipe) {
-      this.recipe.name = newRecipe.name;
-      this.recipe.url = newRecipe.url;
-    }
-    console.log(this.recipe);
     this.recipeForm.reset();
   }
+
   onAddIngredient(): void {
     if (this.recipeForm.get('ingredient')?.invalid) {
       return;

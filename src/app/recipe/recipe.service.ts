@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Recipe } from './models/recipe';
-import { BehaviorSubject } from 'rxjs';
+import { ReplaySubject } from 'rxjs';
 
 @Injectable()
 export class RecipeService {
@@ -22,15 +22,28 @@ export class RecipeService {
     },
   ];
 
-  recipesChanged = new BehaviorSubject<Recipe[]>(this.recipes.slice());
+  recipesChanged = new ReplaySubject<Recipe[]>(1);
 
-  addRecipe(recipe: Recipe): void {
-    this.recipes.push(recipe);
+  constructor() {
     this.recipesChanged.next(this.recipes.slice());
   }
 
   deleteRecipe(index: number): void {
     this.recipes.splice(index, 1);
+    this.recipesChanged.next(this.recipes.slice());
+  }
+
+  upsertRecipe(recipe: Recipe): void {
+    const recipeIndex = this.recipes.findIndex(
+      (rec) => rec.name === recipe.name
+    );
+
+    if (recipeIndex === -1) {
+      this.recipes.push(recipe);
+    } else {
+      this.recipes[recipeIndex] = recipe;
+    }
+
     this.recipesChanged.next(this.recipes.slice());
   }
 }
