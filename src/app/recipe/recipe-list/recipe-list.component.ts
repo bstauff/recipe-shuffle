@@ -11,11 +11,17 @@ import { Observable } from 'rxjs';
     <div *ngIf="this.isShowingAdd">
       <app-edit-recipe></app-edit-recipe>
     </div>
-    <ul>
-      <li *ngFor="let recipe of recipes | async">
-        {{ recipe.name }}
-      </li>
-    </ul>
+    <mat-list>
+      <mat-accordion>
+        <mat-expansion-panel hideToggle *ngFor="let recipe of recipes | async">
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+              {{ recipe.name }}
+            </mat-panel-title>
+          </mat-expansion-panel-header>
+        </mat-expansion-panel>
+      </mat-accordion>
+    </mat-list>
   `,
 })
 export class RecipeListComponent {
