@@ -1,8 +1,16 @@
-import { Component, Input, OnInit } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  Input,
+  OnInit,
+  Output,
+  ViewChild,
+} from '@angular/core';
 import { Recipe } from '../models/recipe';
 import { FormBuilder, Validators } from '@angular/forms';
 import { Ingredient } from '../models/ingredient';
 import { RecipeService } from '../recipe.service';
+import { MatTable } from '@angular/material/table';
 
 @Component({
   selector: 'app-edit-recipe',
@@ -16,6 +24,14 @@ export class EditRecipeComponent implements OnInit {
     url: '',
     ingredients: [],
   };
+  @Output()
+  formCancel = new EventEmitter<void>();
+
+  @ViewChild(MatTable)
+  table: MatTable<Ingredient[]> | undefined;
+
+  displayedColumns: string[] = ['name', 'quantity', 'deleteButton'];
+  dataSource = this.recipe.ingredients;
 
   recipeForm = this.formBuilder.group({
     name: this.formBuilder.control('', { validators: [Validators.required] }),
@@ -63,5 +79,17 @@ export class EditRecipeComponent implements OnInit {
     this.recipe?.ingredients.push(ingredient);
 
     this.recipeForm.get('ingredient')?.reset();
+
+    this.table?.renderRows();
+  }
+
+  onFormCancel(): void {
+    this.formCancel.emit();
+  }
+
+  onDelete(index: number): void {
+    this.recipe?.ingredients.splice(index, 1);
+
+    this.table?.renderRows();
   }
 }

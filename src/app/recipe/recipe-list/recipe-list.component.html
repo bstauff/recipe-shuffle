@@ -1,6 +1,6 @@
 <div class="recipe-list">
   <div *ngIf="this.isShowingAdd">
-    <app-edit-recipe></app-edit-recipe>
+    <app-edit-recipe (formCancel)="onFormCancel()"></app-edit-recipe>
   </div>
   <mat-card> </mat-card>
   <mat-list>

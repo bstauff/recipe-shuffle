@@ -17,4 +17,7 @@ export class RecipeListComponent {
   onAddClicked(): void {
     this.isShowingAdd = !this.isShowingAdd;
   }
+  onFormCancel(): void {
+    this.isShowingAdd = false;
+  }
 }
