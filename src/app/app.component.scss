@@ -2,6 +2,14 @@ mat-sidenav {
     width: 15rem;
 }
 
+mat-sidenav-container {
+    height: 95%;
+}
+
+mat-toolbar {
+    height: 5%;
+}
+
 mat-sidenav-content {
-    height: 100vh;
+    height: 100%;
 }
