@@ -1,20 +1,55 @@
 <form (ngSubmit)="onSubmit()" [formGroup]="recipeForm">
-  <input type="text" id="recipeName" required formControlName="name" />
-  <label for="recipeName">Name</label>
-  <input type="text" id="recipeUrl" required formControlName="url" />
-  <label for="recipeUrl">URL</label>
   <h4>Ingredients</h4>
+  <mat-card>
+    <mat-card-content class="recipe-form">
+      <mat-form-field>
+        <mat-label>Name</mat-label>
+        <input
+          type="text"
+          id="recipeName"
+          required
+          formControlName="name"
+          matInput
+        />
+      </mat-form-field>
+      <mat-form-field>
+        <mat-label>URL</mat-label>
+        <input
+          type="text"
+          id="recipeUrl"
+          required
+          formControlName="url"
+          matInput
+        />
+      </mat-form-field>
+    </mat-card-content>
+  </mat-card>
   <div formGroupName="ingredient">
-    <input type="text" formControlName="name" />
-    <label for="ingredientName">Name</label>
-    <input type="number" formControlName="quantity" />
-    <label for="ingredientQuantity">Quantity</label>
-    <button type="button" (click)="onAddIngredient()">Add</button>
-    <ul>
-      <li *ngFor="let ingredient of this.recipe?.ingredients">
-        {{ ingredient.name }} - {{ ingredient.quantity }}
-      </li>
-    </ul>
+    <mat-card>
+      <mat-card-content>
+        <mat-form-field>
+          <mat-label>Name</mat-label>
+          <input type="text" formControlName="name" matInput />
+        </mat-form-field>
+        <mat-form-field>
+          <mat-label>Quantity</mat-label>
+          <input type="number" formControlName="quantity" matInput />
+        </mat-form-field>
+        <button
+          type="button"
+          (click)="onAddIngredient()"
+          mat-raised-button
+          color="primary"
+        >
+          Add
+        </button>
+        <ul>
+          <li *ngFor="let ingredient of this.recipe?.ingredients">
+            {{ ingredient.name }} - {{ ingredient.quantity }}
+          </li>
+        </ul>
+      </mat-card-content>
+    </mat-card>
   </div>
-  <button type="submit">Save</button>
+  <button type="submit" mat-raised-button color="primary">Save</button>
 </form>

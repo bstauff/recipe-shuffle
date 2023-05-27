@@ -1,12 +1,11 @@
 <div class="main-content">
   <h1>Recipes</h1>
-  <button (click)="onAddClicked()">Add</button>
   <div *ngIf="this.isShowingAdd">
     <app-edit-recipe></app-edit-recipe>
   </div>
   <mat-card> </mat-card>
   <mat-list>
-    <button mat-icon-button color="primary">
+    <button mat-icon-button color="primary" (click)="onAddClicked()">
       <mat-icon>add</mat-icon>
     </button>
     <mat-accordion>
