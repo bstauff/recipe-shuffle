@@ -5,24 +5,8 @@ import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-recipe-list',
-  template: `
-    <h1>Recipes</h1>
-    <button (click)="onAddClicked()">Add</button>
-    <div *ngIf="this.isShowingAdd">
-      <app-edit-recipe></app-edit-recipe>
-    </div>
-    <mat-list>
-      <mat-accordion>
-        <mat-expansion-panel hideToggle *ngFor="let recipe of recipes | async">
-          <mat-expansion-panel-header>
-            <mat-panel-title>
-              {{ recipe.name }}
-            </mat-panel-title>
-          </mat-expansion-panel-header>
-        </mat-expansion-panel>
-      </mat-accordion>
-    </mat-list>
-  `,
+  templateUrl: './recipe-list.component.html',
+  styleUrls: ['./recipe-list.component.scss'],
 })
 export class RecipeListComponent {
   isShowingAdd = false;

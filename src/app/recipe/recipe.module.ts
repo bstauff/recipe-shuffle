@@ -6,7 +6,10 @@ import { RecipeService } from './recipe.service';
 import { EditRecipeComponent } from './edit-recipe/edit-recipe.component';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatListModule } from '@angular/material/list';
-import { MatExpansionModule} from '@angular/material/expansion';
+import { MatExpansionModule } from '@angular/material/expansion';
+import { MatCardModule } from '@angular/material/card';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
 
 @NgModule({
   declarations: [RecipeListComponent, EditRecipeComponent],
@@ -15,7 +18,10 @@ import { MatExpansionModule} from '@angular/material/expansion';
     RecipeRoutingModule,
     ReactiveFormsModule,
     MatListModule,
-    MatExpansionModule
+    MatExpansionModule,
+    MatCardModule,
+    MatButtonModule,
+    MatIconModule,
   ],
   providers: [RecipeService],
 })
