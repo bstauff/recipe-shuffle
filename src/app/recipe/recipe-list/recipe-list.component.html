@@ -1,13 +1,16 @@
 <div class="recipe-list">
-  <h1>Recipes</h1>
   <div *ngIf="this.isShowingAdd">
     <app-edit-recipe></app-edit-recipe>
   </div>
   <mat-card> </mat-card>
   <mat-list>
-    <button mat-icon-button color="primary" (click)="onAddClicked()">
-      <mat-icon>add</mat-icon>
-    </button>
+    <div class="recipe-list__header">
+      <h1>Recipes</h1>
+      <button mat-fab color="primary" (click)="onAddClicked()">
+        <mat-icon>add</mat-icon>
+      </button>
+    </div>
+    <mat-divider></mat-divider>
     <mat-accordion>
       <mat-expansion-panel hideToggle *ngFor="let recipe of recipes | async">
         <mat-expansion-panel-header>
