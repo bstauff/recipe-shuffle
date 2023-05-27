@@ -1,14 +1,11 @@
+<mat-toolbar color="primary">
+  <button mat-icon-button (click)="sidenav.toggle()">
+    <mat-icon>menu</mat-icon>
+  </button>
+  <span>Recipe Shuffle</span>
+</mat-toolbar>
 <mat-sidenav-container>
-  <mat-sidenav
-    #sidenav
-    mode="side"
-    class="sidenav"
-    fixedInViewport="true"
-    opened="true"
-  >
-    <mat-toolbar color="primary">
-      <span>Recipe Shuffle</span>
-    </mat-toolbar>
+  <mat-sidenav #sidenav class="sidenav" fixedInViewport="true">
     <mat-nav-list>
       <a mat-list-item routerLink="/recipes">Recipes</a>
       <a mat-list-item href="/shopping-list">Shopping List</a>
