@@ -2,6 +2,8 @@ import { Component } from '@angular/core';
 import { RecipeService } from '../recipe.service';
 import { Recipe } from '../models/recipe';
 import { Observable } from 'rxjs';
+import { MatDialog } from '@angular/material/dialog';
+import { EditRecipeComponent } from '../edit-recipe/edit-recipe.component';
 
 @Component({
   selector: 'app-recipe-list',
@@ -12,12 +14,18 @@ export class RecipeListComponent {
   isShowingAdd = false;
   recipes: Observable<Recipe[]> = this.recipeService.recipesChanged;
 
-  constructor(private recipeService: RecipeService) {}
+  constructor(private recipeService: RecipeService, public dialog: MatDialog) {}
 
   onAddClicked(): void {
-    this.isShowingAdd = !this.isShowingAdd;
-  }
-  onFormCancel(): void {
-    this.isShowingAdd = false;
+    const recipe: Recipe = {
+      name: '',
+      url: '',
+      ingredients: [],
+    };
+    const dialogRef = this.dialog.open(EditRecipeComponent, { data: recipe });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      console.log(`Dialog result: ${result}`);
+    });
   }
 }

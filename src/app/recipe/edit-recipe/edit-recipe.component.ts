@@ -1,16 +1,10 @@
-import {
-  Component,
-  EventEmitter,
-  Input,
-  OnInit,
-  Output,
-  ViewChild,
-} from '@angular/core';
+import { Component, Inject, OnInit, ViewChild } from '@angular/core';
 import { Recipe } from '../models/recipe';
 import { FormBuilder, Validators } from '@angular/forms';
 import { Ingredient } from '../models/ingredient';
 import { RecipeService } from '../recipe.service';
 import { MatTable } from '@angular/material/table';
+import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-edit-recipe',
@@ -18,15 +12,6 @@ import { MatTable } from '@angular/material/table';
   styleUrls: ['./edit-recipe.component.scss'],
 })
 export class EditRecipeComponent implements OnInit {
-  @Input()
-  recipe: Recipe = {
-    name: '',
-    url: '',
-    ingredients: [],
-  };
-  @Output()
-  formCancel = new EventEmitter<void>();
-
   @ViewChild(MatTable)
   table: MatTable<Ingredient[]> | undefined;
 
@@ -46,7 +31,8 @@ export class EditRecipeComponent implements OnInit {
 
   constructor(
     private formBuilder: FormBuilder,
-    private recipeService: RecipeService
+    private recipeService: RecipeService,
+    @Inject(MAT_DIALOG_DATA) public recipe: Recipe
   ) {}
 
   ngOnInit(): void {
@@ -81,10 +67,6 @@ export class EditRecipeComponent implements OnInit {
     this.recipeForm.get('ingredient')?.reset();
 
     this.table?.renderRows();
-  }
-
-  onFormCancel(): void {
-    this.formCancel.emit();
   }
 
   onDelete(index: number): void {
