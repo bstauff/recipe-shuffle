@@ -33,4 +33,14 @@ export class RecipeListComponent {
     const hostname = new URL(url).hostname;
     return hostname.replace('www.', '');
   }
+  onDelete(recipe: Recipe): void {
+    console.log('delete', recipe);
+  }
+  onEdit(recipe: Recipe): void {
+    const dialogRef = this.dialog.open(EditRecipeComponent, { data: recipe });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      console.log(`Dialog result: ${result}`);
+    });
+  }
 }

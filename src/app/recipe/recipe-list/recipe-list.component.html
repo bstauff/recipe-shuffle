@@ -10,7 +10,7 @@
     <mat-accordion>
       <mat-expansion-panel
         hideToggle
-        *ngFor="let recipe of recipes | async"
+        *ngFor="let recipe of recipes | async; index as i"
         class="recipe-panel"
       >
         <mat-expansion-panel-header>
@@ -34,6 +34,14 @@
             </mat-list>
           </div>
         </div>
+        <mat-action-row>
+          <button mat-icon-button color="primary" (click)="onEdit(recipe)">
+            <mat-icon>edit</mat-icon>
+          </button>
+          <button mat-icon-button color="warn" (click)="onDelete(recipe)">
+            <mat-icon>delete</mat-icon>
+          </button>
+        </mat-action-row>
       </mat-expansion-panel>
     </mat-accordion>
   </mat-list>
