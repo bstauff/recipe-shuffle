@@ -28,4 +28,9 @@ export class RecipeListComponent {
       console.log(`Dialog result: ${result}`);
     });
   }
+
+  getHostname(url: string): string {
+    const hostname = new URL(url).hostname;
+    return hostname.replace('www.', '');
+  }
 }

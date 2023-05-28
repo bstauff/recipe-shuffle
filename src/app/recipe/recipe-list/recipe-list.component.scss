@@ -29,3 +29,21 @@ mat-accordion {
 mat-list {
     width: 50%;
 }
+
+.recipe-panel__body {
+    display: flex;
+}
+.recipe-panel__body__link {
+    display: flex;
+    flex-direction: column;
+}
+.recipe-panel__body__ingredients {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 5;
+    gap: .5em;
+    align-items: center;
+}
+.recipe-panel__body__ingredients > mat-list {
+    align-items: center;
+}
