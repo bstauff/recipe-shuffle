@@ -1,0 +1,48 @@
+<div class="recipe-list">
+  <mat-list>
+    <div class="recipe-list__header">
+      <h1>Recipes</h1>
+      <button mat-fab color="primary" (click)="onAddClicked()">
+        <mat-icon>add</mat-icon>
+      </button>
+    </div>
+    <mat-divider></mat-divider>
+    <mat-accordion>
+      <mat-expansion-panel
+        hideToggle
+        *ngFor="let recipe of recipes | async; index as i"
+        class="recipe-panel"
+      >
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+            {{ recipe.name }}
+          </mat-panel-title>
+        </mat-expansion-panel-header>
+        <div class="recipe-panel__body">
+          <div class="recipe-panel__body__link">
+            <h4>Recipe Link</h4>
+            <a target="_blank" [href]="recipe.url">{{
+              getHostname(recipe.url)
+            }}</a>
+          </div>
+          <div class="recipe-panel__body__ingredients">
+            <h4>Ingredients</h4>
+            <mat-list>
+              <mat-list-item *ngFor="let ingredient of recipe.ingredients">
+                {{ ingredient.name }}
+              </mat-list-item>
+            </mat-list>
+          </div>
+        </div>
+        <mat-action-row>
+          <button mat-icon-button color="primary" (click)="onEdit(recipe)">
+            <mat-icon>edit</mat-icon>
+          </button>
+          <button mat-icon-button color="warn" (click)="onDelete(recipe)">
+            <mat-icon>delete</mat-icon>
+          </button>
+        </mat-action-row>
+      </mat-expansion-panel>
+    </mat-accordion>
+  </mat-list>
+</div>
