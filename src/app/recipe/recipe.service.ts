@@ -4,26 +4,7 @@ import { ReplaySubject } from 'rxjs';
 
 @Injectable()
 export class RecipeService {
-  private recipes: Recipe[] = [
-    {
-      name: 'Pancakes',
-      url: 'https://www.allrecipes.com/recipe/21014/good-old-fashioned-pancakes/',
-      ingredients: [
-        { name: 'Flour', quantity: 5 },
-        { name: 'Eggs', quantity: 2 },
-        { name: 'Milk', quantity: 1 },
-      ]
-    },
-    {
-      name: 'Oatmeal',
-      url: 'https://www.allrecipes.com/recipe/272383/overnight-oats-with-yogurt/',
-      ingredients: [
-        { name: 'Oatmeal', quantity: 5 },
-        { name: 'Yogurt', quantity: 1 },
-        { name: 'Milk', quantity: 1 },
-      ]
-    }
-  ];
+  private recipes: Recipe[] = [];
 
   recipesChanged = new ReplaySubject<Recipe[]>(1);
 
