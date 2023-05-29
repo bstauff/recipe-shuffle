@@ -40,7 +40,12 @@ export class EditRecipeComponent implements OnInit {
   }
 
   onSubmit(): void {
-    this.recipeService.upsertRecipe(this.recipeForm.value as Recipe);
+    const updatedRecipe = this.recipeForm.value as Recipe;
+
+    this.recipe.name = updatedRecipe.name;
+    this.recipe.url = updatedRecipe.url;
+
+    this.recipeService.upsertRecipe(this.recipe);
 
     this.recipeForm.reset();
   }
@@ -61,6 +66,8 @@ export class EditRecipeComponent implements OnInit {
       name: ingredientName,
       quantity: Number(ingredientCount),
     };
+
+    console.log('ingredients in form', this.recipeForm.value?.ingredient);
 
     this.recipe?.ingredients.push(ingredient);
 

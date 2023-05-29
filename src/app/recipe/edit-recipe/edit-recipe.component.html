@@ -42,11 +42,6 @@
         >
           <mat-icon> add </mat-icon>
         </button>
-        <!-- <ul>
-          <li *ngFor="let ingredient of this.recipe?.ingredients">
-            {{ ingredient.name }} - {{ ingredient.quantity }}
-          </li>
-        </ul> -->
       </div>
       <div class="recipe-form__ingredient-list" *ngIf="dataSource.length">
         <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">

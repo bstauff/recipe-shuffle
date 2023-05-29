@@ -22,11 +22,8 @@ export class RecipeListComponent {
       url: '',
       ingredients: [],
     };
-    const dialogRef = this.dialog.open(EditRecipeComponent, { data: recipe });
 
-    dialogRef.afterClosed().subscribe((result) => {
-      console.log(`Dialog result: ${result}`);
-    });
+    this.dialog.open(EditRecipeComponent, { data: recipe });
   }
 
   getHostname(url: string): string {
@@ -34,13 +31,9 @@ export class RecipeListComponent {
     return hostname.replace('www.', '');
   }
   onDelete(recipe: Recipe): void {
-    console.log('delete', recipe);
+    this.recipeService.deleteRecipe(recipe);
   }
   onEdit(recipe: Recipe): void {
-    const dialogRef = this.dialog.open(EditRecipeComponent, { data: recipe });
-
-    dialogRef.afterClosed().subscribe((result) => {
-      console.log(`Dialog result: ${result}`);
-    });
+    this.dialog.open(EditRecipeComponent, { data: recipe });
   }
 }
