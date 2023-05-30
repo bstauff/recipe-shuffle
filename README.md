@@ -1,27 +1,22 @@
-# RecipeShuffle
+# Recipe Shuffle
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 16.0.2.
+[![Netlify Status](https://api.netlify.com/api/v1/badges/de8598ec-1276-4a99-a918-9a485a4f0bc5/deploy-status)](https://app.netlify.com/sites/voluble-buttercream-b12a34/deploys)
+[![angular-test](https://github.com/bstauff/recipe-shuffle/actions/workflows/angular-test.yml/badge.svg?branch=master)](https://github.com/bstauff/recipe-shuffle/actions/workflows/angular-test.yml)
 
-## Development server
+Recipe shuffle is a simple app inspired by my wife's frustration with using spreadsheets to plan out multiple weeks worth of meals and shopping.
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The application will automatically reload if you change any of the source files.
+# Features
+- Create a bank of recipes
+- Assign recipes to days of the week based on a tag system and random assignment
+- Generate a shopping list based on the assigned recipes
 
-## Code scaffolding
+# Running the app locally
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+Recipe Shuffle was built as an angular CLI project, so it should be simple to get running:
+1. Clone the repo
+2. Run `npm install`
+3. Run `ng serve`
 
-## Build
+# Contributing
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory.
-
-## Running unit tests
-
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
-
-## Running end-to-end tests
-
-Run `ng e2e` to execute the end-to-end tests via a platform of your choice. To use this command, you need to first add a package that implements end-to-end testing capabilities.
-
-## Further help
-
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.io/cli) page.
+Contributions welcome.  Feel free to open a PR!
