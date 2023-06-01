@@ -1,0 +1,12 @@
+.login-form {
+    display: flex;
+    flex-direction: column;
+    gap: .5em;
+    justify-content: center;
+    align-content: center;
+}
+
+.login-form__login-button {
+    display: flex;
+    justify-content: center;
+}
