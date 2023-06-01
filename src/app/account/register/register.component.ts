@@ -23,12 +23,11 @@ export class RegisterComponent {
     console.log(this.registerForm.value);
     const { email, password } = this.registerForm.value;
     if (!email || !password) return;
-    this.supabaseService.signUpUser(email, password).subscribe(
-      {
-        next: (response) => {
-          console.log(response);
-        }
-      }
-    );
+    this.supabaseService.signUpUser(email, password).subscribe({
+      next: (response) => {
+        console.log(response);
+      },
+    });
+    this.registerForm.reset();
   }
 }
