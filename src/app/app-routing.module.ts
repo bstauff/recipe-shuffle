@@ -7,6 +7,15 @@ const routes: Routes = [
     loadChildren: () =>
       import('./recipe/recipe.module').then((m) => m.RecipeModule),
   },
+  {
+    path: 'account',
+    loadChildren: () =>
+      import('./account/account.module').then((m) => m.AccountModule),
+  },
+  {
+    path: '**',
+    redirectTo: 'account',
+  },
 ];
 
 @NgModule({
