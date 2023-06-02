@@ -1,31 +1,46 @@
-<form (ngSubmit)="onSubmit()" [formGroup]="loginForm" class="login-form">
+<div class="login-container">
   <h1>Login</h1>
-  <mat-form-field>
-    <mat-label>Email</mat-label>
-    <input type="email" id="email" required formControlName="email" matInput />
-  </mat-form-field>
-  <mat-form-field>
-    <mat-label>Password</mat-label>
-    <input
-      type="password"
-      id="password"
-      required
-      formControlName="password"
-      matInput
-    />
-  </mat-form-field>
-  <div class="login-form__login-button">
-    <button
-      type="submit"
-      mat-raised-button
-      color="primary"
-      [disabled]="!loginForm.valid"
-      class="login-form__login-button"
-    >
-      Login
-    </button>
-  </div>
-  <div class="login-form__register mat-caption">
-    Don't have an account? <a routerLink="../register">Please Register</a>
-  </div>
-</form>
+  <mat-error *ngIf="loginError">{{ loginError }}</mat-error>
+  <form (ngSubmit)="onSubmit()" [formGroup]="loginForm" class="login-form">
+    <mat-form-field>
+      <mat-label>Email</mat-label>
+      <input
+        type="email"
+        id="email"
+        required
+        formControlName="email"
+        matInput
+      />
+      <mat-error *ngIf="emailHasError()">{{
+        getEmailErrorMessage()
+      }}</mat-error>
+    </mat-form-field>
+    <mat-form-field>
+      <mat-label>Password</mat-label>
+      <input
+        type="password"
+        id="password"
+        required
+        formControlName="password"
+        matInput
+      />
+      <mat-error *ngIf="emailHasError()">{{
+        getEmailErrorMessage()
+      }}</mat-error>
+    </mat-form-field>
+    <div class="login-form__login-button">
+      <button
+        type="submit"
+        mat-raised-button
+        color="primary"
+        [disabled]="!loginForm.valid"
+        class="login-form__login-button"
+      >
+        Login
+      </button>
+    </div>
+    <div class="mat-caption">
+      Don't have an account? <a routerLink="../register">Please Register</a>
+    </div>
+  </form>
+</div>
