@@ -26,13 +26,28 @@ export class SupabaseService {
     );
   }
   loginUser(email: string, password: string): Observable<AuthResponse> {
-    return from(this.supabaseClient.auth.signInWithPassword({ email, password })).pipe(
+    return from(
+      this.supabaseClient.auth.signInWithPassword({ email, password })
+    ).pipe(
       exhaustMap((loginResponse) => {
         if (loginResponse.error) {
-          return of({ isError: true, errorMessage: loginResponse.error.message });
+          return of({
+            isError: true,
+            errorMessage: loginResponse.error.message,
+          });
         }
         return of({ isError: false, errorMessage: '' });
-      }
-    ));
+      })
+    );
+  }
+  isUserLoggedIn(): Observable<boolean> {
+    return from(this.supabaseClient.auth.getSession()).pipe(
+      exhaustMap((session) => {
+        if (session.data.session) {
+          return of(true);
+        }
+        return of(false);
+      })
+    );
   }
 }
