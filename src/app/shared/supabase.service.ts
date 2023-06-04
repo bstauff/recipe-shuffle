@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { createClient } from '@supabase/supabase-js';
-import { Observable, exhaustMap, from, of, tap } from 'rxjs';
+import { Observable, exhaustMap, from, of, switchMap, tap } from 'rxjs';
 import { AuthResponse } from './models/AuthResponse';
 import { Recipe } from '../recipe/models/recipe';
 import { Database } from './models/Database';
@@ -56,21 +56,29 @@ export class SupabaseService {
   insertRecipe(
     recipe: Recipe
   ): Observable<{ error: string; isError: boolean }> {
-    return from(
-      this.supabaseClient.from('recipe').insert({
-        key: '01888684-79E9-D1F8-3ED7-67CC890FB42F',
-        name: recipe.name,
-        url: recipe.url,
-      })
-    ).pipe(
-      tap((insertResponse) => {
-        console.log('insertResponse', insertResponse);
-      }),
-      exhaustMap((insertResponse) => {
-        if (insertResponse.error) {
-          return of({ error: insertResponse.error.message, isError: true });
+    return from(this.supabaseClient.auth.getUser()).pipe(
+      switchMap((user) => {
+        if (!user.data.user) {
+          return of({ error: 'user not logged in', isError: true });
         }
-        return of({ error: '', isError: false });
+        return from(
+          this.supabaseClient.from('recipe').insert({
+            key: '018886E3-7592-47DB-A0DA-E1562764F194',
+            name: recipe.name,
+            url: recipe.url,
+            user_id: user.data.user.id,
+          })
+        ).pipe(
+          tap((insertResponse) =>
+            console.log('insertResponse', insertResponse)
+          ),
+          switchMap((insertResponse) => {
+            if (insertResponse.error) {
+              return of({ error: insertResponse.error.message, isError: true });
+            }
+            return of({ error: '', isError: false });
+          })
+        );
       })
     );
   }
