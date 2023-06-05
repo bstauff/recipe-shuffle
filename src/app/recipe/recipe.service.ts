@@ -10,7 +10,10 @@ export class RecipeService {
   recipesChanged = new ReplaySubject<Recipe[]>(1);
 
   constructor(private supabaseService: SupabaseService) {
-    this.recipesChanged.next(this.recipes.slice());
+    this.supabaseService.getRecipes().subscribe((recipes) => {
+      this.recipes = recipes;
+      this.recipesChanged.next(recipes);
+    });
   }
 
   deleteRecipe(recipe: Recipe): void {
@@ -20,24 +23,23 @@ export class RecipeService {
     this.recipes.splice(recipeIndex, 1);
     this.recipesChanged.next(this.recipes.slice());
   }
-
   upsertRecipe(recipe: Recipe): void {
-    console.log('calling supabase to insert reciope...');
-    this.supabaseService.insertRecipe(recipe).subscribe((response) => {
-      if (response.error) {
-        console.error('supabase insert failed', response.error);
-      }
-    });
-    // const recipeIndex = this.recipes.findIndex(
-    //   (rec) => rec.name === recipe.name
-    // );
-
-    // if (recipeIndex === -1) {
-    //   this.recipes.push(recipe);
-    // } else {
-    //   this.recipes[recipeIndex] = recipe;
-    // }
-
-    // this.recipesChanged.next(this.recipes.slice());
+    if (recipe.id < 0) {
+      this.supabaseService.insertRecipe(recipe).subscribe((response) => {
+        if (response.error) {
+          console.error('supabase insert failed', response.error);
+        }
+        recipe.id = response.createdId;
+        this.recipes.push(recipe);
+        this.recipesChanged.next(this.recipes.slice());
+      });
+    } else {
+      this.supabaseService.updateRecipe(recipe).subscribe((response) => {
+        if (response.error) {
+          console.error('supabase insert failed', response.error);
+        }
+        this.recipesChanged.next(this.recipes.slice());
+      });
+    }
   }
 }

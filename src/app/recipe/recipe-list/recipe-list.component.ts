@@ -18,11 +18,11 @@ export class RecipeListComponent {
 
   onAddClicked(): void {
     const recipe: Recipe = {
+      id: -1,
       name: '',
       url: '',
       ingredients: [],
     };
-
     this.dialog.open(EditRecipeComponent, { data: recipe });
   }
 

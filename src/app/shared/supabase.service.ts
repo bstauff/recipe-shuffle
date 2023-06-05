@@ -1,10 +1,9 @@
 import { Injectable } from '@angular/core';
 import { createClient } from '@supabase/supabase-js';
-import { Observable, exhaustMap, from, of, switchMap, tap } from 'rxjs';
+import { Observable, exhaustMap, from, map, of, switchMap, tap } from 'rxjs';
 import { AuthResponse } from './models/AuthResponse';
 import { Recipe } from '../recipe/models/recipe';
 import { Database } from './models/Database';
-import { ulid } from 'ulid';
 
 @Injectable({
   providedIn: 'root',
@@ -55,6 +54,49 @@ export class SupabaseService {
   }
   insertRecipe(
     recipe: Recipe
+  ): Observable<{ error: string; isError: boolean; createdId: number }> {
+    return from(this.supabaseClient.auth.getUser()).pipe(
+      switchMap((user) => {
+        if (!user.data.user) {
+          return of({
+            error: 'user not logged in',
+            isError: true,
+            createdId: -1,
+          });
+        }
+        return from(
+          this.supabaseClient
+            .from('recipe')
+            .insert({
+              name: recipe.name,
+              url: recipe.url,
+              user_id: user.data.user.id,
+            })
+            .select()
+        ).pipe(
+          tap((insertResponse) =>
+            console.log('insertResponse', insertResponse)
+          ),
+          switchMap((insertResponse) => {
+            if (insertResponse.error) {
+              return of({
+                error: insertResponse.error.message,
+                isError: true,
+                createdId: -1,
+              });
+            }
+            return of({
+              error: '',
+              isError: false,
+              createdId: insertResponse.data[0]['id'],
+            });
+          })
+        );
+      })
+    );
+  }
+  updateRecipe(
+    recipe: Recipe
   ): Observable<{ error: string; isError: boolean }> {
     return from(this.supabaseClient.auth.getUser()).pipe(
       switchMap((user) => {
@@ -62,12 +104,14 @@ export class SupabaseService {
           return of({ error: 'user not logged in', isError: true });
         }
         return from(
-          this.supabaseClient.from('recipe').insert({
-            key: '018886E3-7592-47DB-A0DA-E1562764F194',
-            name: recipe.name,
-            url: recipe.url,
-            user_id: user.data.user.id,
-          })
+          this.supabaseClient
+            .from('recipe')
+            .update({
+              name: recipe.name,
+              url: recipe.url,
+              modified_on: new Date().toISOString(),
+            })
+            .eq('id', recipe.id)
         ).pipe(
           tap((insertResponse) =>
             console.log('insertResponse', insertResponse)
@@ -80,6 +124,13 @@ export class SupabaseService {
           })
         );
       })
+    );
+  }
+
+  getRecipes(): Observable<Recipe[]> {
+    return from(this.supabaseClient.from('recipe').select()).pipe(
+      tap((response) => console.log('response', response)),
+      map((response) => response.data as Recipe[])
     );
   }
 }
