@@ -29,13 +29,16 @@ export class RecipeService {
   }
   upsertRecipe(recipe: Recipe): void {
     if (recipe.id < 0) {
-      this.supabaseService.insertRecipe(recipe).subscribe((response) => {
-        if (response.error) {
-          console.error('supabase insert failed', response.error);
-        }
-        recipe.id = response.createdId;
-        this.recipes.push(recipe);
-        this.recipesChanged.next(this.recipes.slice());
+      this.supabaseService.insertRecipe(recipe).subscribe({
+        next: (insertedRecipe) => {
+          console.log('inserted recipe', insertedRecipe);
+          recipe.id = insertedRecipe.id;
+          this.recipes.push(recipe);
+          this.recipesChanged.next(this.recipes.slice());
+        },
+        error: (error: Error) => {
+          console.error('supabase insert failed', error);
+        },
       });
     } else {
       this.supabaseService.updateRecipe(recipe).subscribe((response) => {

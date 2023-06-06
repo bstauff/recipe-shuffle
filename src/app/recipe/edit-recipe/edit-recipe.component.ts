@@ -63,6 +63,7 @@ export class EditRecipeComponent implements OnInit {
     }
 
     const ingredient: Ingredient = {
+      id: -1,
       name: ingredientName,
       quantity: Number(ingredientCount),
     };
