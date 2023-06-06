@@ -133,4 +133,20 @@ export class SupabaseService {
       map((response) => response.data as Recipe[])
     );
   }
+
+  deleteRecipe(
+    recipe: Recipe
+  ): Observable<{ error: string; isError: boolean }> {
+    return from(
+      this.supabaseClient.from('recipe').delete().eq('id', recipe.id)
+    ).pipe(
+      tap((response) => console.log('delete response', response)),
+      map((response) => {
+        if (response.error) {
+          return { error: response.error.message, isError: true };
+        }
+        return { error: '', isError: false };
+      })
+    );
+  }
 }

@@ -17,11 +17,15 @@ export class RecipeService {
   }
 
   deleteRecipe(recipe: Recipe): void {
-    const recipeIndex = this.recipes.findIndex(
-      (rec) => rec.name === recipe.name
-    );
-    this.recipes.splice(recipeIndex, 1);
-    this.recipesChanged.next(this.recipes.slice());
+    const recipeIndex = this.recipes.findIndex((rec) => rec.id === recipe.id);
+    this.supabaseService.deleteRecipe(recipe).subscribe((response) => {
+      if (response.error) {
+        console.error('supabase delete failed', response.error);
+      } else {
+        this.recipes.splice(recipeIndex, 1);
+        this.recipesChanged.next(this.recipes.slice());
+      }
+    });
   }
   upsertRecipe(recipe: Recipe): void {
     if (recipe.id < 0) {
