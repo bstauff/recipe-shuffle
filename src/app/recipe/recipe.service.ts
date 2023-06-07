@@ -5,48 +5,40 @@ import { SupabaseService } from '../shared/supabase.service';
 
 @Injectable()
 export class RecipeService {
-  private recipes: Recipe[] = [];
+  private recipeCollection: { [key: string]: Recipe } = {};
 
   recipesChanged = new ReplaySubject<Recipe[]>(1);
 
   constructor(private supabaseService: SupabaseService) {
     this.supabaseService.getRecipes().subscribe((recipes) => {
-      this.recipes = recipes;
-      this.recipesChanged.next(recipes);
+      recipes.forEach((recipe) => {
+        this.recipeCollection[recipe.key] = recipe;
+      });
+      this.recipesChanged.next(Object.values(this.recipeCollection));
     });
   }
 
   deleteRecipe(recipe: Recipe): void {
-    const recipeIndex = this.recipes.findIndex((rec) => rec.id === recipe.id);
-    this.supabaseService.deleteRecipe(recipe).subscribe((response) => {
-      if (response.error) {
-        console.error('supabase delete failed', response.error);
-      } else {
-        this.recipes.splice(recipeIndex, 1);
-        this.recipesChanged.next(this.recipes.slice());
-      }
-    });
+    // const recipeIndex = this.recipes.findIndex((rec) => rec.id === recipe.id);
+    // this.supabaseService.deleteRecipe(recipe).subscribe((response) => {
+    //   if (response.error) {
+    //     console.error('supabase delete failed', response.error);
+    //   } else {
+    //     this.recipes.splice(recipeIndex, 1);
+    //     this.recipesChanged.next(this.recipes.slice());
+    //   }
+    // });
   }
   upsertRecipe(recipe: Recipe): void {
-    if (recipe.id < 0) {
-      this.supabaseService.insertRecipe(recipe).subscribe({
-        next: (insertedRecipe) => {
-          console.log('inserted recipe', insertedRecipe);
-          recipe.id = insertedRecipe.id;
-          this.recipes.push(recipe);
-          this.recipesChanged.next(this.recipes.slice());
-        },
-        error: (error: Error) => {
-          console.error('supabase insert failed', error);
-        },
-      });
-    } else {
-      this.supabaseService.updateRecipe(recipe).subscribe((response) => {
-        if (response.error) {
-          console.error('supabase insert failed', response.error);
-        }
-        this.recipesChanged.next(this.recipes.slice());
-      });
-    }
+    this.supabaseService.upsertRecipe(recipe).subscribe((response) => {
+      if (response.isError) {
+        console.error('supabase upsert failed', response.errorMessage);
+      }
+
+      if (!this.recipeCollection[recipe.key]) {
+        this.recipeCollection[recipe.key] = recipe;
+        this.recipesChanged.next(Object.values(this.recipeCollection));
+      }
+    });
   }
 }

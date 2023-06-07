@@ -1,19 +1,9 @@
 import { Injectable } from '@angular/core';
-import { User, createClient } from '@supabase/supabase-js';
-import {
-  Observable,
-  exhaustMap,
-  from,
-  map,
-  of,
-  switchMap,
-  tap,
-  throwError,
-} from 'rxjs';
+import { createClient } from '@supabase/supabase-js';
+import { Observable, exhaustMap, from, map, of } from 'rxjs';
 import { AuthResponse } from './models/AuthResponse';
 import { Recipe } from '../recipe/models/recipe';
-import { Database } from './models/Database';
-import { Ingredient } from '../recipe/models/ingredient';
+import { Database } from '../../../lib/database.types';
 
 @Injectable({
   providedIn: 'root',
@@ -63,73 +53,91 @@ export class SupabaseService {
     );
   }
 
-  // updateRecipoe(recipe: Recipe): Observable<Recipe> {
-  //   return this.getUser().pipe(
-  //     exhaustMap((userResponse) => of(userResponse.id)),
-  //     exhaustMap((userId: string) => {
-  //       return from(
-  //         this.supabaseClient.from('recipe').select(`
-  //           id,
-  //           name,
-  //           url
-  //           `)
-  //       ).pipe(map((response) => response.data as Recipe[]));
-  //     })
-  //   );
-  // }
+  getRecipes(): Observable<Recipe[]> {
+    const recipes = this.supabaseClient.from('recipe').select(`
+          key,
+          name,
+          url,
+          created_at,
+          modified_on,
+          recipe_ingredient (
+            key,
+            name,
+            quantity,
+            created_at,
+            modified_on
+          )
+        `);
 
-  insertRecipe(recipe: Recipe): Observable<Recipe> {
-    return this.getUser().pipe(
-      exhaustMap((userResponse) => of(userResponse.id)),
-      exhaustMap((userId: string) => {
+    const recipes$ = from(recipes);
+
+    return recipes$.pipe(
+      map((response) => {
+        if (!response.data) {
+          throw new Error(response.error.message);
+        }
+        return response.data?.map((recipe) => {
+          return {
+            key: recipe.key,
+            name: recipe.name,
+            url: recipe.url,
+            ingredients: recipe.recipe_ingredient,
+            created_at: recipe.created_at,
+            modified_on: recipe.modified_on,
+          };
+        });
+      })
+    );
+  }
+
+  upsertRecipe(
+    recipe: Recipe
+  ): Observable<{ isError: boolean; errorMessage: string }> {
+    const userId$ = this.getUserId();
+    return userId$.pipe(
+      exhaustMap((userId) => {
         return from(
-          this.supabaseClient
-            .from('recipe')
-            .insert({
-              name: recipe.name,
-              url: recipe.url,
-              user_id: userId,
-            })
-            .select('id')
+          this.supabaseClient.from('recipe').upsert({
+            key: recipe.key,
+            name: recipe.name,
+            url: recipe.url,
+            user_id: userId,
+            modified_on: recipe.modified_on,
+            created_at: recipe.created_at,
+          })
         ).pipe(
-          exhaustMap((insertResponse) => {
-            if (!insertResponse.data) {
-              return throwError(() => new Error(insertResponse.error.message));
+          exhaustMap((upsertRecipeResponse) => {
+            console.log('upsert recipe response', upsertRecipeResponse);
+            if (upsertRecipeResponse.error) {
+              return of({
+                isError: true,
+                errorMessage: upsertRecipeResponse.error.message,
+              });
             }
-            return of(insertResponse.data[0]['id'] as number);
-          }),
-          exhaustMap((recipeId: number) => {
-            const ingredients = recipe.ingredients.map((ingredient) => {
+
+            const mapped = recipe.ingredients.map((ingredient) => {
               return {
-                name: ingredient.name,
-                quantity: ingredient.quantity,
-                recipe_id: recipeId,
+                ...ingredient,
+                recipe_key: recipe.key,
                 user_id: userId,
               };
             });
+
             return from(
-              this.supabaseClient
-                .from('recipe_ingredient')
-                .insert(ingredients)
-                .select()
+              this.supabaseClient.from('recipe_ingredient').upsert(mapped)
             ).pipe(
-              exhaustMap((ingredientInsertResonse) => {
-                if (ingredientInsertResonse.error) {
-                  return throwError(
-                    () => new Error(ingredientInsertResonse.error.message)
-                  );
+              map((response) => {
+                console.log('upsert ingredients response', response);
+                if (response.error) {
+                  return {
+                    isError: true,
+                    errorMessage: response.error.message,
+                  };
                 }
-                const ingredients =
-                  ingredientInsertResonse.data as Ingredient[];
-                if (!ingredients) {
-                  return throwError(() => new Error('no ingredients returned'));
-                }
-                const recipeWithIds: Recipe = {
-                  ...recipe,
-                  id: recipeId,
-                  ingredients: ingredients,
+                return {
+                  isError: false,
+                  errorMessage: '',
                 };
-                return of(recipeWithIds);
               })
             );
           })
@@ -138,93 +146,13 @@ export class SupabaseService {
     );
   }
 
-  private getUser(): Observable<User> {
-    return from(this.supabaseClient.auth.getUser()).pipe(
-      switchMap((userResponse) => {
-        if (!userResponse.data.user) {
-          return throwError(() => new Error('user not logged in'));
+  private getUserId(): Observable<string> {
+    return from(this.supabaseClient.auth.getSession()).pipe(
+      map((session) => {
+        if (session.data.session) {
+          return session.data.session.user.id;
         }
-        return of(userResponse.data.user);
-      })
-    );
-  }
-
-  updateRecipe(
-    recipe: Recipe
-  ): Observable<{ error: string; isError: boolean }> {
-    return from(this.supabaseClient.auth.getUser()).pipe(
-      switchMap((user) => {
-        if (!user.data.user) {
-          return of({ error: 'user not logged in', isError: true });
-        }
-        return from(
-          this.supabaseClient
-            .from('recipe')
-            .update({
-              name: recipe.name,
-              url: recipe.url,
-              modified_on: new Date().toISOString(),
-            })
-            .eq('id', recipe.id)
-        ).pipe(
-          tap((insertResponse) =>
-            console.log('insertResponse', insertResponse)
-          ),
-          switchMap((insertResponse) => {
-            if (insertResponse.error) {
-              return of({ error: insertResponse.error.message, isError: true });
-            }
-            return of({ error: '', isError: false });
-          })
-        );
-      })
-    );
-  }
-
-  getRecipes(): Observable<Recipe[]> {
-    const recipes = this.supabaseClient.from('recipe').select(`
-          id,
-          name,
-          url,
-          recipe_ingredient (
-            id,
-            name,
-            quantity
-          )
-        `);
-
-    const recipes$ = from(recipes);
-
-    return recipes$.pipe(
-      tap((response) => console.log('response', response)),
-      map((response) => {
-        if (!response.data) {
-          throw new Error(response.error.message);
-        }
-        return response.data?.map((recipe) => {
-          return {
-            id: recipe.id,
-            name: recipe.name,
-            url: recipe.url,
-            ingredients: recipe.recipe_ingredient,
-          };
-        });
-      })
-    );
-  }
-
-  deleteRecipe(
-    recipe: Recipe
-  ): Observable<{ error: string; isError: boolean }> {
-    return from(
-      this.supabaseClient.from('recipe').delete().eq('id', recipe.id)
-    ).pipe(
-      tap((response) => console.log('delete response', response)),
-      map((response) => {
-        if (response.error) {
-          return { error: response.error.message, isError: true };
-        }
-        return { error: '', isError: false };
+        throw new Error('no session');
       })
     );
   }

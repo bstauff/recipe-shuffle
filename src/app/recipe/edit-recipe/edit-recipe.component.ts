@@ -62,11 +62,7 @@ export class EditRecipeComponent implements OnInit {
       return;
     }
 
-    const ingredient: Ingredient = {
-      id: -1,
-      name: ingredientName,
-      quantity: Number(ingredientCount),
-    };
+    const ingredient = new Ingredient(ingredientName, Number(ingredientCount));
 
     console.log('ingredients in form', this.recipeForm.value?.ingredient);
 
