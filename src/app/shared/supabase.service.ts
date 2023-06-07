@@ -63,12 +63,25 @@ export class SupabaseService {
     );
   }
 
+  // updateRecipoe(recipe: Recipe): Observable<Recipe> {
+  //   return this.getUser().pipe(
+  //     exhaustMap((userResponse) => of(userResponse.id)),
+  //     exhaustMap((userId: string) => {
+  //       return from(
+  //         this.supabaseClient.from('recipe').select(`
+  //           id,
+  //           name,
+  //           url
+  //           `)
+  //       ).pipe(map((response) => response.data as Recipe[]));
+  //     })
+  //   );
+  // }
+
   insertRecipe(recipe: Recipe): Observable<Recipe> {
     return this.getUser().pipe(
-      tap((user) => console.log('user', user)),
       exhaustMap((userResponse) => of(userResponse.id)),
       exhaustMap((userId: string) => {
-        console.log('im using user id', userId);
         return from(
           this.supabaseClient
             .from('recipe')
@@ -169,9 +182,34 @@ export class SupabaseService {
   }
 
   getRecipes(): Observable<Recipe[]> {
-    return from(this.supabaseClient.from('recipe').select()).pipe(
+    const recipes = this.supabaseClient.from('recipe').select(`
+          id,
+          name,
+          url,
+          recipe_ingredient (
+            id,
+            name,
+            quantity
+          )
+        `);
+
+    const recipes$ = from(recipes);
+
+    return recipes$.pipe(
       tap((response) => console.log('response', response)),
-      map((response) => response.data as Recipe[])
+      map((response) => {
+        if (!response.data) {
+          throw new Error(response.error.message);
+        }
+        return response.data?.map((recipe) => {
+          return {
+            id: recipe.id,
+            name: recipe.name,
+            url: recipe.url,
+            ingredients: recipe.recipe_ingredient,
+          };
+        });
+      })
     );
   }
 
