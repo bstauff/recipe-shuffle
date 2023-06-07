@@ -19,25 +19,41 @@ export class RecipeService {
   }
 
   deleteRecipe(recipe: Recipe): void {
-    // const recipeIndex = this.recipes.findIndex((rec) => rec.id === recipe.id);
-    // this.supabaseService.deleteRecipe(recipe).subscribe((response) => {
-    //   if (response.error) {
-    //     console.error('supabase delete failed', response.error);
-    //   } else {
-    //     this.recipes.splice(recipeIndex, 1);
-    //     this.recipesChanged.next(this.recipes.slice());
-    //   }
-    // });
+    const recipeCopy = {
+      ...recipe,
+      is_deleted: true,
+      ingredients: [
+        ...recipe.ingredients.map((ingredient) => {
+          return {
+            ...ingredient,
+            is_deleted: true,
+          };
+        }),
+      ],
+    };
+    this.supabaseService.upsertRecipe(recipeCopy).subscribe((response) => {
+      if (response.isError) {
+        console.error('supabase upsert failed', response.errorMessage);
+      } else {
+        recipe.is_deleted = true;
+        recipe.ingredients = recipe.ingredients.map((ingredient) => {
+          return { ...ingredient, is_deleted: true };
+        });
+        delete this.recipeCollection[recipe.key];
+        this.recipesChanged.next(Object.values(this.recipeCollection));
+      }
+    });
   }
+
   upsertRecipe(recipe: Recipe): void {
     this.supabaseService.upsertRecipe(recipe).subscribe((response) => {
       if (response.isError) {
         console.error('supabase upsert failed', response.errorMessage);
-      }
-
-      if (!this.recipeCollection[recipe.key]) {
-        this.recipeCollection[recipe.key] = recipe;
-        this.recipesChanged.next(Object.values(this.recipeCollection));
+      } else {
+        if (!this.recipeCollection[recipe.key]) {
+          this.recipeCollection[recipe.key] = recipe;
+          this.recipesChanged.next(Object.values(this.recipeCollection));
+        }
       }
     });
   }

@@ -6,6 +6,7 @@ export class Ingredient {
   quantity: number;
   created_at: string;
   modified_on: string;
+  is_deleted: boolean;
 
   constructor(name: string, quantity: number) {
     const ulidKey = Ulid.generate().toRaw();
@@ -14,5 +15,6 @@ export class Ingredient {
     this.quantity = quantity;
     this.created_at = new Date().toISOString();
     this.modified_on = new Date().toISOString();
+    this.is_deleted = false;
   }
 }

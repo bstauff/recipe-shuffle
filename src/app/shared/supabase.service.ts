@@ -54,20 +54,27 @@ export class SupabaseService {
   }
 
   getRecipes(): Observable<Recipe[]> {
-    const recipes = this.supabaseClient.from('recipe').select(`
+    const recipes = this.supabaseClient
+      .from('recipe')
+      .select(
+        `
           key,
           name,
           url,
           created_at,
           modified_on,
+          is_deleted,
           recipe_ingredient (
             key,
             name,
             quantity,
             created_at,
-            modified_on
+            modified_on,
+            is_deleted
           )
-        `);
+        `
+      )
+      .neq('is_deleted', true);
 
     const recipes$ = from(recipes);
 
@@ -84,6 +91,7 @@ export class SupabaseService {
             ingredients: recipe.recipe_ingredient,
             created_at: recipe.created_at,
             modified_on: recipe.modified_on,
+            is_deleted: recipe.is_deleted,
           };
         });
       })
@@ -104,6 +112,7 @@ export class SupabaseService {
             user_id: userId,
             modified_on: recipe.modified_on,
             created_at: recipe.created_at,
+            is_deleted: recipe.is_deleted,
           })
         ).pipe(
           exhaustMap((upsertRecipeResponse) => {
