@@ -41,11 +41,8 @@ export class RecipeService {
   upsertRecipe(recipe: Recipe): void {
     this.supabaseService.upsertRecipe(recipe).subscribe({
       complete: () => {
-        if (!this.recipeCollection[recipe.key]) {
-          this.recipeCollection[recipe.key] = recipe;
-          this.recipesChanged.next(Object.values(this.recipeCollection));
-        }
-        console.log('completed recipe upsert');
+        this.recipeCollection[recipe.key] = recipe;
+        this.recipesChanged.next(Object.values(this.recipeCollection));
       },
       error: (err) => console.error('error upserting recipe', err),
     });
