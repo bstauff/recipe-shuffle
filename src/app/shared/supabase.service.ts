@@ -1,9 +1,10 @@
 import { Injectable } from '@angular/core';
 import { createClient } from '@supabase/supabase-js';
-import { Observable, exhaustMap, from, map, of } from 'rxjs';
+import { EMPTY, Observable, exhaustMap, from, map, of } from 'rxjs';
 import { AuthResponse } from './models/AuthResponse';
 import { Recipe } from '../recipe/models/recipe';
 import { Database } from '../../../lib/database.types';
+import { Ingredient } from '../recipe/models/ingredient';
 
 @Injectable({
   providedIn: 'root',
@@ -54,27 +55,22 @@ export class SupabaseService {
   }
 
   getRecipes(): Observable<Recipe[]> {
-    const recipes = this.supabaseClient
-      .from('recipe')
-      .select(
-        `
+    const recipes = this.supabaseClient.from('recipe').select(
+      `
           key,
           name,
           url,
           created_at,
           modified_on,
-          is_deleted,
           recipe_ingredient (
             key,
             name,
             quantity,
             created_at,
-            modified_on,
-            is_deleted
+            modified_on
           )
         `
-      )
-      .neq('is_deleted', true);
+    );
 
     const recipes$ = from(recipes);
 
@@ -91,16 +87,13 @@ export class SupabaseService {
             ingredients: recipe.recipe_ingredient,
             created_at: recipe.created_at,
             modified_on: recipe.modified_on,
-            is_deleted: recipe.is_deleted,
           };
         });
       })
     );
   }
 
-  upsertRecipe(
-    recipe: Recipe
-  ): Observable<{ isError: boolean; errorMessage: string }> {
+  upsertRecipe(recipe: Recipe): Observable<never> {
     const userId$ = this.getUserId();
     return userId$.pipe(
       exhaustMap((userId) => {
@@ -112,16 +105,11 @@ export class SupabaseService {
             user_id: userId,
             modified_on: recipe.modified_on,
             created_at: recipe.created_at,
-            is_deleted: recipe.is_deleted,
           })
         ).pipe(
           exhaustMap((upsertRecipeResponse) => {
-            console.log('upsert recipe response', upsertRecipeResponse);
             if (upsertRecipeResponse.error) {
-              return of({
-                isError: true,
-                errorMessage: upsertRecipeResponse.error.message,
-              });
+              throw new Error(upsertRecipeResponse.error.message);
             }
 
             const mapped = recipe.ingredients.map((ingredient) => {
@@ -135,22 +123,47 @@ export class SupabaseService {
             return from(
               this.supabaseClient.from('recipe_ingredient').upsert(mapped)
             ).pipe(
-              map((response) => {
-                console.log('upsert ingredients response', response);
+              exhaustMap((response) => {
                 if (response.error) {
-                  return {
-                    isError: true,
-                    errorMessage: response.error.message,
-                  };
+                  throw new Error(response.error.message);
                 }
-                return {
-                  isError: false,
-                  errorMessage: '',
-                };
+                return EMPTY;
               })
             );
           })
         );
+      })
+    );
+  }
+
+  deleteRecipe(recipe: Recipe): Observable<never> {
+    return from(
+      this.supabaseClient.from('recipe').delete().eq('key', recipe.key)
+    ).pipe(
+      exhaustMap((response) => {
+        if (response.error) {
+          throw new Error(response.error.message);
+        }
+        return EMPTY;
+      })
+    );
+  }
+
+  deleteIngredients(ingredients: Ingredient[]): Observable<never> {
+    return from(
+      this.supabaseClient
+        .from('recipe_ingredient')
+        .delete()
+        .in(
+          'key',
+          ingredients.map((i) => i.key)
+        )
+    ).pipe(
+      exhaustMap((response) => {
+        if (response.error) {
+          throw new Error(response.error.message);
+        }
+        return EMPTY;
       })
     );
   }

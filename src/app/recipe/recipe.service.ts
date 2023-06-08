@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { Recipe } from './models/recipe';
 import { ReplaySubject } from 'rxjs';
 import { SupabaseService } from '../shared/supabase.service';
+import { Ingredient } from './models/ingredient';
 
 @Injectable()
 export class RecipeService {
@@ -19,42 +20,34 @@ export class RecipeService {
   }
 
   deleteRecipe(recipe: Recipe): void {
-    const recipeCopy = {
-      ...recipe,
-      is_deleted: true,
-      ingredients: [
-        ...recipe.ingredients.map((ingredient) => {
-          return {
-            ...ingredient,
-            is_deleted: true,
-          };
-        }),
-      ],
-    };
-    this.supabaseService.upsertRecipe(recipeCopy).subscribe((response) => {
-      if (response.isError) {
-        console.error('supabase upsert failed', response.errorMessage);
-      } else {
-        recipe.is_deleted = true;
-        recipe.ingredients = recipe.ingredients.map((ingredient) => {
-          return { ...ingredient, is_deleted: true };
-        });
+    this.supabaseService.deleteRecipe(recipe).subscribe({
+      complete: () => {
         delete this.recipeCollection[recipe.key];
         this.recipesChanged.next(Object.values(this.recipeCollection));
-      }
+      },
+      error: (err) => console.error('error deleting recipe', err),
+    });
+  }
+
+  deleteIngredients(ingredients: Ingredient[]): void {
+    this.supabaseService.deleteIngredients(ingredients).subscribe({
+      complete: () => {
+        this.recipesChanged.next(Object.values(this.recipeCollection));
+      },
+      error: (err) => console.error('error deleting ingredients', err),
     });
   }
 
   upsertRecipe(recipe: Recipe): void {
-    this.supabaseService.upsertRecipe(recipe).subscribe((response) => {
-      if (response.isError) {
-        console.error('supabase upsert failed', response.errorMessage);
-      } else {
+    this.supabaseService.upsertRecipe(recipe).subscribe({
+      complete: () => {
         if (!this.recipeCollection[recipe.key]) {
           this.recipeCollection[recipe.key] = recipe;
           this.recipesChanged.next(Object.values(this.recipeCollection));
         }
-      }
+        console.log('completed recipe upsert');
+      },
+      error: (err) => console.error('error upserting recipe', err),
     });
   }
 }
