@@ -1,6 +1,16 @@
 import { Component } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
+import {
+  AbstractControl,
+  FormBuilder,
+  FormControl,
+  FormGroup,
+  FormGroupDirective,
+  NgForm,
+  Validators,
+} from '@angular/forms';
 import { SupabaseService } from 'src/app/shared/supabase.service';
+import { passwordsMatchValidator } from './register.passwords.validator';
+import { ErrorStateMatcher } from '@angular/material/core';
 
 @Component({
   selector: 'app-register',
@@ -8,10 +18,19 @@ import { SupabaseService } from 'src/app/shared/supabase.service';
   styleUrls: ['./register.component.scss'],
 })
 export class RegisterComponent {
+  passwordMismatchErrorStateMatcher = new PasswordMismatchErrorStateMatcher();
   registerForm = this.formBuilder.group({
-    email: this.formBuilder.control(''),
-    password: this.formBuilder.control(''),
-    confirmPassword: this.formBuilder.control(''),
+    email: this.formBuilder.control('', [
+      Validators.required,
+      Validators.email,
+    ]),
+    confirmPassword: this.formBuilder.group(
+      {
+        password: this.formBuilder.control('', [Validators.required]),
+        confirmPassword: this.formBuilder.control('', [Validators.required]),
+      },
+      { validators: [passwordsMatchValidator] }
+    ),
   });
 
   constructor(
@@ -20,14 +39,42 @@ export class RegisterComponent {
   ) {}
 
   onSubmit() {
-    console.log(this.registerForm.value);
-    const { email, password } = this.registerForm.value;
+    const email = this.registerForm.get('email')?.value;
+
+    const password = this.registerForm.get('confirmPassword.password')?.value;
+
+    const confirmPassword = this.registerForm.get(
+      'confirmPassword.confirmPassword'
+    )?.value;
+
     if (!email || !password) return;
+
+    if (password !== confirmPassword) return;
+
     this.supabaseService.signUpUser(email, password).subscribe({
       next: (response) => {
         console.log(response);
       },
     });
     this.registerForm.reset();
+  }
+  hasPasswordMatchError(): boolean | undefined {
+    return (
+      this.registerForm
+        .get('confirmPassword')
+        ?.hasError('passwordsDoNotMatch') &&
+      this.registerForm.get('confirmPassword')?.dirty &&
+      this.registerForm.get('confirmPassword')?.touched
+    );
+  }
+}
+
+export class PasswordMismatchErrorStateMatcher extends ErrorStateMatcher {
+  override isErrorState(
+    control: FormControl | null,
+    form: FormGroupDirective | NgForm | null
+  ): boolean {
+    console.log('control err', control);
+    return control?.parent?.hasError('passwordsDoNotMatch') ?? false;
   }
 }
