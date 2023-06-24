@@ -5,9 +5,9 @@ export function passwordsMatchValidator(
 ): ValidationErrors | null {
   const password = group.get('password')?.value;
   const confirmPassword = group.get('confirmPassword')?.value;
-
-  console.log('password', password);
-  console.log('confirmPassword', confirmPassword);
-  console.log('group', group);
-  return password === confirmPassword ? null : { passwordsDoNotMatch: true };
+  if (group.touched && group.dirty) {
+    return password === confirmPassword ? null : { passwordsDoNotMatch: true };
+  } else {
+    return null;
+  }
 }

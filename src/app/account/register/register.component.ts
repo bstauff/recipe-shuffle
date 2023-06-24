@@ -1,9 +1,7 @@
 import { Component } from '@angular/core';
 import {
-  AbstractControl,
   FormBuilder,
   FormControl,
-  FormGroup,
   FormGroupDirective,
   NgForm,
   Validators,
@@ -74,7 +72,12 @@ export class PasswordMismatchErrorStateMatcher extends ErrorStateMatcher {
     control: FormControl | null,
     form: FormGroupDirective | NgForm | null
   ): boolean {
-    console.log('control err', control);
-    return control?.parent?.hasError('passwordsDoNotMatch') ?? false;
+    console.log('form is ', form);
+    return (
+      (control?.dirty &&
+        control?.touched &&
+        form?.form.get('confirmPassword')?.hasError('passwordsDoNotMatch')) ??
+      false
+    );
   }
 }
