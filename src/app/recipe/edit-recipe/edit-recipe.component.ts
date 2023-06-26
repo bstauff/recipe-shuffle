@@ -16,7 +16,7 @@ export class EditRecipeComponent implements OnInit {
   table: MatTable<Ingredient[]> | undefined;
 
   displayedColumns: string[] = ['name', 'quantity', 'deleteButton'];
-  updatedIngredients = this.recipe.ingredients.slice();
+  updatedIngredients: Ingredient[] = [];
   deletedIngredients: Ingredient[] = [];
 
   recipeForm = this.formBuilder.group({
@@ -38,6 +38,7 @@ export class EditRecipeComponent implements OnInit {
 
   ngOnInit(): void {
     this.recipeForm.patchValue(this.recipe);
+    this.updatedIngredients = this.recipe.ingredients.slice();
   }
 
   onSubmit(): void {
@@ -46,13 +47,7 @@ export class EditRecipeComponent implements OnInit {
     this.recipe.name = updatedRecipe.name;
     this.recipe.url = updatedRecipe.url;
 
-    console.log('recipe ingredients before update', this.recipe.ingredients);
-    console.log('deleted ingredients', this.deletedIngredients);
-
     this.recipe.ingredients = this.updatedIngredients.slice();
-
-    console.log('updated recipe ingredients', this.recipe.ingredients);
-
     this.recipeService.upsertRecipe(this.recipe);
     this.recipeService.deleteIngredients(this.deletedIngredients);
 
