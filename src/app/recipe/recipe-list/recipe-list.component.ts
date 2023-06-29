@@ -23,9 +23,12 @@ export class RecipeListComponent {
 
   getHostname(url: string | null): string {
     if (!url) return '';
-
-    const hostname = new URL(url).hostname;
-    return hostname.replace('www.', '');
+    try {
+      const hostname = new URL(url).hostname;
+      return hostname.replace('www.', '');
+    } catch (_) {
+      return '';
+    }
   }
   onDelete(recipe: Recipe): void {
     this.recipeService.deleteRecipe(recipe);

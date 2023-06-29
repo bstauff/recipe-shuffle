@@ -20,9 +20,10 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 describe('RecipeListComponent', () => {
   let component: RecipeListComponent;
   let fixture: ComponentFixture<RecipeListComponent>;
+  let recipeService: jasmine.SpyObj<RecipeService>;
 
   beforeEach(() => {
-    const recipeService = jasmine.createSpyObj('RecipeService', [], {
+    recipeService = jasmine.createSpyObj('RecipeService', [], {
       recipesChanged: of([
         {
           name: 'Test Recipe 1',
@@ -31,7 +32,7 @@ describe('RecipeListComponent', () => {
         },
         {
           name: 'Test Recipe 2',
-          url: 'https://www.bananas.net/',
+          url: 'asdf',
           ingredients: [],
         },
       ]),
