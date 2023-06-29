@@ -16,7 +16,8 @@ export class EditRecipeComponent implements OnInit {
   table: MatTable<Ingredient[]> | undefined;
 
   displayedColumns: string[] = ['name', 'quantity', 'deleteButton'];
-  dataSource = this.recipe.ingredients;
+  updatedIngredients: Ingredient[] = [];
+  deletedIngredients: Ingredient[] = [];
 
   recipeForm = this.formBuilder.group({
     name: this.formBuilder.control('', { validators: [Validators.required] }),
@@ -37,6 +38,7 @@ export class EditRecipeComponent implements OnInit {
 
   ngOnInit(): void {
     this.recipeForm.patchValue(this.recipe);
+    this.updatedIngredients = this.recipe.ingredients.slice();
   }
 
   onSubmit(): void {
@@ -45,8 +47,11 @@ export class EditRecipeComponent implements OnInit {
     this.recipe.name = updatedRecipe.name;
     this.recipe.url = updatedRecipe.url;
 
+    this.recipe.ingredients = this.updatedIngredients.slice();
     this.recipeService.upsertRecipe(this.recipe);
+    this.recipeService.deleteIngredients(this.deletedIngredients);
 
+    this.deletedIngredients = [];
     this.recipeForm.reset();
   }
 
@@ -62,14 +67,9 @@ export class EditRecipeComponent implements OnInit {
       return;
     }
 
-    const ingredient: Ingredient = {
-      name: ingredientName,
-      quantity: Number(ingredientCount),
-    };
+    const ingredient = new Ingredient(ingredientName, Number(ingredientCount));
 
-    console.log('ingredients in form', this.recipeForm.value?.ingredient);
-
-    this.recipe?.ingredients.push(ingredient);
+    this.updatedIngredients.push(ingredient);
 
     this.recipeForm.get('ingredient')?.reset();
 
@@ -77,7 +77,8 @@ export class EditRecipeComponent implements OnInit {
   }
 
   onDelete(index: number): void {
-    this.recipe?.ingredients.splice(index, 1);
+    this.updatedIngredients.splice(index, 1);
+    this.deletedIngredients.push(this.recipe.ingredients[index]);
 
     this.table?.renderRows();
   }

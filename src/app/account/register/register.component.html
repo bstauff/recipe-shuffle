@@ -14,27 +14,40 @@
         formControlName="email"
         matInput
       />
+      <mat-error *ngIf="registerForm.get('email')?.hasError('required')">
+        Email is required
+      </mat-error>
+      <mat-error *ngIf="registerForm.get('email')?.hasError('email')">
+        Email is invalid
+      </mat-error>
     </mat-form-field>
-    <mat-form-field>
-      <mat-label>Password</mat-label>
-      <input
-        type="password"
-        id="password"
-        required
-        formControlName="password"
-        matInput
-      />
-    </mat-form-field>
-    <mat-form-field>
-      <mat-label>Confirm Password</mat-label>
-      <input
-        type="password"
-        id="confirmPassword"
-        required
-        formControlName="confirmPassword"
-        matInput
-      />
-    </mat-form-field>
+    <div class="register-form__password" formGroupName="confirmPassword">
+      <mat-form-field>
+        <mat-label>Password</mat-label>
+        <input
+          type="password"
+          id="password"
+          required
+          formControlName="password"
+          [errorStateMatcher]="passwordMismatchErrorStateMatcher"
+          matInput
+        />
+      </mat-form-field>
+      <mat-form-field>
+        <mat-label>Confirm Password</mat-label>
+        <input
+          type="password"
+          id="confirmPassword"
+          required
+          formControlName="confirmPassword"
+          [errorStateMatcher]="passwordMismatchErrorStateMatcher"
+          matInput
+        />
+        <mat-error *ngIf="hasPasswordMatchError()"
+          >Passwords do not match</mat-error
+        >
+      </mat-form-field>
+    </div>
     <div class="register-form__register-button">
       <button
         type="submit"

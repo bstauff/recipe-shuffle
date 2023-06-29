@@ -17,16 +17,13 @@ export class RecipeListComponent {
   constructor(private recipeService: RecipeService, public dialog: MatDialog) {}
 
   onAddClicked(): void {
-    const recipe: Recipe = {
-      name: '',
-      url: '',
-      ingredients: [],
-    };
-
+    const recipe = new Recipe('', '');
     this.dialog.open(EditRecipeComponent, { data: recipe });
   }
 
-  getHostname(url: string): string {
+  getHostname(url: string | null): string {
+    if (!url) return '';
+
     const hostname = new URL(url).hostname;
     return hostname.replace('www.', '');
   }
