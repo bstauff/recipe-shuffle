@@ -10,9 +10,15 @@ import { MatButtonModule } from '@angular/material/button';
 import { LoginComponent } from './login/login.component';
 import { RegisterComponent } from './register/register.component';
 import { SharedModule } from '../shared/shared.module';
+import { PasswordResetComponent } from './password-reset/password-reset.component';
 
 @NgModule({
-  declarations: [AccountComponent, LoginComponent, RegisterComponent],
+  declarations: [
+    AccountComponent,
+    LoginComponent,
+    RegisterComponent,
+    PasswordResetComponent,
+  ],
   imports: [
     CommonModule,
     AccountRoutingModule,
