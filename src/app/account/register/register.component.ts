@@ -72,12 +72,16 @@ export class PasswordMismatchErrorStateMatcher extends ErrorStateMatcher {
     control: FormControl | null,
     form: FormGroupDirective | NgForm | null
   ): boolean {
-    console.log('form is ', form);
-    return (
-      (control?.dirty &&
-        control?.touched &&
-        form?.form.get('confirmPassword')?.hasError('passwordsDoNotMatch')) ??
-      false
-    );
+    if (control?.dirty && control.touched && control.invalid) {
+      return true;
+    } else if (
+      control?.parent?.dirty &&
+      control.parent.touched &&
+      control.parent.invalid
+    ) {
+      return true;
+    }
+
+    return false;
   }
 }
