@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { SupabaseService } from 'src/app/shared/supabase.service';
 
 @Component({
   selector: 'app-password-reset',
@@ -11,12 +12,16 @@ export class PasswordResetComponent {
     email: this.formBuilder.control('', [Validators.required]),
   });
 
-  constructor(private formBuilder: FormBuilder) {}
+  constructor(
+    private formBuilder: FormBuilder,
+    private supabaseService: SupabaseService
+  ) {}
 
   onSubmit(): void {
-    console.log(
-      'you will reset email for: ',
-      this.resetEmailCollection.get('email')?.value
-    );
+    const email = this.resetEmailCollection.value?.email;
+
+    if (email) {
+      this.supabaseService.initiatePasswordReset(email);
+    }
   }
 }

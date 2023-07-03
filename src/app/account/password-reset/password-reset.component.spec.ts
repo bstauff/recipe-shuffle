@@ -8,12 +8,17 @@ import { MatInputModule } from '@angular/material/input';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { RouterTestingModule } from '@angular/router/testing';
 import { SharedModule } from 'src/app/shared/shared.module';
+import { SupabaseService } from 'src/app/shared/supabase.service';
 
 describe('PasswordResetComponent', () => {
   let component: PasswordResetComponent;
   let fixture: ComponentFixture<PasswordResetComponent>;
+  let supabaseSpy: jasmine.SpyObj<SupabaseService>;
 
   beforeEach(() => {
+    supabaseSpy = jasmine.createSpyObj('SupabaseService', [
+      'initiatePasswordReset',
+    ]);
     TestBed.configureTestingModule({
       declarations: [PasswordResetComponent],
       imports: [
@@ -25,6 +30,9 @@ describe('PasswordResetComponent', () => {
         BrowserAnimationsModule,
         RouterTestingModule,
       ],
+    });
+    TestBed.overrideProvider(SupabaseService, {
+      useValue: supabaseSpy,
     });
     fixture = TestBed.createComponent(PasswordResetComponent);
     component = fixture.componentInstance;
@@ -41,5 +49,14 @@ describe('PasswordResetComponent', () => {
     emailControl?.markAsTouched();
     emailControl?.markAsDirty();
     expect(component.resetEmailCollection.valid).toBeFalse();
+  }));
+
+  it('should call initiatePasswordReset on SupabaseService when submit is clicked', fakeAsync(() => {
+    const expectedEmail = 'john@gmail.com';
+    component.resetEmailCollection.get('email')?.setValue(expectedEmail);
+    component.onSubmit();
+    expect(supabaseSpy.initiatePasswordReset).toHaveBeenCalledWith(
+      expectedEmail
+    );
   }));
 });
