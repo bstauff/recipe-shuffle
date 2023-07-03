@@ -79,8 +79,6 @@ describe('LoginComponent', () => {
     const expectedEmail = 'asdf@acme.com';
     const expectedPassword = 'password';
 
-    console.log('supaabsespy', supabaseService);
-
     component.loginForm.get('email')?.setValue(expectedEmail);
     component.loginForm.get('password')?.setValue(expectedPassword);
 
