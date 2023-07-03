@@ -7,6 +7,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { LoginComponent } from './login/login.component';
 import { RegisterComponent } from './register/register.component';
 import { SharedModule } from '../shared/shared.module';
@@ -29,6 +30,7 @@ import { NewPasswordComponent } from './password-reset/new-password/new-password
     MatInputModule,
     MatButtonModule,
     SharedModule,
+    MatSnackBarModule,
   ],
 })
 export class AccountModule {}
