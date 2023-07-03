@@ -113,7 +113,6 @@ describe('RecipeService', () => {
     supabaseSpy.getRecipes.and.returnValue(of(recipes));
 
     service = new RecipeService(supabaseSpy);
-    console.log(service);
     service.upsertRecipe({ ...recipe, name: expectedNewName });
     service.recipesChanged.subscribe({
       next: (recipes) => {

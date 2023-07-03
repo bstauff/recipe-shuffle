@@ -168,6 +168,31 @@ export class SupabaseService {
     );
   }
 
+  initiatePasswordReset(userEmail: string): Observable<never> {
+    return from(
+      this.supabaseClient.auth.resetPasswordForEmail(userEmail, {
+        redirectTo:
+          'https://recipe-shuffle.braynesoft.net/account/password-reset/new-password',
+      })
+    ).pipe(
+      exhaustMap((data) => {
+        if (data.error) throw new Error(data.error.message);
+        return EMPTY;
+      })
+    );
+  }
+
+  updatePassword(newPassword: string): Observable<never> {
+    return from(
+      this.supabaseClient.auth.updateUser({ password: newPassword })
+    ).pipe(
+      exhaustMap((data) => {
+        if (data.error) throw new Error(data.error.message);
+        return EMPTY;
+      })
+    );
+  }
+
   private getUserId(): Observable<string> {
     return from(this.supabaseClient.auth.getSession()).pipe(
       map((session) => {

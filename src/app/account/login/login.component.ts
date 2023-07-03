@@ -31,8 +31,6 @@ export class LoginComponent {
     if (!email || !password) {
       return;
     }
-    console.log('calling on submit');
-    console.log('supabase service', this.supabaseService);
     this.supabaseService.loginUser(email, password).subscribe({
       next: (response) => {
         if (response.isError) {

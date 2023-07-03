@@ -7,12 +7,21 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { LoginComponent } from './login/login.component';
 import { RegisterComponent } from './register/register.component';
 import { SharedModule } from '../shared/shared.module';
+import { PasswordResetComponent } from './password-reset/password-reset.component';
+import { NewPasswordComponent } from './password-reset/new-password/new-password.component';
 
 @NgModule({
-  declarations: [AccountComponent, LoginComponent, RegisterComponent],
+  declarations: [
+    AccountComponent,
+    LoginComponent,
+    RegisterComponent,
+    PasswordResetComponent,
+    NewPasswordComponent,
+  ],
   imports: [
     CommonModule,
     AccountRoutingModule,
@@ -21,6 +30,7 @@ import { SharedModule } from '../shared/shared.module';
     MatInputModule,
     MatButtonModule,
     SharedModule,
+    MatSnackBarModule,
   ],
 })
 export class AccountModule {}

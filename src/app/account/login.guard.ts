@@ -11,10 +11,8 @@ export const LoginGuard: CanActivateFn = (_route, _state) => {
   return isUserLoggedIn$.pipe(
     exhaustMap((isUserLoggedIn: boolean) => {
       if (isUserLoggedIn) {
-        console.log('User is logged in');
         return of(true);
       } else {
-        console.log('User is not logged in');
         const loginUrl = router.parseUrl('/account/login');
         return of(loginUrl);
       }
