@@ -13,6 +13,7 @@ import { RegisterComponent } from './register/register.component';
 import { SharedModule } from '../shared/shared.module';
 import { PasswordResetComponent } from './password-reset/password-reset.component';
 import { NewPasswordComponent } from './password-reset/new-password/new-password.component';
+import { LogoutComponent } from './logout/logout.component';
 
 @NgModule({
   declarations: [
@@ -21,6 +22,7 @@ import { NewPasswordComponent } from './password-reset/new-password/new-password
     RegisterComponent,
     PasswordResetComponent,
     NewPasswordComponent,
+    LogoutComponent,
   ],
   imports: [
     CommonModule,
@@ -32,5 +34,6 @@ import { NewPasswordComponent } from './password-reset/new-password/new-password
     SharedModule,
     MatSnackBarModule,
   ],
+  exports: [LogoutComponent],
 })
 export class AccountModule {}

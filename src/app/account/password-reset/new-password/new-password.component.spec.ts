@@ -16,7 +16,7 @@ import { RouterTestingModule } from '@angular/router/testing';
 import { SharedModule } from 'src/app/shared/shared.module';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { SupabaseService } from 'src/app/shared/supabase.service';
-import { EMPTY, of } from 'rxjs';
+import { EMPTY } from 'rxjs';
 import { RecipeListComponent } from 'src/app/recipe/recipe-list/recipe-list.component';
 import { provideRouter } from '@angular/router';
 
