@@ -28,6 +28,16 @@ export class SupabaseService {
       })
     );
   }
+  logoutUser(): Observable<never> {
+    return from(this.supabaseClient.auth.signOut()).pipe(
+      exhaustMap((response) => {
+        if (response?.error) {
+          throw new Error(response?.error?.message);
+        }
+        return EMPTY;
+      })
+    );
+  }
   loginUser(email: string, password: string): Observable<AuthResponse> {
     return from(
       this.supabaseClient.auth.signInWithPassword({ email, password })
