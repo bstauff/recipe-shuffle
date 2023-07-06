@@ -15,6 +15,12 @@ const routes: Routes = [
       import('./account/account.module').then((m) => m.AccountModule),
   },
   {
+    path: 'meal-plan',
+    canActivate: [LoginGuard],
+    loadChildren: () =>
+      import('./meal-plan/meal-plan.module').then((m) => m.MealPlanModule),
+  },
+  {
     path: '**',
     redirectTo: 'recipes',
   },
