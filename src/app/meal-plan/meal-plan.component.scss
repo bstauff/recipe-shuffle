@@ -1,0 +1,15 @@
+.meal-plan {
+    width: 80%;
+    max-width: 25rem;
+    margin: 0 auto;    
+}
+
+.meal-plan h1 {
+    text-align: center;
+}
+
+.meal-plan__body {
+    display: flex;
+    flex-direction: column;
+    gap: .5em;
+}
