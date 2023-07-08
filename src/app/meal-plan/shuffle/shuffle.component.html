@@ -1,1 +1,6 @@
-<p>shuffle works!</p>
+<p *ngIf="!hasEnoughRecipes">
+  You need at least 7 recipes to build a meal plan. Go add more recipes.
+</p>
+<button mat-raised-button color="primary" *ngIf="hasEnoughRecipes">
+  Shuffle!
+</button>
