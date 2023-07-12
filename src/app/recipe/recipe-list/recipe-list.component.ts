@@ -12,7 +12,7 @@ import { EditRecipeComponent } from '../edit-recipe/edit-recipe.component';
 })
 export class RecipeListComponent {
   isShowingAdd = false;
-  recipes: Observable<Recipe[]> = this.recipeService.recipesChanged;
+  recipes: Observable<Recipe[]> = this.recipeService.recipesChanged$;
 
   constructor(private recipeService: RecipeService, public dialog: MatDialog) {}
 

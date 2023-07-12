@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Recipe } from './models/recipe';
-import { ReplaySubject } from 'rxjs';
+import { Observable, ReplaySubject } from 'rxjs';
 import { SupabaseService } from '../shared/supabase.service';
 import { Ingredient } from './models/ingredient';
 
@@ -8,11 +8,11 @@ import { Ingredient } from './models/ingredient';
 export class RecipeService {
   private recipeCollection: { [key: string]: Recipe } = {};
 
-  recipesChanged = new ReplaySubject<Recipe[]>(1);
+  private recipesChanged = new ReplaySubject<Recipe[]>(1);
+  recipesChanged$: Observable<Recipe[]> = this.recipesChanged.asObservable();
 
   constructor(private supabaseService: SupabaseService) {
     this.supabaseService.getRecipes().subscribe((recipes) => {
-      console.log('firing get!');
       recipes.forEach((recipe) => {
         this.recipeCollection[recipe.key] = recipe;
       });
@@ -50,10 +50,6 @@ export class RecipeService {
   }
 
   private pushRecipesUpdated(): void {
-    console.log(
-      'pushing recipes updated: ',
-      Object.values(this.recipeCollection)
-    );
     this.recipesChanged.next(Object.values(this.recipeCollection));
   }
 }

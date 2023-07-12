@@ -39,7 +39,7 @@ describe('RecipeService', () => {
 
     service = new RecipeService(supabaseSpy);
 
-    service.recipesChanged.pipe(take(1)).subscribe({
+    service.recipesChanged$.pipe(take(1)).subscribe({
       next: (recipes: Recipe[]) => {
         expect(recipes.length).toBe(1);
         done();
@@ -57,7 +57,7 @@ describe('RecipeService', () => {
 
     service.deleteRecipe(recipe);
 
-    service.recipesChanged.pipe(take(1)).subscribe({
+    service.recipesChanged$.pipe(take(1)).subscribe({
       next: (recipes: Recipe[]) => {
         expect(recipes.length).toBe(0);
         done();
@@ -76,7 +76,7 @@ describe('RecipeService', () => {
 
     service.deleteRecipe(recipeA);
 
-    service.recipesChanged.pipe(take(1)).subscribe({
+    service.recipesChanged$.pipe(take(1)).subscribe({
       next: (recipes: Recipe[]) => {
         expect(recipes.length).toBe(1);
         expect(recipes[0]).toBe(recipeB);
@@ -96,7 +96,7 @@ describe('RecipeService', () => {
 
     let recipesEmissions = 0;
 
-    service.recipesChanged.subscribe({
+    service.recipesChanged$.subscribe({
       next: () => recipesEmissions++,
     });
 
@@ -114,7 +114,7 @@ describe('RecipeService', () => {
 
     service = new RecipeService(supabaseSpy);
     service.upsertRecipe({ ...recipe, name: expectedNewName });
-    service.recipesChanged.subscribe({
+    service.recipesChanged$.subscribe({
       next: (recipes) => {
         expect(recipes.length).toBe(1);
         expect(recipes[0].name).toBe(expectedNewName);

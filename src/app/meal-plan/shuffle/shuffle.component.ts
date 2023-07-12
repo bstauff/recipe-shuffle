@@ -23,12 +23,13 @@ export class ShuffleComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.recipeService.recipesChanged.pipe(takeUntil(this.destroy$)).subscribe({
-      next: (recipes) => {
-        console.log('meal plan recipes: ', recipes);
-        this.hasEnoughRecipes = recipes.length >= 7 ? true : false;
-        this.recipes = recipes;
-      },
-    });
+    this.recipeService.recipesChanged$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (recipes) => {
+          this.hasEnoughRecipes = recipes.length >= 7 ? true : false;
+          this.recipes = recipes;
+        },
+      });
   }
 }
