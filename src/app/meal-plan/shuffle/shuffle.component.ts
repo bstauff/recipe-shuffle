@@ -11,7 +11,8 @@ import { RecipeService } from 'src/app/recipe/recipe.service';
 export class ShuffleComponent implements OnInit, OnDestroy {
   hasEnoughRecipes = false;
 
-  recipes: Recipe[] = [];
+  private recipes: Recipe[] = [];
+  shuffledRecipes: Recipe[] = [];
 
   private destroy$ = new Subject();
 
@@ -29,7 +30,17 @@ export class ShuffleComponent implements OnInit, OnDestroy {
         next: (recipes) => {
           this.hasEnoughRecipes = recipes.length >= 7 ? true : false;
           this.recipes = recipes;
+          this.shuffledRecipes = this.recipes.slice();
         },
       });
+  }
+
+  onShuffleClicked(): void {
+    for (let i = this.shuffledRecipes.length - 1; i >= 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      const temp = this.shuffledRecipes[i];
+      this.shuffledRecipes[i] = this.shuffledRecipes[j];
+      this.shuffledRecipes[j] = temp;
+    }
   }
 }
