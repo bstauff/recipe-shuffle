@@ -13,9 +13,9 @@ export class ShuffleComponent implements OnInit, OnDestroy {
 
   private recipes: Recipe[] = [];
   shuffledRecipes: Recipe[] = [];
+  mealPlanRecipes: Recipe[] = [];
 
   private destroy$ = new Subject();
-
   constructor(private recipeService: RecipeService) {}
 
   ngOnDestroy(): void {
@@ -41,6 +41,28 @@ export class ShuffleComponent implements OnInit, OnDestroy {
       const temp = this.shuffledRecipes[i];
       this.shuffledRecipes[i] = this.shuffledRecipes[j];
       this.shuffledRecipes[j] = temp;
+    }
+    this.mealPlanRecipes = this.shuffledRecipes.slice(0, 7);
+  }
+
+  getDay(dayNumber: number): string {
+    switch (dayNumber) {
+      case 0:
+        return 'Sunday';
+      case 1:
+        return 'Monday';
+      case 2:
+        return 'Tuesday';
+      case 3:
+        return 'Wednesday';
+      case 4:
+        return 'Thursday';
+      case 5:
+        return 'Friday';
+      case 6:
+        return 'Saturday';
+      default:
+        throw new Error(`no matching day for dayNumber=${dayNumber}`);
     }
   }
 }
