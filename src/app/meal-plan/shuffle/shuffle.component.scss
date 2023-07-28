@@ -1,0 +1,12 @@
+.recipe-cards {
+  display: flex;
+  text-align: center;
+  gap: 1.25rem;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.recipe-cards__card mat-card {
+  width: 15rem;
+  height: 17rem;
+}

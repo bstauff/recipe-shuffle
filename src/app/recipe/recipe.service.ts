@@ -1,14 +1,15 @@
 import { Injectable } from '@angular/core';
 import { Recipe } from './models/recipe';
-import { ReplaySubject } from 'rxjs';
+import { Observable, ReplaySubject } from 'rxjs';
 import { SupabaseService } from '../shared/supabase.service';
 import { Ingredient } from './models/ingredient';
 
-@Injectable()
+@Injectable({ providedIn: 'root' })
 export class RecipeService {
   private recipeCollection: { [key: string]: Recipe } = {};
 
-  recipesChanged = new ReplaySubject<Recipe[]>(1);
+  private recipesChanged = new ReplaySubject<Recipe[]>(1);
+  recipesChanged$: Observable<Recipe[]> = this.recipesChanged.asObservable();
 
   constructor(private supabaseService: SupabaseService) {
     this.supabaseService.getRecipes().subscribe((recipes) => {
@@ -23,7 +24,7 @@ export class RecipeService {
     this.supabaseService.deleteRecipe(recipe).subscribe({
       complete: () => {
         delete this.recipeCollection[recipe.key];
-        this.recipesChanged.next(Object.values(this.recipeCollection));
+        this.pushRecipesUpdated();
       },
       error: (err) => console.error('error deleting recipe', err),
     });
@@ -32,7 +33,7 @@ export class RecipeService {
   deleteIngredients(ingredients: Ingredient[]): void {
     this.supabaseService.deleteIngredients(ingredients).subscribe({
       complete: () => {
-        this.recipesChanged.next(Object.values(this.recipeCollection));
+        this.pushRecipesUpdated();
       },
       error: (err) => console.error('error deleting ingredients', err),
     });
@@ -42,9 +43,13 @@ export class RecipeService {
     this.supabaseService.upsertRecipe(recipe).subscribe({
       complete: () => {
         this.recipeCollection[recipe.key] = recipe;
-        this.recipesChanged.next(Object.values(this.recipeCollection));
+        this.pushRecipesUpdated();
       },
       error: (err) => console.error('error upserting recipe', err),
     });
+  }
+
+  private pushRecipesUpdated(): void {
+    this.recipesChanged.next(Object.values(this.recipeCollection));
   }
 }

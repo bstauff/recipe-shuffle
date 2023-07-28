@@ -24,7 +24,7 @@ describe('RecipeListComponent', () => {
 
   beforeEach(() => {
     recipeService = jasmine.createSpyObj('RecipeService', [], {
-      recipesChanged: of([
+      recipesChanged$: of([
         {
           name: 'Test Recipe 1',
           url: 'https://www.bananas.net/',
