@@ -35,6 +35,8 @@ describe('ShuffleComponent', () => {
 
   it('should hide shuffle button if users has fewer than 7 recipes', fakeAsync(() => {
     userRecipes$.next([]);
+    tick();
+    fixture.detectChanges();
     const componentHtmlElement: HTMLElement = fixture.nativeElement;
     const buttonElement: HTMLButtonElement | null =
       componentHtmlElement.querySelector('button');
