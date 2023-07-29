@@ -18,6 +18,7 @@ export interface Database {
           url: string | null;
           user_id: string;
           is_deleted: boolean;
+          tag: string;
         };
         Insert: {
           created_at?: string;
@@ -26,6 +27,7 @@ export interface Database {
           name: string;
           url?: string | null;
           user_id: string;
+          tag: string;
         };
         Update: {
           created_at?: string;
@@ -35,6 +37,7 @@ export interface Database {
           url?: string | null;
           user_id?: string;
           is_deleted?: boolean | null;
+          tag: string;
         };
       };
       recipe_ingredient: {

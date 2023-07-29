@@ -78,7 +78,8 @@ export class SupabaseService {
             quantity,
             created_at,
             modified_on
-          )
+          ),
+          tag
         `
     );
 
@@ -97,6 +98,7 @@ export class SupabaseService {
             ingredients: recipe.recipe_ingredient,
             created_at: recipe.created_at,
             modified_on: recipe.modified_on,
+            tag: recipe.tag
           };
         });
       })
@@ -115,6 +117,7 @@ export class SupabaseService {
             user_id: userId,
             modified_on: recipe.modified_on,
             created_at: recipe.created_at,
+            tag: recipe.tag
           })
         ).pipe(
           exhaustMap((upsertRecipeResponse) => {
