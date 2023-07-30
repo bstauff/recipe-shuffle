@@ -22,6 +22,7 @@ export class EditRecipeComponent implements OnInit {
   recipeForm = this.formBuilder.group({
     name: this.formBuilder.control('', { validators: [Validators.required] }),
     url: this.formBuilder.control('', { validators: [Validators.required] }),
+    tag: this.formBuilder.control('', { validators: [] }),
     ingredient: this.formBuilder.group({
       name: this.formBuilder.control('', { validators: [Validators.required] }),
       quantity: this.formBuilder.control('', {
@@ -46,6 +47,7 @@ export class EditRecipeComponent implements OnInit {
 
     this.recipe.name = updatedRecipe.name;
     this.recipe.url = updatedRecipe.url;
+    this.recipe.tag = updatedRecipe.tag;
 
     this.recipe.ingredients = this.updatedIngredients.slice();
     this.recipeService.upsertRecipe(this.recipe);
