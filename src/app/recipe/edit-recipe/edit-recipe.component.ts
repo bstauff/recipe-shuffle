@@ -5,6 +5,8 @@ import { Ingredient } from '../models/ingredient';
 import { RecipeService } from '../recipe.service';
 import { MatTable } from '@angular/material/table';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { COMMA, ENTER } from '@angular/cdk/keycodes';
+import { MatChipEditedEvent, MatChipInputEvent } from '@angular/material/chips';
 
 @Component({
   selector: 'app-edit-recipe',
@@ -18,6 +20,11 @@ export class EditRecipeComponent implements OnInit {
   displayedColumns: string[] = ['name', 'quantity', 'deleteButton'];
   updatedIngredients: Ingredient[] = [];
   deletedIngredients: Ingredient[] = [];
+
+  recipeTags: string[] = [];
+
+  readonly separatorKeyCodes = [ENTER, COMMA] as const;
+  addOnBlur = true;
 
   recipeForm = this.formBuilder.group({
     name: this.formBuilder.control('', { validators: [Validators.required] }),
@@ -83,5 +90,39 @@ export class EditRecipeComponent implements OnInit {
     this.deletedIngredients.push(this.recipe.ingredients[index]);
 
     this.table?.renderRows();
+  }
+
+  addTag(event: MatChipInputEvent): void {
+    const value = (event.value || '').trim();
+
+    if (value) {
+      this.recipeTags.push(value);
+    }
+    event.chipInput?.clear();
+  }
+
+  editTag(tag: string, event: MatChipEditedEvent) {
+    console.log('tag: ', tag);
+    console.log('chipevent: ', event);
+
+    const value = event.value.trim();
+
+    if (!value) {
+      this.removeTag(tag);
+      return;
+    }
+
+    const index = this.recipeTags.indexOf(tag);
+    if (index >= 0) {
+      this.recipeTags[index] = event.value;
+    }
+  }
+
+  removeTag(tag: string): void {
+    const index = this.recipeTags.indexOf(tag);
+
+    if (index >= 0) {
+      this.recipeTags.splice(index, 1);
+    }
   }
 }

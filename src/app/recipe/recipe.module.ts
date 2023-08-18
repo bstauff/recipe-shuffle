@@ -13,6 +13,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatTableModule } from '@angular/material/table';
 import { MatDialogModule } from '@angular/material/dialog';
+import { MatChipsModule } from '@angular/material/chips';
 
 @NgModule({
   declarations: [RecipeListComponent, EditRecipeComponent],
@@ -29,6 +30,7 @@ import { MatDialogModule } from '@angular/material/dialog';
     MatInputModule,
     MatTableModule,
     MatDialogModule,
+    MatChipsModule,
   ],
 })
 export class RecipeModule {}
