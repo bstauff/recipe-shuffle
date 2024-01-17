@@ -67,10 +67,10 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "browserTarget": "recipe-shuffle:build:production"
+              "buildTarget": "recipe-shuffle:build:production"
             },
             "development": {
-              "browserTarget": "recipe-shuffle:build:development"
+              "buildTarget": "recipe-shuffle:build:development"
             }
           },
           "defaultConfiguration": "development"
@@ -78,7 +78,7 @@
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "recipe-shuffle:build"
+            "buildTarget": "recipe-shuffle:build"
           }
         },
         "test": {
@@ -117,6 +117,7 @@
   "cli": {
     "schematicCollections": [
       "@angular-eslint/schematics"
-    ]
+    ],
+    "analytics": false
   }
 }
