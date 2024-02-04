@@ -122,7 +122,7 @@ export class SupabaseService {
             user_id: userId,
             modified_on: recipe.modified_on,
             created_at: recipe.created_at,
-            tag: recipe.tags,
+            tags: recipe.tags,
           })
         ).pipe(
           exhaustMap((upsertRecipeResponse) => {

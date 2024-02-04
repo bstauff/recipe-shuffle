@@ -7,6 +7,7 @@ import { MatTable } from '@angular/material/table';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { COMMA, ENTER } from '@angular/cdk/keycodes';
 import { MatChipEditedEvent, MatChipInputEvent } from '@angular/material/chips';
+import { Tag } from '../models/tag';
 
 @Component({
   selector: 'app-edit-recipe',
@@ -54,9 +55,15 @@ export class EditRecipeComponent implements OnInit {
 
     this.recipe.name = updatedRecipe.name;
     this.recipe.url = updatedRecipe.url;
-    this.recipe.tag = updatedRecipe.tag;
+
+    console.log('updated tags', this.recipeTags);
+
+    const updatedTags = this.recipeTags.map((x) => new Tag(x));
+
+    this.recipe.tags = updatedTags;
 
     this.recipe.ingredients = this.updatedIngredients.slice();
+
     this.recipeService.upsertRecipe(this.recipe);
     this.recipeService.deleteIngredients(this.deletedIngredients);
 
@@ -93,6 +100,7 @@ export class EditRecipeComponent implements OnInit {
   }
 
   addTag(event: MatChipInputEvent): void {
+    console.log('add tag called', event);
     const value = (event.value || '').trim();
 
     if (value) {
@@ -102,9 +110,6 @@ export class EditRecipeComponent implements OnInit {
   }
 
   editTag(tag: string, event: MatChipEditedEvent) {
-    console.log('tag: ', tag);
-    console.log('chipevent: ', event);
-
     const value = event.value.trim();
 
     if (!value) {

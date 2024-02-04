@@ -1,4 +1,10 @@
-import { ComponentFixture, TestBed, fakeAsync } from '@angular/core/testing';
+import {
+  ComponentFixture,
+  TestBed,
+  fakeAsync,
+  flushMicrotasks,
+  tick,
+} from '@angular/core/testing';
 
 import { EditRecipeComponent } from './edit-recipe.component';
 import { ReactiveFormsModule } from '@angular/forms';
@@ -20,12 +26,21 @@ import { CommonModule } from '@angular/common';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { Recipe } from '../models/recipe';
 import { Ingredient } from '../models/ingredient';
+import { MatChipsModule } from '@angular/material/chips';
+import { HarnessLoader, TestKey } from '@angular/cdk/testing';
+import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
+import {
+  MatChipHarness,
+  MatChipInputHarness,
+} from '@angular/material/chips/testing';
+import { By } from '@angular/platform-browser';
 
 describe('EditRecipeComponent', () => {
   let component: EditRecipeComponent;
   let fixture: ComponentFixture<EditRecipeComponent>;
   let recipe: Recipe;
   let recipeService: jasmine.SpyObj<RecipeService>;
+  let loader: HarnessLoader;
 
   beforeEach(() => {
     recipe = new Recipe('bananas foster', 'https://bananas.net/');
@@ -49,6 +64,7 @@ describe('EditRecipeComponent', () => {
         MatInputModule,
         MatTableModule,
         MatDialogModule,
+        MatChipsModule,
         BrowserAnimationsModule,
       ],
       providers: [
@@ -68,6 +84,7 @@ describe('EditRecipeComponent', () => {
     });
     TestBed.inject(RecipeService);
     fixture = TestBed.createComponent(EditRecipeComponent);
+    loader = TestbedHarnessEnvironment.loader(fixture);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
@@ -116,6 +133,38 @@ describe('EditRecipeComponent', () => {
     component.onSubmit();
     expect(component.recipe.ingredients.length).toBe(0);
   }));
+  it('should add tags to recipe when onSubmit is called', fakeAsync(async () => {
+    const expectedName = 'Bananas Foster';
+    const expectedUrl = 'https://bananas.net/';
+    const expectedTag = 'Fruit';
+    const expectedTags = [expectedTag];
+
+    component.recipeForm.get('name')?.setValue(expectedName);
+    component.recipeForm.get('url')?.setValue(expectedUrl);
+
+    const chipsInput = await loader.getHarness(MatChipInputHarness);
+    chipsInput.setValue(expectedTag);
+    chipsInput.sendSeparatorKey(TestKey.ENTER);
+
+    const input = fixture.nativeElement.querySelector(
+      'input[id="recipeTag"]'
+    ) as HTMLInputElement;
+    input.value = expectedTag;
+    input.dispatchEvent(new Event('input'));
+
+    tick();
+    fixture.detectChanges();
+
+    component.onSubmit();
+
+    tick();
+    fixture.detectChanges();
+
+    expect(recipeService.upsertRecipe).toHaveBeenCalledWith(
+      jasmine.objectContaining({ tags: expectedTags })
+    );
+  }));
+
   it('should call upsertRecipe when onSubmit is called', () => {
     component.onSubmit();
     expect(recipeService.upsertRecipe).toHaveBeenCalled();
