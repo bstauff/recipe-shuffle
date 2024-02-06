@@ -5,6 +5,9 @@ import { Ingredient } from '../models/ingredient';
 import { RecipeService } from '../recipe.service';
 import { MatTable } from '@angular/material/table';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { COMMA, ENTER } from '@angular/cdk/keycodes';
+import { MatChipEditedEvent, MatChipInputEvent } from '@angular/material/chips';
+import { Tag } from '../models/tag';
 
 @Component({
   selector: 'app-edit-recipe',
@@ -19,9 +22,15 @@ export class EditRecipeComponent implements OnInit {
   updatedIngredients: Ingredient[] = [];
   deletedIngredients: Ingredient[] = [];
 
+  recipeTags: string[] = [];
+
+  readonly separatorKeyCodes = [ENTER, COMMA] as const;
+  addOnBlur = true;
+
   recipeForm = this.formBuilder.group({
     name: this.formBuilder.control('', { validators: [Validators.required] }),
     url: this.formBuilder.control('', { validators: [Validators.required] }),
+    tag: this.formBuilder.control('', { validators: [] }),
     ingredient: this.formBuilder.group({
       name: this.formBuilder.control('', { validators: [Validators.required] }),
       quantity: this.formBuilder.control('', {
@@ -47,7 +56,14 @@ export class EditRecipeComponent implements OnInit {
     this.recipe.name = updatedRecipe.name;
     this.recipe.url = updatedRecipe.url;
 
+    console.log('updated tags', this.recipeTags);
+
+    const updatedTags = this.recipeTags.map((x) => new Tag(x));
+
+    this.recipe.tags = updatedTags;
+
     this.recipe.ingredients = this.updatedIngredients.slice();
+
     this.recipeService.upsertRecipe(this.recipe);
     this.recipeService.deleteIngredients(this.deletedIngredients);
 
@@ -81,5 +97,41 @@ export class EditRecipeComponent implements OnInit {
     this.deletedIngredients.push(this.recipe.ingredients[index]);
 
     this.table?.renderRows();
+  }
+
+  onAddTag(event: MatChipInputEvent): void {
+    const value = (event.value || '').trim();
+
+    this.addTag(value);
+
+    event.chipInput?.clear();
+  }
+
+  addTag(tag: string): void {
+    if (tag) {
+      this.recipeTags.push(tag);
+    }
+  }
+
+  editTag(tag: string, event: MatChipEditedEvent) {
+    const value = event.value.trim();
+
+    if (!value) {
+      this.removeTag(tag);
+      return;
+    }
+
+    const index = this.recipeTags.indexOf(tag);
+    if (index >= 0) {
+      this.recipeTags[index] = event.value;
+    }
+  }
+
+  removeTag(tag: string): void {
+    const index = this.recipeTags.indexOf(tag);
+
+    if (index >= 0) {
+      this.recipeTags.splice(index, 1);
+    }
   }
 }
