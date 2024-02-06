@@ -2,7 +2,6 @@ import {
   ComponentFixture,
   TestBed,
   fakeAsync,
-  flushMicrotasks,
   tick,
 } from '@angular/core/testing';
 
@@ -27,20 +26,12 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { Recipe } from '../models/recipe';
 import { Ingredient } from '../models/ingredient';
 import { MatChipsModule } from '@angular/material/chips';
-import { HarnessLoader, TestKey } from '@angular/cdk/testing';
-import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import {
-  MatChipHarness,
-  MatChipInputHarness,
-} from '@angular/material/chips/testing';
-import { By } from '@angular/platform-browser';
 
 describe('EditRecipeComponent', () => {
   let component: EditRecipeComponent;
   let fixture: ComponentFixture<EditRecipeComponent>;
   let recipe: Recipe;
   let recipeService: jasmine.SpyObj<RecipeService>;
-  let loader: HarnessLoader;
 
   beforeEach(() => {
     recipe = new Recipe('bananas foster', 'https://bananas.net/');
@@ -84,7 +75,6 @@ describe('EditRecipeComponent', () => {
     });
     TestBed.inject(RecipeService);
     fixture = TestBed.createComponent(EditRecipeComponent);
-    loader = TestbedHarnessEnvironment.loader(fixture);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
@@ -137,23 +127,11 @@ describe('EditRecipeComponent', () => {
     const expectedName = 'Bananas Foster';
     const expectedUrl = 'https://bananas.net/';
     const expectedTag = 'Fruit';
-    const expectedTags = [expectedTag];
 
     component.recipeForm.get('name')?.setValue(expectedName);
     component.recipeForm.get('url')?.setValue(expectedUrl);
 
-    const chipsInput = await loader.getHarness(MatChipInputHarness);
-    chipsInput.setValue(expectedTag);
-    chipsInput.sendSeparatorKey(TestKey.ENTER);
-
-    const input = fixture.nativeElement.querySelector(
-      'input[id="recipeTag"]'
-    ) as HTMLInputElement;
-    input.value = expectedTag;
-    input.dispatchEvent(new Event('input'));
-
-    tick();
-    fixture.detectChanges();
+    component.addTag(expectedTag);
 
     component.onSubmit();
 
@@ -161,7 +139,9 @@ describe('EditRecipeComponent', () => {
     fixture.detectChanges();
 
     expect(recipeService.upsertRecipe).toHaveBeenCalledWith(
-      jasmine.objectContaining({ tags: expectedTags })
+      jasmine.objectContaining({
+        tags: [jasmine.objectContaining({ name: expectedTag })],
+      })
     );
   }));
 

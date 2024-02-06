@@ -99,14 +99,18 @@ export class EditRecipeComponent implements OnInit {
     this.table?.renderRows();
   }
 
-  addTag(event: MatChipInputEvent): void {
-    console.log('add tag called', event);
+  onAddTag(event: MatChipInputEvent): void {
     const value = (event.value || '').trim();
 
-    if (value) {
-      this.recipeTags.push(value);
-    }
+    this.addTag(value);
+
     event.chipInput?.clear();
+  }
+
+  addTag(tag: string): void {
+    if (tag) {
+      this.recipeTags.push(tag);
+    }
   }
 
   editTag(tag: string, event: MatChipEditedEvent) {

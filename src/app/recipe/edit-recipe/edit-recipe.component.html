@@ -42,7 +42,7 @@
               [matChipInputFor]="chipGrid"
               [matChipInputSeparatorKeyCodes]="separatorKeyCodes"
               [matChipInputAddOnBlur]="addOnBlur"
-              (matChipInputTokenEnd)="addTag($event)"
+              (matChipInputTokenEnd)="onAddTag($event)"
             />
           </mat-chip-grid>
         </mat-form-field>
