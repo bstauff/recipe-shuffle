@@ -1,15 +1,13 @@
-import { Ingredient } from './ingredient';
 import { Ulid, Uuid } from 'id128';
-import { Tag } from './tag';
+import { RecipeTag } from './recipe-tag';
+import { RecipeIngredient } from './recipe-ingredient';
 
 export class Recipe {
   key: string;
   name: string;
   url: string | null;
-  ingredients: Ingredient[];
-  created_at: string;
-  modified_on: string;
-  tags: Tag[];
+  ingredients: RecipeIngredient[];
+  tags: RecipeTag[];
 
   constructor(name: string, url: string) {
     const ulidKey = Ulid.generate().toRaw();
@@ -19,8 +17,6 @@ export class Recipe {
     this.name = name;
     this.url = url;
     this.ingredients = [];
-    this.created_at = new Date().toISOString();
-    this.modified_on = new Date().toISOString();
     this.tags = [];
   }
 }

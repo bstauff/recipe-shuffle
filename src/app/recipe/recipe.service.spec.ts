@@ -2,7 +2,7 @@ import { EMPTY, of, take } from 'rxjs';
 import { SupabaseService } from '../shared/supabase.service';
 import { RecipeService } from './recipe.service';
 import { Recipe } from './models/recipe';
-import { Ingredient } from './models/ingredient';
+import { Ingredient } from './models/recipe-ingredient';
 
 describe('RecipeService', () => {
   let service: RecipeService;

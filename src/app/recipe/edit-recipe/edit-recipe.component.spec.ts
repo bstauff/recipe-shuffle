@@ -24,7 +24,7 @@ import {
 import { CommonModule } from '@angular/common';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { Recipe } from '../models/recipe';
-import { Ingredient } from '../models/ingredient';
+import { Ingredient } from '../models/recipe-ingredient';
 import { MatChipsModule } from '@angular/material/chips';
 
 describe('EditRecipeComponent', () => {

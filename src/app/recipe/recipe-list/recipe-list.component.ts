@@ -30,8 +30,8 @@ export class RecipeListComponent {
       return '';
     }
   }
-  onDelete(recipe: Recipe): void {
-    this.recipeService.deleteRecipe(recipe);
+  onDelete(): void {
+    console.warn('delete not implemented');
   }
   onEdit(recipe: Recipe): void {
     this.dialog.open(EditRecipeComponent, { data: recipe });

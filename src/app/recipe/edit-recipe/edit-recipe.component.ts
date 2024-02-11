@@ -1,13 +1,13 @@
 import { Component, Inject, OnInit, ViewChild } from '@angular/core';
 import { Recipe } from '../models/recipe';
 import { FormBuilder, Validators } from '@angular/forms';
-import { Ingredient } from '../models/ingredient';
 import { RecipeService } from '../recipe.service';
 import { MatTable } from '@angular/material/table';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { COMMA, ENTER } from '@angular/cdk/keycodes';
 import { MatChipEditedEvent, MatChipInputEvent } from '@angular/material/chips';
-import { Tag } from '../models/tag';
+import { RecipeIngredient } from '../models/recipe-ingredient';
+import { RecipeTag } from '../models/recipe-tag';
 
 @Component({
   selector: 'app-edit-recipe',
@@ -16,11 +16,11 @@ import { Tag } from '../models/tag';
 })
 export class EditRecipeComponent implements OnInit {
   @ViewChild(MatTable)
-  table: MatTable<Ingredient[]> | undefined;
+  table: MatTable<RecipeIngredient[]> | undefined;
 
   displayedColumns: string[] = ['name', 'quantity', 'deleteButton'];
-  updatedIngredients: Ingredient[] = [];
-  deletedIngredients: Ingredient[] = [];
+  updatedIngredients: RecipeIngredient[] = [];
+  deletedIngredients: RecipeIngredient[] = [];
 
   recipeTags: string[] = [];
 
@@ -36,6 +36,7 @@ export class EditRecipeComponent implements OnInit {
       quantity: this.formBuilder.control('', {
         validators: [Validators.required],
       }),
+      unit: this.formBuilder.control('', { validators: [Validators.required] }),
     }),
   });
 
@@ -56,16 +57,11 @@ export class EditRecipeComponent implements OnInit {
     this.recipe.name = updatedRecipe.name;
     this.recipe.url = updatedRecipe.url;
 
-    console.log('updated tags', this.recipeTags);
-
-    const updatedTags = this.recipeTags.map((x) => new Tag(x));
+    const updatedTags = this.recipeTags.map((x) => new RecipeTag(x));
 
     this.recipe.tags = updatedTags;
 
     this.recipe.ingredients = this.updatedIngredients.slice();
-
-    this.recipeService.upsertRecipe(this.recipe);
-    this.recipeService.deleteIngredients(this.deletedIngredients);
 
     this.deletedIngredients = [];
     this.recipeForm.reset();
@@ -76,14 +72,15 @@ export class EditRecipeComponent implements OnInit {
       return;
     }
 
-    const ingredientName = this.recipeForm.value?.ingredient?.name;
-    const ingredientCount = this.recipeForm.value?.ingredient?.quantity;
+    const name = this.recipeForm.value?.ingredient?.name;
+    const count = this.recipeForm.value?.ingredient?.quantity;
+    const unit = this.recipeForm.value?.ingredient?.unit;
 
-    if (!ingredientName || !ingredientCount) {
+    if (!name || !count || !unit) {
       return;
     }
 
-    const ingredient = new Ingredient(ingredientName, Number(ingredientCount));
+    const ingredient = new RecipeIngredient(name, Number(count), unit);
 
     this.updatedIngredients.push(ingredient);
 
