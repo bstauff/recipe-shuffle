@@ -14,11 +14,13 @@ import { MatInputModule } from '@angular/material/input';
 import { MatTableModule } from '@angular/material/table';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatChipsModule } from '@angular/material/chips';
+import { IngredientListComponent } from './ingredient-list/ingredient-list.component';
 
 @NgModule({
   declarations: [RecipeListComponent, EditRecipeComponent],
   imports: [
     CommonModule,
+    IngredientListComponent,
     RecipeRoutingModule,
     ReactiveFormsModule,
     MatListModule,
