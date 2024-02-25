@@ -8,6 +8,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { badUrlValidator } from 'src/app/shared/form-validators/url-validator.directive';
 import { Recipe } from '../models/recipe';
 import { RecipeService } from '../recipe.service';
+import { ErrorDisplayService } from 'src/app/shared/error-display.service';
 
 @Component({
   selector: 'app-add-recipe',
@@ -32,22 +33,29 @@ export class AddRecipeComponent {
   isAddRequestInProgress = false;
   constructor(
     private formBuilder: FormBuilder,
-    private recipeService: RecipeService
+    private recipeService: RecipeService,
+    private errorDisplayService: ErrorDisplayService
   ) {}
 
   onSubmit() {
     if (!this.recipeForm.get('name')?.value) {
-      console.error('bad recipe in form');
+      this.errorDisplayService.displayError('bad recipe name given');
+      console.error('null recipe name or value');
     }
+
     const recipeName = this.recipeForm.get('name')?.value as string;
     const recipeUrl = this.recipeForm.get('url')?.value;
     const recipe = new Recipe(recipeName, recipeUrl);
-    console.log('adding recipe: ', recipe);
+
     this.isAddRequestInProgress = true;
+
     this.recipeService.addRecipe(recipe).subscribe({
-      next: (upsertedRecipe: Recipe) => {
+      next: () => {
         this.isAddRequestInProgress = false;
-        console.log('added this recipe to list: ', upsertedRecipe);
+      },
+      error: (error: Error) => {
+        console.error('recipe add failed', error);
+        this.errorDisplayService.displayError(error.message);
       },
     });
   }
