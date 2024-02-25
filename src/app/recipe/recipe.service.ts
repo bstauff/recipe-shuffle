@@ -1,7 +1,6 @@
-import { DestroyRef, Injectable, inject } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { Injectable } from '@angular/core';
 import { Recipe } from './models/recipe';
-import { Observable, ReplaySubject, tap } from 'rxjs';
+import { Observable, ReplaySubject, map, tap } from 'rxjs';
 import { SupabaseService } from '../shared/supabase.service';
 
 @Injectable({ providedIn: 'root' })
@@ -11,9 +10,23 @@ export class RecipeService {
   private recipesChanged = new ReplaySubject<Recipe[]>(1);
   recipesChanged$: Observable<Recipe[]> = this.recipesChanged.asObservable();
 
-  private destroyRef = inject(DestroyRef);
-
-  constructor(private supabaseService: SupabaseService) {}
+  constructor(private supabaseService: SupabaseService) {
+    supabaseService
+      .getRecipes()
+      .pipe(
+        map((recipes: Recipe[]) => {
+          return new Map(recipes.map((recipe) => [recipe.key, recipe]));
+        })
+      )
+      .subscribe({
+        next: (recipes) => {
+          this.recipeCollection = recipes;
+          this.pushRecipesUpdated();
+        },
+        error: (error) =>
+          console.error('failed to fetch initial recipes', error),
+      });
+  }
 
   private pushRecipesUpdated(): void {
     this.recipesChanged.next(
@@ -22,12 +35,13 @@ export class RecipeService {
   }
 
   addRecipe(recipe: Recipe): Observable<Recipe> {
-    return this.supabaseService.upsertRecipe(recipe).pipe(
-      takeUntilDestroyed(this.destroyRef),
-      tap((upsertedRecipe: Recipe) =>
-        this.updateRecipeInCollection(upsertedRecipe)
-      )
-    );
+    return this.supabaseService
+      .upsertRecipe(recipe)
+      .pipe(
+        tap((upsertedRecipe: Recipe) =>
+          this.updateRecipeInCollection(upsertedRecipe)
+        )
+      );
   }
 
   private updateRecipeInCollection(recipe: Recipe) {
