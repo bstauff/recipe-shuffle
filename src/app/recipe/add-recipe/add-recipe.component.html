@@ -1,0 +1,34 @@
+<form (ngSubmit)="onSubmit()" [formGroup]="recipeForm">
+  <mat-card>
+    <mat-card-content class="recipe-form">
+      <div class="recipe-form__basic-info">
+        <mat-form-field>
+          <mat-label>Name</mat-label>
+          <input
+            type="text"
+            id="recipeName"
+            required
+            formControlName="name"
+            matInput
+          />
+        </mat-form-field>
+        <mat-form-field>
+          <mat-label>URL</mat-label>
+          <input type="text" id="recipeUrl" formControlName="url" matInput />
+        </mat-form-field>
+        @if (isAddRequestInProgress) {
+        <mat-spinner [diameter]="45"></mat-spinner>
+        } @else {
+        <button
+          type="submit"
+          mat-raised-button
+          color="primary"
+          [disabled]="recipeForm.invalid || recipeForm.hasError('badUrl')"
+        >
+          Create
+        </button>
+        }
+      </div>
+    </mat-card-content>
+  </mat-card>
+</form>

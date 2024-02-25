@@ -93,24 +93,34 @@ export class SupabaseService {
     );
   }
 
-  upsertRecipe(recipe: Recipe): Observable<never> {
+  upsertRecipe(recipe: Recipe): Observable<Recipe> {
     const userId$ = this.getUserId();
     return userId$.pipe(
       exhaustMap((userId) => {
         return from(
-          this.supabaseClient.from('recipe').upsert({
-            recipe_key: recipe.key,
-            name: recipe.name,
-            url: recipe.url,
-            user_id: userId,
-            tags: recipe.tags,
-          })
+          this.supabaseClient
+            .from('recipe')
+            .upsert({
+              recipe_key: recipe.key,
+              name: recipe.name,
+              url: recipe.url,
+              user_id: userId,
+            })
+            .select()
         ).pipe(
           exhaustMap((upsertRecipeResponse) => {
             if (upsertRecipeResponse.error) {
               throw new Error(upsertRecipeResponse.error.message);
             }
-            return EMPTY;
+
+            const upsertedRecipe = upsertRecipeResponse.data[0];
+            return of({
+              key: upsertedRecipe.recipe_key,
+              name: upsertedRecipe.name,
+              url: upsertedRecipe.url,
+              ingredients: [],
+              tags: [],
+            });
           })
         );
       })

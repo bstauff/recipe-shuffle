@@ -11,21 +11,18 @@ export type Database = {
     Tables: {
       ingredient: {
         Row: {
-          id: number
           ingredient_key: string
           name: string
           unit: string
           user_id: string
         }
         Insert: {
-          id?: number
           ingredient_key: string
           name: string
           unit: string
           user_id?: string
         }
         Update: {
-          id?: number
           ingredient_key?: string
           name?: string
           unit?: string
@@ -43,21 +40,18 @@ export type Database = {
       }
       recipe: {
         Row: {
-          id: number
           name: string
           recipe_key: string
           url: string | null
           user_id: string
         }
         Insert: {
-          id?: number
           name: string
           recipe_key: string
           url?: string | null
           user_id: string
         }
         Update: {
-          id?: number
           name?: string
           recipe_key?: string
           url?: string | null
@@ -75,40 +69,40 @@ export type Database = {
       }
       recipeingredient: {
         Row: {
-          id: number
-          ingredient_id: number
+          ingredient_key: string
           quantity: number
-          recipe_id: number
+          recipe_key: string
+          recipeingredient_key: string
           user_id: string
         }
         Insert: {
-          id?: number
-          ingredient_id: number
+          ingredient_key: string
           quantity: number
-          recipe_id: number
+          recipe_key: string
+          recipeingredient_key: string
           user_id?: string
         }
         Update: {
-          id?: number
-          ingredient_id?: number
+          ingredient_key?: string
           quantity?: number
-          recipe_id?: number
+          recipe_key?: string
+          recipeingredient_key?: string
           user_id?: string
         }
         Relationships: [
           {
-            foreignKeyName: "recipeingredient_ingredient_id_fkey"
-            columns: ["ingredient_id"]
+            foreignKeyName: "public_recipeingredient_ingredient_key_fkey"
+            columns: ["ingredient_key"]
             isOneToOne: false
             referencedRelation: "ingredient"
-            referencedColumns: ["id"]
+            referencedColumns: ["ingredient_key"]
           },
           {
-            foreignKeyName: "recipeingredient_recipe_id_fkey"
-            columns: ["recipe_id"]
+            foreignKeyName: "public_recipeingredient_recipe_key_fkey"
+            columns: ["recipe_key"]
             isOneToOne: false
             referencedRelation: "recipe"
-            referencedColumns: ["id"]
+            referencedColumns: ["recipe_key"]
           },
           {
             foreignKeyName: "recipeingredient_user_id_fkey"
@@ -122,29 +116,29 @@ export type Database = {
       recipetag: {
         Row: {
           id: number
-          recipe_id: number
+          recipe_key: string
           tag_id: number
           user_id: string
         }
         Insert: {
           id?: number
-          recipe_id: number
+          recipe_key: string
           tag_id: number
           user_id?: string
         }
         Update: {
           id?: number
-          recipe_id?: number
+          recipe_key?: string
           tag_id?: number
           user_id?: string
         }
         Relationships: [
           {
-            foreignKeyName: "recipetag_recipe_id_fkey"
-            columns: ["recipe_id"]
+            foreignKeyName: "public_recipetag_recipe_key_fkey"
+            columns: ["recipe_key"]
             isOneToOne: false
             referencedRelation: "recipe"
-            referencedColumns: ["id"]
+            referencedColumns: ["recipe_key"]
           },
           {
             foreignKeyName: "recipetag_tag_id_fkey"

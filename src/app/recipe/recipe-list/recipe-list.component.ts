@@ -4,6 +4,7 @@ import { Recipe } from '../models/recipe';
 import { Observable } from 'rxjs';
 import { MatDialog } from '@angular/material/dialog';
 import { EditRecipeComponent } from '../edit-recipe/edit-recipe.component';
+import { AddRecipeComponent } from '../add-recipe/add-recipe.component';
 
 @Component({
   selector: 'app-recipe-list',
@@ -17,11 +18,10 @@ export class RecipeListComponent {
   constructor(private recipeService: RecipeService, public dialog: MatDialog) {}
 
   onAddClicked(): void {
-    const recipe = new Recipe('', '');
-    this.dialog.open(EditRecipeComponent, { data: recipe });
+    this.dialog.open(AddRecipeComponent);
   }
 
-  getHostname(url: string | null): string {
+  getHostname(url: string | null | undefined): string {
     if (!url) return '';
     try {
       const hostname = new URL(url).hostname;

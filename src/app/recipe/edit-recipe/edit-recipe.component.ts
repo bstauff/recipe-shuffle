@@ -48,7 +48,6 @@ export class EditRecipeComponent implements OnInit {
 
   ngOnInit(): void {
     this.recipeForm.patchValue(this.recipe);
-    this.updatedIngredients = this.recipe.ingredients.slice();
   }
 
   onSubmit(): void {
@@ -58,10 +57,6 @@ export class EditRecipeComponent implements OnInit {
     this.recipe.url = updatedRecipe.url;
 
     const updatedTags = this.recipeTags.map((x) => new RecipeTag(x));
-
-    this.recipe.tags = updatedTags;
-
-    this.recipe.ingredients = this.updatedIngredients.slice();
 
     this.deletedIngredients = [];
     this.recipeForm.reset();
@@ -91,7 +86,6 @@ export class EditRecipeComponent implements OnInit {
 
   onDelete(index: number): void {
     this.updatedIngredients.splice(index, 1);
-    this.deletedIngredients.push(this.recipe.ingredients[index]);
 
     this.table?.renderRows();
   }
