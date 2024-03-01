@@ -2,7 +2,6 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RecipeListComponent } from './recipe-list/recipe-list.component';
 import { RecipeRoutingModule } from './recipe-routing.module';
-import { EditRecipeComponent } from './edit-recipe/edit-recipe.component';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatListModule } from '@angular/material/list';
 import { MatExpansionModule } from '@angular/material/expansion';
@@ -14,13 +13,11 @@ import { MatInputModule } from '@angular/material/input';
 import { MatTableModule } from '@angular/material/table';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatChipsModule } from '@angular/material/chips';
-import { IngredientListComponent } from './ingredient-list/ingredient-list.component';
 
 @NgModule({
-  declarations: [RecipeListComponent, EditRecipeComponent],
+  declarations: [RecipeListComponent],
   imports: [
     CommonModule,
-    IngredientListComponent,
     RecipeRoutingModule,
     ReactiveFormsModule,
     MatListModule,

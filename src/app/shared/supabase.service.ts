@@ -4,7 +4,6 @@ import { EMPTY, Observable, exhaustMap, from, map, of } from 'rxjs';
 import { AuthResponse } from './models/AuthResponse';
 import { Recipe } from '../recipe/models/recipe';
 import { Database } from '../../../lib/database.types';
-import { RecipeIngredient } from '../recipe/models/recipe-ingredient';
 
 @Injectable({
   providedIn: 'root',
@@ -130,25 +129,6 @@ export class SupabaseService {
   deleteRecipe(recipe: Recipe): Observable<never> {
     return from(
       this.supabaseClient.from('recipe').delete().eq('key', recipe.key)
-    ).pipe(
-      exhaustMap((response) => {
-        if (response.error) {
-          throw new Error(response.error.message);
-        }
-        return EMPTY;
-      })
-    );
-  }
-
-  deleteIngredients(ingredients: RecipeIngredient[]): Observable<never> {
-    return from(
-      this.supabaseClient
-        .from('recipe_ingredient')
-        .delete()
-        .in(
-          'key',
-          ingredients.map((i) => i.key)
-        )
     ).pipe(
       exhaustMap((response) => {
         if (response.error) {

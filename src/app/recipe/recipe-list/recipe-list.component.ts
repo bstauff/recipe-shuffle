@@ -3,8 +3,7 @@ import { RecipeService } from '../recipe.service';
 import { Recipe } from '../models/recipe';
 import { Observable } from 'rxjs';
 import { MatDialog } from '@angular/material/dialog';
-import { EditRecipeComponent } from '../edit-recipe/edit-recipe.component';
-import { AddRecipeComponent } from '../add-recipe/add-recipe.component';
+import { CreateRecipeComponent } from '../create-recipe/create-recipe.component';
 
 @Component({
   selector: 'app-recipe-list',
@@ -18,7 +17,7 @@ export class RecipeListComponent {
   constructor(private recipeService: RecipeService, public dialog: MatDialog) {}
 
   onAddClicked(): void {
-    this.dialog.open(AddRecipeComponent);
+    this.dialog.open(CreateRecipeComponent);
   }
 
   getHostname(url: string | null | undefined): string {
@@ -34,6 +33,6 @@ export class RecipeListComponent {
     console.warn('delete not implemented');
   }
   onEdit(recipe: Recipe): void {
-    this.dialog.open(EditRecipeComponent, { data: recipe });
+    console.warn('edit not implemented');
   }
 }
