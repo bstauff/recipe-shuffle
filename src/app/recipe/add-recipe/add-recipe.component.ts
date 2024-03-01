@@ -56,6 +56,7 @@ export class AddRecipeComponent {
       error: (error: Error) => {
         console.error('recipe add failed', error);
         this.errorDisplayService.displayError(error.message);
+        this.isAddRequestInProgress = false;
       },
     });
   }

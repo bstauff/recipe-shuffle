@@ -50,9 +50,7 @@ export class RegisterComponent {
     if (password !== confirmPassword) return;
 
     this.supabaseService.signUpUser(email, password).subscribe({
-      next: (response) => {
-        console.log(response);
-      },
+      error: (error) => console.error('sign up failed', error),
     });
     this.registerForm.reset();
   }
