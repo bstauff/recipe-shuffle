@@ -7,11 +7,17 @@ import { NewPasswordComponent } from './account/password-reset/new-password/new-
 import { PasswordResetComponent } from './account/password-reset/password-reset.component';
 import { RegisterComponent } from './account/register/register.component';
 import { MealPlanComponent } from './meal-plan/meal-plan.component';
+import { EditRecipeComponent } from './recipe/edit-recipe/edit-recipe.component';
 
 export const routes: Routes = [
   {
     path: 'recipes',
     component: RecipeListComponent,
+    canActivate: [LoginGuard],
+  },
+  {
+    path: 'recipes/edit/:recipeKey',
+    component: EditRecipeComponent,
     canActivate: [LoginGuard],
   },
   {

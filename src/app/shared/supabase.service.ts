@@ -92,6 +92,35 @@ export class SupabaseService {
     );
   }
 
+  getRecipe(recipeKey: string): Observable<Recipe> {
+    const recipe = this.supabaseClient
+      .from('recipe')
+      .select(
+        `
+        recipe_key,
+        name,
+        url
+      `
+      )
+      .eq('recipe_key', recipeKey)
+      .single();
+
+    const recipe$ = from(recipe);
+    return recipe$.pipe(
+      map((response) => {
+        if (!response.data) {
+          throw new Error(response.error.message);
+        }
+
+        return {
+          key: response.data?.recipe_key,
+          name: response.data?.name,
+          url: response.data?.url,
+        };
+      })
+    );
+  }
+
   upsertRecipe(recipe: Recipe): Observable<Recipe> {
     const userId$ = this.getUserId();
     return userId$.pipe(
