@@ -27,8 +27,8 @@ describe('AppComponent', () => {
         MatTabsModule,
         MatDividerModule,
         AccountModule,
+        AppComponent,
     ],
-    declarations: [AppComponent],
 })
   );
 
