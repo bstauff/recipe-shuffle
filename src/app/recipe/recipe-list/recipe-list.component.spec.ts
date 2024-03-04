@@ -14,7 +14,6 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatListModule } from '@angular/material/list';
-import { RecipeRoutingModule } from '../recipe-routing.module';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 describe('RecipeListComponent', () => {
@@ -39,10 +38,9 @@ describe('RecipeListComponent', () => {
     });
 
     TestBed.configureTestingModule({
-    imports: [
+      imports: [
         BrowserAnimationsModule,
         CommonModule,
-        RecipeRoutingModule,
         ReactiveFormsModule,
         MatListModule,
         MatExpansionModule,
@@ -54,9 +52,9 @@ describe('RecipeListComponent', () => {
         MatTableModule,
         MatDialogModule,
         RecipeListComponent,
-    ],
-    providers: [{ provide: RecipeService, useValue: recipeService }],
-});
+      ],
+      providers: [{ provide: RecipeService, useValue: recipeService }],
+    });
     fixture = TestBed.createComponent(RecipeListComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();

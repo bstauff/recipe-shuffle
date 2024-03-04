@@ -21,15 +21,15 @@ describe('LoginComponent', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-    imports: [
+      imports: [
         MatFormFieldModule,
         ReactiveFormsModule,
         MatInputModule,
         MatButtonModule,
         BrowserAnimationsModule,
         LoginComponent,
-    ],
-});
+      ],
+    });
 
     supabaseService.loginUser.and.returnValue(
       of({
@@ -45,13 +45,21 @@ describe('LoginComponent', () => {
           provide: SupabaseService,
           useValue: supabaseService,
         },
-        provideRouter([{ path: '**', component: LoginComponent }]),
+        provideRouter([
+          {
+            path: '**',
+            component: LoginComponent,
+          },
+        ]),
       ],
     })
       .compileComponents()
       .then(async () => {
         harness = await RouterTestingHarness.create();
-        component = await harness.navigateByUrl('/', LoginComponent);
+        component = await harness.navigateByUrl(
+          '/account/login',
+          LoginComponent
+        );
       });
   }));
 
