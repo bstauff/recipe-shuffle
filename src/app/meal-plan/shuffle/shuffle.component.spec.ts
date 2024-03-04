@@ -21,9 +21,9 @@ describe('ShuffleComponent', () => {
       recipesChanged$: userRecipes$.asObservable(),
     });
     TestBed.configureTestingModule({
-      declarations: [ShuffleComponent],
-      providers: [{ provide: RecipeService, useValue: recipeServiceSpy }],
-    });
+    imports: [ShuffleComponent],
+    providers: [{ provide: RecipeService, useValue: recipeServiceSpy }],
+});
     fixture = TestBed.createComponent(ShuffleComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();

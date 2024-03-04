@@ -30,8 +30,7 @@ describe('NewPasswordComponent', () => {
     supabaseSpy.updatePassword.and.returnValue(EMPTY);
     TestBed.overrideProvider(SupabaseService, { useValue: supabaseSpy });
     TestBed.configureTestingModule({
-      declarations: [NewPasswordComponent],
-      imports: [
+    imports: [
         MatFormFieldModule,
         ReactiveFormsModule,
         MatInputModule,
@@ -40,11 +39,12 @@ describe('NewPasswordComponent', () => {
         BrowserAnimationsModule,
         RouterTestingModule,
         MatSnackBarModule,
-      ],
-      providers: [
+        NewPasswordComponent,
+    ],
+    providers: [
         provideRouter([{ path: 'recipes', component: RecipeListComponent }]),
-      ],
-    });
+    ],
+});
     fixture = TestBed.createComponent(NewPasswordComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();

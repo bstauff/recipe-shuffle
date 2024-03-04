@@ -15,21 +15,21 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { MatChipsModule } from '@angular/material/chips';
 
 @NgModule({
-  declarations: [RecipeListComponent],
-  imports: [
-    CommonModule,
-    RecipeRoutingModule,
-    ReactiveFormsModule,
-    MatListModule,
-    MatExpansionModule,
-    MatCardModule,
-    MatButtonModule,
-    MatIconModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatTableModule,
-    MatDialogModule,
-    MatChipsModule,
-  ],
+    imports: [
+        CommonModule,
+        RecipeRoutingModule,
+        ReactiveFormsModule,
+        MatListModule,
+        MatExpansionModule,
+        MatCardModule,
+        MatButtonModule,
+        MatIconModule,
+        MatFormFieldModule,
+        MatInputModule,
+        MatTableModule,
+        MatDialogModule,
+        MatChipsModule,
+        RecipeListComponent,
+    ],
 })
 export class RecipeModule {}

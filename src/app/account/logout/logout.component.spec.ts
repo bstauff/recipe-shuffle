@@ -22,12 +22,11 @@ describe('LogoutComponent', () => {
     supabaseSpy.logoutUser.and.returnValue(EMPTY);
 
     TestBed.configureTestingModule({
-      declarations: [LogoutComponent],
-      imports: [RouterTestingModule],
-      providers: [
+    imports: [RouterTestingModule, LogoutComponent],
+    providers: [
         provideRouter([{ path: 'account/login', component: LoginComponent }]),
-      ],
-    });
+    ],
+});
     TestBed.overrideProvider(SupabaseService, { useValue: supabaseSpy });
     fixture = TestBed.createComponent(LogoutComponent);
     component = fixture.componentInstance;

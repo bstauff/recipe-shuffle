@@ -23,8 +23,7 @@ describe('RegisterComponent', () => {
     );
 
     TestBed.configureTestingModule({
-      declarations: [RegisterComponent],
-      imports: [
+    imports: [
         MatFormFieldModule,
         ReactiveFormsModule,
         MatInputModule,
@@ -32,9 +31,10 @@ describe('RegisterComponent', () => {
         SharedModule,
         BrowserAnimationsModule,
         RouterTestingModule,
-      ],
-      providers: [{ provide: SupabaseService, useValue: supaServiceSpy }],
-    });
+        RegisterComponent,
+    ],
+    providers: [{ provide: SupabaseService, useValue: supaServiceSpy }],
+});
     fixture = TestBed.createComponent(RegisterComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();

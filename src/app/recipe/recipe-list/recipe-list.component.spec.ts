@@ -39,7 +39,7 @@ describe('RecipeListComponent', () => {
     });
 
     TestBed.configureTestingModule({
-      imports: [
+    imports: [
         BrowserAnimationsModule,
         CommonModule,
         RecipeRoutingModule,
@@ -53,10 +53,10 @@ describe('RecipeListComponent', () => {
         MatInputModule,
         MatTableModule,
         MatDialogModule,
-      ],
-      declarations: [RecipeListComponent],
-      providers: [{ provide: RecipeService, useValue: recipeService }],
-    });
+        RecipeListComponent,
+    ],
+    providers: [{ provide: RecipeService, useValue: recipeService }],
+});
     fixture = TestBed.createComponent(RecipeListComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();

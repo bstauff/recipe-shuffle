@@ -15,7 +15,7 @@ import { AccountModule } from './account/account.module';
 describe('AppComponent', () => {
   beforeEach(() =>
     TestBed.configureTestingModule({
-      imports: [
+    imports: [
         BrowserAnimationsModule,
         RouterTestingModule,
         MatSlideToggleModule,
@@ -27,9 +27,9 @@ describe('AppComponent', () => {
         MatTabsModule,
         MatDividerModule,
         AccountModule,
-      ],
-      declarations: [AppComponent],
-    })
+    ],
+    declarations: [AppComponent],
+})
   );
 
   it('should create the app', () => {

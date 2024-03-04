@@ -29,8 +29,7 @@ describe('PasswordResetComponent', () => {
     ]);
     supabaseSpy.initiatePasswordReset.and.returnValue(of());
     TestBed.configureTestingModule({
-      declarations: [PasswordResetComponent],
-      imports: [
+    imports: [
         MatFormFieldModule,
         ReactiveFormsModule,
         MatInputModule,
@@ -39,8 +38,9 @@ describe('PasswordResetComponent', () => {
         BrowserAnimationsModule,
         RouterTestingModule,
         MatSnackBarModule,
-      ],
-    });
+        PasswordResetComponent,
+    ],
+});
     TestBed.overrideProvider(SupabaseService, {
       useValue: supabaseSpy,
     });

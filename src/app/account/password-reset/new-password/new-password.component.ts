@@ -1,16 +1,30 @@
 import { Component, OnDestroy } from '@angular/core';
-import { FormBuilder, Validators } from '@angular/forms';
+import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { passwordsMatchValidator } from '../../register/register.passwords.validator';
 import { PasswordMismatchErrorStateMatcher } from '../../register/register.component';
 import { Router } from '@angular/router';
 import { SupabaseService } from 'src/app/shared/supabase.service';
 import { Subject, takeUntil } from 'rxjs';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatButton } from '@angular/material/button';
+import { NgIf } from '@angular/common';
+import { MatInput } from '@angular/material/input';
+import { MatFormField, MatLabel, MatError } from '@angular/material/form-field';
 
 @Component({
-  selector: 'app-password-confirmation',
-  templateUrl: './new-password.component.html',
-  styleUrls: ['./new-password.component.scss'],
+    selector: 'app-password-confirmation',
+    templateUrl: './new-password.component.html',
+    styleUrls: ['./new-password.component.scss'],
+    standalone: true,
+    imports: [
+        ReactiveFormsModule,
+        MatFormField,
+        MatLabel,
+        MatInput,
+        NgIf,
+        MatError,
+        MatButton,
+    ],
 })
 export class NewPasswordComponent implements OnDestroy {
   passMismatchErrorStateMatcher = new PasswordMismatchErrorStateMatcher();

@@ -1,19 +1,27 @@
 import { Component } from '@angular/core';
-import {
-  FormBuilder,
-  FormControl,
-  FormGroupDirective,
-  NgForm,
-  Validators,
-} from '@angular/forms';
+import { FormBuilder, FormControl, FormGroupDirective, NgForm, Validators, ReactiveFormsModule } from '@angular/forms';
 import { SupabaseService } from 'src/app/shared/supabase.service';
 import { passwordsMatchValidator } from './register.passwords.validator';
 import { ErrorStateMatcher } from '@angular/material/core';
+import { MatButton } from '@angular/material/button';
+import { NgIf } from '@angular/common';
+import { MatInput } from '@angular/material/input';
+import { MatFormField, MatLabel, MatError } from '@angular/material/form-field';
 
 @Component({
-  selector: 'app-register',
-  templateUrl: './register.component.html',
-  styleUrls: ['./register.component.scss'],
+    selector: 'app-register',
+    templateUrl: './register.component.html',
+    styleUrls: ['./register.component.scss'],
+    standalone: true,
+    imports: [
+        ReactiveFormsModule,
+        MatFormField,
+        MatLabel,
+        MatInput,
+        NgIf,
+        MatError,
+        MatButton,
+    ],
 })
 export class RegisterComponent {
   passwordMismatchErrorStateMatcher = new PasswordMismatchErrorStateMatcher();

@@ -21,15 +21,15 @@ describe('LoginComponent', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      declarations: [LoginComponent],
-      imports: [
+    imports: [
         MatFormFieldModule,
         ReactiveFormsModule,
         MatInputModule,
         MatButtonModule,
         BrowserAnimationsModule,
-      ],
-    });
+        LoginComponent,
+    ],
+});
 
     supabaseService.loginUser.and.returnValue(
       of({

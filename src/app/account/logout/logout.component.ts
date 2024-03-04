@@ -2,11 +2,14 @@ import { Component, NgZone, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 import { Subject, takeUntil } from 'rxjs';
 import { SupabaseService } from 'src/app/shared/supabase.service';
+import { MatButton } from '@angular/material/button';
 
 @Component({
-  selector: 'app-logout',
-  templateUrl: './logout.component.html',
-  styleUrls: ['./logout.component.scss'],
+    selector: 'app-logout',
+    templateUrl: './logout.component.html',
+    styleUrls: ['./logout.component.scss'],
+    standalone: true,
+    imports: [MatButton],
 })
 export class LogoutComponent implements OnDestroy {
   destroy$ = new Subject();

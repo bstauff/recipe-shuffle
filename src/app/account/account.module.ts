@@ -16,24 +16,22 @@ import { NewPasswordComponent } from './password-reset/new-password/new-password
 import { LogoutComponent } from './logout/logout.component';
 
 @NgModule({
-  declarations: [
-    AccountComponent,
-    LoginComponent,
-    RegisterComponent,
-    PasswordResetComponent,
-    NewPasswordComponent,
-    LogoutComponent,
-  ],
-  imports: [
-    CommonModule,
-    AccountRoutingModule,
-    MatFormFieldModule,
-    ReactiveFormsModule,
-    MatInputModule,
-    MatButtonModule,
-    SharedModule,
-    MatSnackBarModule,
-  ],
-  exports: [LogoutComponent],
+    imports: [
+        CommonModule,
+        AccountRoutingModule,
+        MatFormFieldModule,
+        ReactiveFormsModule,
+        MatInputModule,
+        MatButtonModule,
+        SharedModule,
+        MatSnackBarModule,
+        AccountComponent,
+        LoginComponent,
+        RegisterComponent,
+        PasswordResetComponent,
+        NewPasswordComponent,
+        LogoutComponent,
+    ],
+    exports: [LogoutComponent],
 })
 export class AccountModule {}

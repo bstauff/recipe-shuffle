@@ -8,12 +8,12 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 
 @NgModule({
-  declarations: [MealPlanComponent, ShuffleComponent],
-  imports: [
-    CommonModule,
-    MealPlanRoutingModule,
-    MatButtonModule,
-    MatCardModule,
-  ],
+    imports: [
+        CommonModule,
+        MealPlanRoutingModule,
+        MatButtonModule,
+        MatCardModule,
+        MealPlanComponent, ShuffleComponent,
+    ],
 })
 export class MealPlanModule {}
