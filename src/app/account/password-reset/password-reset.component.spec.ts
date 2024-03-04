@@ -13,7 +13,6 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { RouterTestingModule } from '@angular/router/testing';
-import { SharedModule } from 'src/app/shared/shared.module';
 import { SupabaseService } from 'src/app/shared/supabase.service';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { of } from 'rxjs';
@@ -29,18 +28,17 @@ describe('PasswordResetComponent', () => {
     ]);
     supabaseSpy.initiatePasswordReset.and.returnValue(of());
     TestBed.configureTestingModule({
-    imports: [
+      imports: [
         MatFormFieldModule,
         ReactiveFormsModule,
         MatInputModule,
         MatButtonModule,
-        SharedModule,
         BrowserAnimationsModule,
         RouterTestingModule,
         MatSnackBarModule,
         PasswordResetComponent,
-    ],
-});
+      ],
+    });
     TestBed.overrideProvider(SupabaseService, {
       useValue: supabaseSpy,
     });

@@ -5,7 +5,6 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import { SharedModule } from 'src/app/shared/shared.module';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { RouterTestingModule } from '@angular/router/testing';
 import { SupabaseService } from 'src/app/shared/supabase.service';
@@ -23,18 +22,17 @@ describe('RegisterComponent', () => {
     );
 
     TestBed.configureTestingModule({
-    imports: [
+      imports: [
         MatFormFieldModule,
         ReactiveFormsModule,
         MatInputModule,
         MatButtonModule,
-        SharedModule,
         BrowserAnimationsModule,
         RouterTestingModule,
         RegisterComponent,
-    ],
-    providers: [{ provide: SupabaseService, useValue: supaServiceSpy }],
-});
+      ],
+      providers: [{ provide: SupabaseService, useValue: supaServiceSpy }],
+    });
     fixture = TestBed.createComponent(RegisterComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();

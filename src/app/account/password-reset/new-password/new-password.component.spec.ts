@@ -13,7 +13,6 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { RouterTestingModule } from '@angular/router/testing';
-import { SharedModule } from 'src/app/shared/shared.module';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { SupabaseService } from 'src/app/shared/supabase.service';
 import { EMPTY } from 'rxjs';
@@ -30,21 +29,20 @@ describe('NewPasswordComponent', () => {
     supabaseSpy.updatePassword.and.returnValue(EMPTY);
     TestBed.overrideProvider(SupabaseService, { useValue: supabaseSpy });
     TestBed.configureTestingModule({
-    imports: [
+      imports: [
         MatFormFieldModule,
         ReactiveFormsModule,
         MatInputModule,
         MatButtonModule,
-        SharedModule,
         BrowserAnimationsModule,
         RouterTestingModule,
         MatSnackBarModule,
         NewPasswordComponent,
-    ],
-    providers: [
+      ],
+      providers: [
         provideRouter([{ path: 'recipes', component: RecipeListComponent }]),
-    ],
-});
+      ],
+    });
     fixture = TestBed.createComponent(NewPasswordComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();

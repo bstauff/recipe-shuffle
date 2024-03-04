@@ -10,12 +10,11 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { AccountModule } from './account/account.module';
 
 describe('AppComponent', () => {
   beforeEach(() =>
     TestBed.configureTestingModule({
-    imports: [
+      imports: [
         BrowserAnimationsModule,
         RouterTestingModule,
         MatSlideToggleModule,
@@ -26,10 +25,9 @@ describe('AppComponent', () => {
         MatButtonModule,
         MatTabsModule,
         MatDividerModule,
-        AccountModule,
         AppComponent,
-    ],
-})
+      ],
+    })
   );
 
   it('should create the app', () => {
