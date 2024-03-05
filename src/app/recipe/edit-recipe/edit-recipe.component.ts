@@ -15,6 +15,7 @@ import { MatInputModule } from '@angular/material/input';
 import { Router } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
+import { EditIngredientsComponent } from 'src/app/ingredient/edit-ingredients/edit-ingredients.component';
 
 @Component({
   selector: 'app-edit-recipe',
@@ -26,6 +27,7 @@ import { MatIconModule } from '@angular/material/icon';
     MatInputModule,
     MatButtonModule,
     MatIconModule,
+    EditIngredientsComponent,
   ],
   templateUrl: './edit-recipe.component.html',
   styleUrl: './edit-recipe.component.scss',
