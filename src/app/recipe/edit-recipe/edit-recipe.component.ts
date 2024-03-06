@@ -33,7 +33,7 @@ import { EditIngredientsComponent } from 'src/app/ingredient/edit-ingredients/ed
   styleUrl: './edit-recipe.component.scss',
 })
 export class EditRecipeComponent {
-  @Input()
+  @Input({ required: true })
   set recipeKey(recipeKey: string) {
     this.recipeService
       .getRecipe(recipeKey)
@@ -41,7 +41,7 @@ export class EditRecipeComponent {
       .subscribe({ next: (recipe) => this.recipe.set(recipe) });
   }
 
-  recipe: WritableSignal<Recipe | undefined> = signal(undefined);
+  recipe: WritableSignal<Recipe> = signal(new Recipe('', null));
 
   constructor(
     private recipeService: RecipeService,

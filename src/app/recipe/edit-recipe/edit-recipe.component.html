@@ -22,14 +22,13 @@
         <input
           type="text"
           id="recipeUrl"
-          required
           matInput
           formControlName="url"
           value="{{ this.recipe()?.url }}"
         />
       </mat-form-field>
       <mat-divider></mat-divider>
-      <app-edit-ingredients [recipeKey]="recipe()?.key"></app-edit-ingredients>
+      <app-edit-ingredients [recipeKey]="recipe().key"></app-edit-ingredients>
       <mat-divider></mat-divider>
       <h2>Tags</h2>
       <div class="edit-recipe__actions">

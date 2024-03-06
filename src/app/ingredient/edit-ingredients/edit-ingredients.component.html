@@ -1,8 +1,18 @@
 <div class="edit-ingredients">
   <div class="edit-ingredients__header">
     <h2>Ingredients</h2>
-    <button mat-icon-button color="primary">
+    <button
+      mat-icon-button
+      color="primary"
+      (click)="onAddClicked()"
+      type="button"
+    >
       <mat-icon>add</mat-icon>
     </button>
+  </div>
+  <div class="edit-ingredients__ingredient-list">
+    @for (ingredient of recipeIngredients(); track ingredient.key) {
+    <app-edit-ingredient [ingredient]="ingredient"></app-edit-ingredient>
+    }
   </div>
 </div>
