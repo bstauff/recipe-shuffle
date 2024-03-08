@@ -12,7 +12,10 @@
   </div>
   <div class="edit-ingredients__ingredient-list">
     @for (ingredient of recipeIngredients(); track ingredient.key) {
-    <app-edit-ingredient [ingredient]="ingredient"></app-edit-ingredient>
+    <app-edit-ingredient
+      [ingredient]="ingredient"
+      (ingredientDeleted)="onIngredientDeleted(ingredient)"
+    ></app-edit-ingredient>
     }
   </div>
 </div>

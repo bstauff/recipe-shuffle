@@ -32,7 +32,14 @@
       <mat-divider></mat-divider>
       <h2>Tags</h2>
       <div class="edit-recipe__actions">
-        <button mat-raised-button color="primary">Save</button>
+        <button
+          mat-raised-button
+          color="primary"
+          (click)="onSave()"
+          type="button"
+        >
+          Save
+        </button>
         <button (click)="onCancel()" mat-raised-button color="warn">
           cancel
         </button>

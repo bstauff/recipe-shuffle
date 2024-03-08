@@ -52,4 +52,7 @@ export class EditRecipeComponent {
   onCancel(): void {
     this.router.navigateByUrl('../');
   }
+  onSave(): void {
+    console.log('the recipe is: ', this.recipe());
+  }
 }

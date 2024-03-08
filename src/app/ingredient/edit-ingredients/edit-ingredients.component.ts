@@ -35,4 +35,13 @@ export class EditIngredientsComponent {
     console.log('ingredients', updatedIngredients);
     this.recipeIngredients.set(updatedIngredients);
   }
+
+  onIngredientDeleted(ingredient: RecipeIngredient): void {
+    const indexToDelete = this.recipeIngredients().findIndex(
+      (x) => x.key == ingredient.key
+    );
+    this.recipeIngredients.set(
+      this.recipeIngredients().splice(indexToDelete, 1)
+    );
+  }
 }

@@ -11,4 +11,10 @@
     <mat-label>Units</mat-label>
     <input matInput required type="text" formControlName="name" />
   </mat-form-field>
+  <button mat-mini-fab color="primary" type="submit">
+    <mat-icon>check</mat-icon>
+  </button>
+  <button mat-mini-fab color="warn" type="button" (click)="onDelete()">
+    <mat-icon>cancel</mat-icon>
+  </button>
 </form>
