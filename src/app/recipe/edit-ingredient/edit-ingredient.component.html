@@ -1,4 +1,4 @@
-<form [formGroup]="ingredientForm">
+<form [formGroup]="ingredientForm" (submit)="onSave()">
   <mat-form-field>
     <mat-label>Name</mat-label>
     <input type="text" required matInput formControlName="name" />
@@ -9,9 +9,14 @@
   </mat-form-field>
   <mat-form-field>
     <mat-label>Units</mat-label>
-    <input matInput required type="text" formControlName="name" />
+    <input matInput required type="text" formControlName="units" />
   </mat-form-field>
-  <button mat-mini-fab color="primary" type="submit">
+  <button
+    mat-mini-fab
+    color="primary"
+    type="submit"
+    [disabled]="ingredientForm.invalid"
+  >
     <mat-icon>check</mat-icon>
   </button>
   <button mat-mini-fab color="warn" type="button" (click)="onDelete()">

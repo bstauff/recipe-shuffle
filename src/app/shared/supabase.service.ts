@@ -4,6 +4,7 @@ import { EMPTY, Observable, exhaustMap, from, map, of } from 'rxjs';
 import { AuthResponse } from './models/AuthResponse';
 import { Recipe } from '../recipe/models/recipe';
 import { Database } from '../../../lib/database.types';
+import { Ingredient } from '../recipe/models/ingredient';
 
 @Injectable({
   providedIn: 'root',
@@ -151,6 +152,58 @@ export class SupabaseService {
             });
           })
         );
+      })
+    );
+  }
+
+  upsertIngredient(ingredient: Ingredient): Observable<Ingredient> {
+    const userId$ = this.getUserId();
+
+    return userId$.pipe(
+      exhaustMap((userId) => {
+        return from(
+          this.supabaseClient
+            .from('ingredient')
+            .upsert({
+              key: ingredient.key,
+              name: ingredient.name,
+              units: ingredient.units,
+              quantity: ingredient.quantity,
+              recipe_key: ingredient.recipeKey,
+              user_id: userId,
+            })
+            .select()
+        ).pipe(
+          map((upsertedIngredientResponse) => {
+            if (upsertedIngredientResponse.error) {
+              throw new Error(upsertedIngredientResponse.error.message);
+            }
+
+            return upsertedIngredientResponse.data[0];
+          }),
+          map((upsertedIngredient) => {
+            return {
+              key: upsertedIngredient.key,
+              quantity: upsertedIngredient.quantity,
+              name: upsertedIngredient.name,
+              units: upsertedIngredient.units,
+              recipeKey: upsertedIngredient.recipe_key,
+            };
+          })
+        );
+      })
+    );
+  }
+
+  deleteIngredient(ingredientKey: string): Observable<never> {
+    return from(
+      this.supabaseClient.from('ingredient').delete().eq('key', ingredientKey)
+    ).pipe(
+      exhaustMap((response) => {
+        if (response.error) {
+          throw new Error(response.error.message);
+        }
+        return EMPTY;
       })
     );
   }

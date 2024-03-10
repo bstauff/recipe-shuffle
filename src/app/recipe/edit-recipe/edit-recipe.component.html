@@ -1,6 +1,6 @@
 <div class="edit-recipe">
   <div class="edit-recipe__header">
-    <h1>Edit {{ this.recipe()?.name }}</h1>
+    <h1>Edit {{ this.recipe().name }}</h1>
   </div>
   <mat-divider></mat-divider>
   <form>
@@ -14,7 +14,7 @@
           required
           matInput
           formControlName="name"
-          value="{{ this.recipe()?.name }}"
+          value="{{ this.recipe().name }}"
         />
       </mat-form-field>
       <mat-form-field>
@@ -24,11 +24,11 @@
           id="recipeUrl"
           matInput
           formControlName="url"
-          value="{{ this.recipe()?.url }}"
+          value="{{ this.recipe().url }}"
         />
       </mat-form-field>
       <mat-divider></mat-divider>
-      <app-edit-ingredients [recipeKey]="recipe().key"></app-edit-ingredients>
+      <app-ingredients-list [recipeKey]="recipe().key"></app-ingredients-list>
       <mat-divider></mat-divider>
       <h2>Tags</h2>
       <div class="edit-recipe__actions">

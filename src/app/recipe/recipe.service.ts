@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { Recipe } from './models/recipe';
 import { Observable, ReplaySubject, map, tap } from 'rxjs';
 import { SupabaseService } from '../shared/supabase.service';
+import { Ingredient } from './models/ingredient';
 
 @Injectable({ providedIn: 'root' })
 export class RecipeService {
@@ -44,10 +45,6 @@ export class RecipeService {
       );
   }
 
-  getRecipe(recipeKey: string): Observable<Recipe> {
-    return this.supabaseService.getRecipe(recipeKey);
-  }
-
   private updateRecipeInCollection(recipe: Recipe) {
     if (this.recipeCollection.has(recipe.key)) {
       const existingRecipe = this.recipeCollection.get(recipe.key) as Recipe;
@@ -58,5 +55,17 @@ export class RecipeService {
     }
 
     this.pushRecipesUpdated();
+  }
+
+  getRecipe(recipeKey: string): Observable<Recipe> {
+    return this.supabaseService.getRecipe(recipeKey);
+  }
+
+  upsertIngredient(ingredient: Ingredient): Observable<Ingredient> {
+    return this.supabaseService.upsertIngredient(ingredient);
+  }
+
+  deleteIngredient(ingredientKey: string): Observable<void> {
+    return this.supabaseService.deleteIngredient(ingredientKey);
   }
 }
