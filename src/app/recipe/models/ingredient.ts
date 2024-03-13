@@ -2,10 +2,8 @@ import { Ulid, Uuid } from 'id128';
 
 export interface Ingredient {
   key: string;
-  quantity: number;
   name: string;
   units: string;
-  recipeKey: string;
 }
 
 export function newIngredientKey(): string {

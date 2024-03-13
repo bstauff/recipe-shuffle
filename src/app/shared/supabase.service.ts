@@ -85,7 +85,7 @@ export class SupabaseService {
             key: recipe.recipe_key,
             name: recipe.name,
             url: recipe.url,
-            ingredients: [],
+            recipeIngredients: [],
             tags: [],
           };
         });
@@ -117,6 +117,7 @@ export class SupabaseService {
           key: response.data?.recipe_key,
           name: response.data?.name,
           url: response.data?.url,
+          recipeIngredients: [],
         };
       })
     );
@@ -147,7 +148,7 @@ export class SupabaseService {
               key: upsertedRecipe.recipe_key,
               name: upsertedRecipe.name,
               url: upsertedRecipe.url,
-              ingredients: [],
+              recipeIngredients: [],
               tags: [],
             });
           })
@@ -168,8 +169,6 @@ export class SupabaseService {
               key: ingredient.key,
               name: ingredient.name,
               units: ingredient.units,
-              quantity: ingredient.quantity,
-              recipe_key: ingredient.recipeKey,
               user_id: userId,
             })
             .select()
@@ -184,10 +183,8 @@ export class SupabaseService {
           map((upsertedIngredient) => {
             return {
               key: upsertedIngredient.key,
-              quantity: upsertedIngredient.quantity,
               name: upsertedIngredient.name,
               units: upsertedIngredient.units,
-              recipeKey: upsertedIngredient.recipe_key,
             };
           })
         );

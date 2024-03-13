@@ -13,35 +13,22 @@ export type Database = {
         Row: {
           key: string
           name: string
-          quantity: number
-          recipe_key: string
           units: string
           user_id: string
         }
         Insert: {
           key: string
           name: string
-          quantity: number
-          recipe_key: string
           units: string
           user_id?: string
         }
         Update: {
           key?: string
           name?: string
-          quantity?: number
-          recipe_key?: string
           units?: string
           user_id?: string
         }
         Relationships: [
-          {
-            foreignKeyName: "public_recipeingredient_recipe_key_fkey"
-            columns: ["recipe_key"]
-            isOneToOne: false
-            referencedRelation: "recipe"
-            referencedColumns: ["recipe_key"]
-          },
           {
             foreignKeyName: "recipeingredient_user_id_fkey"
             columns: ["user_id"]
@@ -62,7 +49,7 @@ export type Database = {
           name: string
           recipe_key: string
           url?: string | null
-          user_id: string
+          user_id?: string
         }
         Update: {
           name?: string
@@ -73,6 +60,52 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "recipe_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
+      recipeingredient: {
+        Row: {
+          ingredient_key: string
+          key: string
+          quantity: number
+          recipe_key: string
+          user_id: string
+        }
+        Insert: {
+          ingredient_key: string
+          key: string
+          quantity: number
+          recipe_key: string
+          user_id?: string
+        }
+        Update: {
+          ingredient_key?: string
+          key?: string
+          quantity?: number
+          recipe_key?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "public_recipeingredient_ingredient_key_fkey"
+            columns: ["ingredient_key"]
+            isOneToOne: false
+            referencedRelation: "ingredient"
+            referencedColumns: ["key"]
+          },
+          {
+            foreignKeyName: "public_recipeingredient_recipe_key_fkey"
+            columns: ["recipe_key"]
+            isOneToOne: false
+            referencedRelation: "recipe"
+            referencedColumns: ["recipe_key"]
+          },
+          {
+            foreignKeyName: "public_recipeingredient_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: false
             referencedRelation: "users"

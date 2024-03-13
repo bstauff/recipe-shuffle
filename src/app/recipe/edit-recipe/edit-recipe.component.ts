@@ -15,19 +15,19 @@ import { MatInputModule } from '@angular/material/input';
 import { Router } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-import { IngredientsListComponent } from '../list-ingredients/ingredients-list.component';
+import { IngredientListComponent } from '../ingredient-list/ingredient-list.component';
 
 @Component({
   selector: 'app-edit-recipe',
   standalone: true,
   imports: [
+    IngredientListComponent,
     MatCardModule,
     MatDividerModule,
     MatFormFieldModule,
     MatInputModule,
     MatButtonModule,
     MatIconModule,
-    IngredientsListComponent,
   ],
   templateUrl: './edit-recipe.component.html',
   styleUrl: './edit-recipe.component.scss',
