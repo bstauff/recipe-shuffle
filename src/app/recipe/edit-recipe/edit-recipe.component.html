@@ -28,9 +28,7 @@
         />
       </mat-form-field>
       <mat-divider></mat-divider>
-      <app-ingredient-list
-        [ingredients]="recipe().recipeIngredients"
-      ></app-ingredient-list>
+      <app-ingredient-list [recipeKey]="recipe().key"></app-ingredient-list>
       <mat-divider></mat-divider>
       <h2>Tags</h2>
       <div class="edit-recipe__actions">

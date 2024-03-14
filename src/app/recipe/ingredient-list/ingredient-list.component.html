@@ -1,12 +1,13 @@
 <div class="ingredient-list">
   <div class="ingredient-list__header">
     <h2>Ingredients</h2>
-    <button type="button" (click)="onAddIngredient()">Add</button>
+    <button type="button" (click)="onAddClicked()">Add</button>
   </div>
   <div class="ingredient-list__list">
-    @for (ingredient of ingredients; track ingredient.key) {
-    {{ ingredient.ingredient.name }} -- {{ ingredient.quantity }} --
-    {{ ingredient.ingredient.units }}
+    @for (ingredient of ingredients(); track ingredient.key) {
+    <app-edit-recipe-ingredient
+      [recipeIngredient]="ingredient"
+    ></app-edit-recipe-ingredient>
     }
   </div>
 </div>
