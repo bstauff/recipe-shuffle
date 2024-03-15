@@ -3,7 +3,7 @@
     <h1>Edit {{ this.recipe().name }}</h1>
   </div>
   <mat-divider></mat-divider>
-  <form>
+  <form [formGroup]="this.recipeForm" (submit)="onRecipeSave()">
     <div class="edit-recipe__basic-info">
       <h2>Basic Info</h2>
       <mat-form-field>
@@ -13,8 +13,7 @@
           id="recipeName"
           required
           matInput
-          formControlName="name"
-          value="{{ this.recipe().name }}"
+          formControlName="recipeName"
         />
       </mat-form-field>
       <mat-form-field>
@@ -23,8 +22,7 @@
           type="text"
           id="recipeUrl"
           matInput
-          formControlName="url"
-          value="{{ this.recipe().url }}"
+          formControlName="recipeUrl"
         />
       </mat-form-field>
       <mat-divider></mat-divider>
@@ -33,7 +31,43 @@
           <h2>Ingredients</h2>
         </div>
         <div class="edit-recipe__ingredient-form">
-          <form [formGroup]="this.ingredientForm"></form>
+          <form [formGroup]="ingredientForm" (submit)="onAddIngredient()">
+            <mat-form-field>
+              <mat-label>Name</mat-label>
+              <input
+                matInput
+                formControlName="ingredientName"
+                type="text"
+                required
+              />
+            </mat-form-field>
+            <mat-form-field>
+              <mat-label>Quantity</mat-label>
+              <input
+                matInput
+                required
+                formControlName="ingredientQuantity"
+                type="number"
+              />
+            </mat-form-field>
+            <mat-form-field>
+              <mat-label>Units</mat-label>
+              <input
+                matInput
+                formControlName="ingredientUnits"
+                type="text"
+                required
+              />
+            </mat-form-field>
+            <button
+              type="submit"
+              mat-mini-fab
+              color="primary"
+              [disabled]="this.ingredientForm.invalid"
+            >
+              <mat-icon>add</mat-icon>
+            </button>
+          </form>
         </div>
         <div class="edit-recipe__ingredients-list">
           @for (item of recipe().recipeIngredients; track item.key) {
@@ -48,8 +82,8 @@
         <button
           mat-raised-button
           color="primary"
-          (click)="onSave()"
-          type="button"
+          type="submit"
+          [disabled]="this.recipeForm.invalid"
         >
           Save
         </button>
