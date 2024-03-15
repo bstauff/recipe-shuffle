@@ -28,7 +28,20 @@
         />
       </mat-form-field>
       <mat-divider></mat-divider>
-      <app-ingredient-list [recipeKey]="recipe().key"></app-ingredient-list>
+      <div class="edit-recipe__ingredients">
+        <div class="edit-recipe__ingredients-header">
+          <h2>Ingredients</h2>
+        </div>
+        <div class="edit-recipe__ingredient-form">
+          <form [formGroup]="this.ingredientForm"></form>
+        </div>
+        <div class="edit-recipe__ingredients-list">
+          @for (item of recipe().recipeIngredients; track item.key) {
+          {{ item.ingredient.name }} - {{ item.quantity }} --
+          {{ item.ingredient.units }}
+          }
+        </div>
+      </div>
       <mat-divider></mat-divider>
       <h2>Tags</h2>
       <div class="edit-recipe__actions">
