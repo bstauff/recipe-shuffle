@@ -144,63 +144,24 @@ export class SupabaseService {
             }
 
             const upsertedRecipe = upsertRecipeResponse.data[0];
-            return of({
-              key: upsertedRecipe.recipe_key,
-              name: upsertedRecipe.name,
-              url: upsertedRecipe.url,
-              recipeIngredients: [],
-              tags: [],
-            });
+
+            const upsertIngred$ = from(
+              this.supabaseClient
+                .from('ingredient')
+                .upsert(
+                  recipe.recipeIngredients.map((x) => {
+                    return {
+                      key: x.ingredient.key,
+                      name: x.ingredient.name,
+                      units: x.ingredient.units,
+                      user_id: userId,
+                    };
+                  })
+                )
+                .select()
+            );
           })
         );
-      })
-    );
-  }
-
-  upsertIngredient(ingredient: Ingredient): Observable<Ingredient> {
-    const userId$ = this.getUserId();
-
-    return userId$.pipe(
-      exhaustMap((userId) => {
-        return from(
-          this.supabaseClient
-            .from('ingredient')
-            .upsert({
-              key: ingredient.key,
-              name: ingredient.name,
-              units: ingredient.units,
-              user_id: userId,
-            })
-            .select()
-        ).pipe(
-          map((upsertedIngredientResponse) => {
-            if (upsertedIngredientResponse.error) {
-              throw new Error(upsertedIngredientResponse.error.message);
-            }
-
-            return upsertedIngredientResponse.data[0];
-          }),
-          map((upsertedIngredient) => {
-            return {
-              key: upsertedIngredient.key,
-              name: upsertedIngredient.name,
-              units: upsertedIngredient.units,
-            };
-          })
-        );
-      })
-    );
-  }
-
-  deleteIngredient(ingredientKey: string): Observable<never> {
-    return from(
-      this.supabaseClient.from('ingredient').delete().eq('key', ingredientKey)
-    ).pipe(
-      exhaustMap((response) => {
-        if (response.error) {
-          throw new Error(response.error.message);
-        }
-        return EMPTY;
       })
     );
   }

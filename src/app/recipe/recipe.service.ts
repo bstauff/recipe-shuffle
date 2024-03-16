@@ -2,7 +2,6 @@ import { Injectable } from '@angular/core';
 import { Recipe } from './models/recipe';
 import { Observable, ReplaySubject, map, tap } from 'rxjs';
 import { SupabaseService } from '../shared/supabase.service';
-import { Ingredient } from './models/ingredient';
 
 @Injectable({ providedIn: 'root' })
 export class RecipeService {
@@ -35,7 +34,8 @@ export class RecipeService {
     );
   }
 
-  addRecipe(recipe: Recipe): Observable<Recipe> {
+  upsertRecipe(recipe: Recipe): Observable<Recipe> {
+    // upsert recipe
     return this.supabaseService
       .upsertRecipe(recipe)
       .pipe(
@@ -55,17 +55,5 @@ export class RecipeService {
     }
 
     this.pushRecipesUpdated();
-  }
-
-  getRecipe(recipeKey: string): Observable<Recipe> {
-    return this.supabaseService.getRecipe(recipeKey);
-  }
-
-  upsertIngredient(ingredient: Ingredient): Observable<Ingredient> {
-    return this.supabaseService.upsertIngredient(ingredient);
-  }
-
-  deleteIngredient(ingredientKey: string): Observable<void> {
-    return this.supabaseService.deleteIngredient(ingredientKey);
   }
 }
