@@ -5,6 +5,7 @@ import { AuthResponse } from './models/AuthResponse';
 import { Recipe } from '../recipe/models/recipe';
 import { Database } from '../../../lib/database.types';
 import { Ingredient } from '../recipe/models/ingredient';
+import { RecipeIngredient } from '../recipe/models/recipeingredient';
 
 @Injectable({
   providedIn: 'root',
@@ -123,47 +124,71 @@ export class SupabaseService {
     );
   }
 
-  upsertRecipe(recipe: Recipe): Observable<Recipe> {
-    const userId$ = this.getUserId();
-    return userId$.pipe(
-      exhaustMap((userId) => {
-        return from(
-          this.supabaseClient
-            .from('recipe')
-            .upsert({
-              recipe_key: recipe.key,
-              name: recipe.name,
-              url: recipe.url,
-              user_id: userId,
-            })
-            .select()
-        ).pipe(
-          exhaustMap((upsertRecipeResponse) => {
-            if (upsertRecipeResponse.error) {
-              throw new Error(upsertRecipeResponse.error.message);
-            }
+  async upsertRecipeAsync(recipe: Recipe) {
+    const session = await this.supabaseClient.auth.getSession();
 
-            const upsertedRecipe = upsertRecipeResponse.data[0];
+    if (!session.data.session) {
+      throw new Error('no session');
+    }
 
-            const upsertIngred$ = from(
-              this.supabaseClient
-                .from('ingredient')
-                .upsert(
-                  recipe.recipeIngredients.map((x) => {
-                    return {
-                      key: x.ingredient.key,
-                      name: x.ingredient.name,
-                      units: x.ingredient.units,
-                      user_id: userId,
-                    };
-                  })
-                )
-                .select()
-            );
-          })
-        );
+    const userId = session.data.session.user.id;
+
+    const upsertRecipeResponse = await this.supabaseClient
+      .from('recipe')
+      .upsert({
+        recipe_key: recipe.key,
+        name: recipe.name,
+        url: recipe.url,
+        user_id: userId,
       })
+      .select();
+
+    if (upsertRecipeResponse.error) {
+      throw new Error(upsertRecipeResponse.error.message);
+    }
+
+    const ingredientsToUpsert = recipe.recipeIngredients.map(
+      (x) => x.ingredient
     );
+
+    const upsertIngredientsResponse = await this.supabaseClient
+      .from('ingredient')
+      .upsert(
+        ingredientsToUpsert.map((x) => {
+          return {
+            key: x.key,
+            name: x.name,
+            units: x.units,
+            user_id: userId,
+          };
+        })
+      )
+      .select();
+
+    if (upsertIngredientsResponse.error) {
+      throw new Error(upsertIngredientsResponse.error.message);
+    }
+
+    const recipeIngredientsToUpsert = recipe.recipeIngredients.map(
+      (recipeIngredient) => {
+        return {
+          ingredient_key: recipeIngredient.ingredient.key,
+          key: recipeIngredient.key,
+          quantity: recipeIngredient.quantity,
+          recipe_key: recipe.key,
+          user_id: userId,
+        };
+      }
+    );
+
+    const upsertRecipeIngredientsResponse = await this.supabaseClient
+      .from('recipeingredient')
+      .upsert(recipeIngredientsToUpsert)
+      .select();
+
+    if (upsertRecipeIngredientsResponse.error) {
+      throw new Error(upsertRecipeIngredientsResponse.error.message);
+    }
   }
 
   deleteRecipe(recipe: Recipe): Observable<never> {
