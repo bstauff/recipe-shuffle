@@ -1,6 +1,14 @@
 import { Injectable } from '@angular/core';
 import { createClient } from '@supabase/supabase-js';
-import { EMPTY, Observable, exhaustMap, from, map, of } from 'rxjs';
+import {
+  EMPTY,
+  Observable,
+  combineLatest,
+  exhaustMap,
+  from,
+  map,
+  of,
+} from 'rxjs';
 import { AuthResponse } from './models/AuthResponse';
 import { Recipe } from '../recipe/models/recipe';
 import { Database } from '../../../lib/database.types';
@@ -189,6 +197,141 @@ export class SupabaseService {
     if (upsertRecipeIngredientsResponse.error) {
       throw new Error(upsertRecipeIngredientsResponse.error.message);
     }
+
+    return recipe;
+  }
+
+  upsertRecipe(recipe: Recipe): Observable<Recipe> {
+    const userId$ = this.getUserId();
+
+    const upsertRecipe$ = userId$.pipe(
+      exhaustMap((userId) => {
+        return from(
+          this.supabaseClient
+            .from('recipe')
+            .upsert({
+              recipe_key: recipe.key,
+              name: recipe.name,
+              url: recipe.url,
+              user_id: userId,
+            })
+            .select()
+        );
+      }),
+      map((upsertRecipeResponse): Recipe => {
+        if (upsertRecipeResponse.error) {
+          throw new Error(upsertRecipeResponse.error.message);
+        }
+        return {
+          key: upsertRecipeResponse.data[0].recipe_key,
+          name: upsertRecipeResponse.data[0].name,
+          url: upsertRecipeResponse.data[0].url,
+          recipeIngredients: [],
+        };
+      })
+    );
+
+    const upsertIngredients$ = userId$.pipe(
+      exhaustMap((userId) => {
+        return from(
+          this.supabaseClient
+            .from('ingredient')
+            .upsert(
+              recipe.recipeIngredients.map((x) => {
+                return {
+                  key: x.ingredient.key,
+                  name: x.ingredient.name,
+                  units: x.ingredient.units,
+                  user_id: userId,
+                };
+              })
+            )
+            .select()
+        );
+      }),
+      map((upsertIngredientsResponse): Ingredient[] => {
+        if (upsertIngredientsResponse.error) {
+          throw new Error(upsertIngredientsResponse.error.message);
+        }
+        return upsertIngredientsResponse.data.map((supaIngredient) => {
+          return {
+            key: supaIngredient.key,
+            name: supaIngredient.name,
+            units: supaIngredient.units,
+          };
+        });
+      })
+    );
+
+    const upsertRecipeIngredients$ = userId$.pipe(
+      exhaustMap((userId) => {
+        const recipeIngredientsToUpsert = recipe.recipeIngredients.map(
+          (recipeIngredient) => {
+            return {
+              ingredient_key: recipeIngredient.ingredient.key,
+              key: recipeIngredient.key,
+              quantity: recipeIngredient.quantity,
+              recipe_key: recipe.key,
+              user_id: userId,
+            };
+          }
+        );
+        return from(
+          this.supabaseClient
+            .from('recipeingredient')
+            .upsert(recipeIngredientsToUpsert)
+            .select()
+        );
+      }),
+      map((upsertedRecipeIngredientsResponse) => {
+        if (upsertedRecipeIngredientsResponse.error) {
+          throw new Error(upsertedRecipeIngredientsResponse.error.message);
+        }
+
+        return upsertedRecipeIngredientsResponse.data.map((x) => {
+          return {
+            key: x.key,
+            quantity: x.quantity,
+            ingredient_key: x.ingredient_key,
+          };
+        });
+      })
+    );
+
+    return combineLatest(
+      [upsertRecipe$, upsertIngredients$, upsertRecipeIngredients$],
+      (upsertedRecipe, upsertedIngredients, upsertedRecipeIngredients) => {
+        const ingredientMap = new Map(
+          upsertedIngredients.map((x) => [x.key, x])
+        );
+
+        const recipeIngredients = upsertedRecipeIngredients.map(
+          (recipeIngredient): RecipeIngredient => {
+            if (!ingredientMap.has(recipeIngredient.ingredient_key)) {
+              throw new Error(
+                `no matching ingredient for given ingredient_key in recipeIngredient ${recipeIngredient.key}`
+              );
+            }
+            const ingredient = ingredientMap.get(
+              recipeIngredient.ingredient_key
+            ) as Ingredient;
+
+            return {
+              key: recipeIngredient.key,
+              quantity: recipeIngredient.quantity,
+              ingredient: {
+                key: recipeIngredient.ingredient_key,
+                name: ingredient.name,
+                units: ingredient.units,
+              },
+            };
+          }
+        );
+
+        upsertedRecipe.recipeIngredients = recipeIngredients;
+        return upsertedRecipe;
+      }
+    );
   }
 
   deleteRecipe(recipe: Recipe): Observable<never> {
