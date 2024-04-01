@@ -250,57 +250,15 @@ export class SupabaseService {
         });
       })
     );
-
-    const what = upsertRecipe$.pipe(
+    return upsertRecipe$.pipe(
       exhaustMap((upsertedRecipe) => {
-        return upsertIngredients$.pipe(
-          exhaustMap((upsertedIngredients) => {
-            return upsertedRecipeIngredients$.pipe(
-              map((upsertedRecipeIngredients) => {
-                const ingredientKeyToIngredients = new Map(
-                  upsertedIngredients.map((upsertedIngredient) => [
-                    upsertedIngredient.key,
-                    upsertedIngredient,
-                  ])
-                );
-                return upsertedRecipeIngredients.map((recipeIngredient) => {
-                  if (
-                    !ingredientKeyToIngredients.has(
-                      recipeIngredient.ingredient_key
-                    )
-                  ) {
-                    throw new Error(
-                      `no matching ingredient found for ingredientkey ${recipeIngredient.key} in recipeIngredient ${recipeIngredient.key}`
-                    );
-                  }
-
-                  const ingredient = ingredientKeyToIngredients.get(
-                    recipeIngredient.ingredient_key
-                  ) as Ingredient;
-
-                  return {
-                    key: upsertedRecipe.key,
-                    name: upsertedRecipe.name,
-                    url: upsertedRecipe.url,
-                    recipeIngredients: upsertedRecipeIngredients.map(
-                      (recipeIngredient) => {
-                        return {
-                          key: recipeIngredient.key,
-                          quantity: recipeIngredient.quantity,
-                          ingredient: {
-                            key: ingredient.key,
-                            name: ingredient.name,
-                            units: ingredient.units,
-                          },
-                        };
-                      }
-                    ),
-                  };
-                });
-              })
-            );
-          })
-        );
+        return upsertIngredients$;
+      }),
+      exhaustMap((upsertedIngredients) => {
+        return upsertedRecipeIngredients$;
+      }),
+      exhaustMap((upsertedRecipeIngredients) => {
+        return of(recipe);
       })
     );
   }
