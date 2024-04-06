@@ -102,7 +102,7 @@ export class EditRecipeComponent {
   onRecipeSave(): void {
     const recipe = this.recipe();
 
-    if (!this.recipeForm.value.recipeName || !this.recipeForm.value.recipeUrl) {
+    if (!this.recipeForm.value.recipeName) {
       throw new Error('bad recipe form values!');
     }
 
@@ -110,5 +110,7 @@ export class EditRecipeComponent {
     recipe.url = this.recipeForm.value.recipeUrl;
 
     console.log('updated recipe is: ', recipe);
+
+    this.recipeService.upsertRecipe(recipe).subscribe();
   }
 }
