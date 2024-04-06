@@ -49,7 +49,7 @@ export class AddRecipeComponent {
 
     this.isAddRequestInProgress = true;
 
-    this.recipeService.addRecipe(recipe).subscribe({
+    this.recipeService.upsertRecipe(recipe).subscribe({
       next: () => {
         this.isAddRequestInProgress = false;
       },

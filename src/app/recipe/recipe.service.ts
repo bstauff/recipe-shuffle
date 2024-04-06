@@ -45,6 +45,10 @@ export class RecipeService {
       );
   }
 
+  getRecipe(recipeKey: string): Observable<Recipe> {
+    return this.supabaseService.getRecipe(recipeKey);
+  }
+
   private updateRecipeInCollection(recipe: Recipe) {
     if (this.recipeCollection.has(recipe.key)) {
       const existingRecipe = this.recipeCollection.get(recipe.key) as Recipe;
