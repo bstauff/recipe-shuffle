@@ -70,7 +70,7 @@
           </form>
         </div>
         <div class="edit-recipe__ingredients-list">
-          @for (item of recipe().recipeIngredients; track item.key) {
+          @for (item of recipe().recipeIngredients; track item.id) {
           {{ item.ingredient.name }} - {{ item.quantity }} --
           {{ item.ingredient.units }}
           }

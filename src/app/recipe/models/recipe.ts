@@ -1,8 +1,8 @@
 import { RecipeIngredient } from './recipeingredient';
 
-export class Recipe {
+export interface Recipe {
   id: number;
   name: string;
   url: string | null | undefined;
-  recipeIngredients: RecipeIngredient[] = [];
+  recipeIngredients: RecipeIngredient[];
 }

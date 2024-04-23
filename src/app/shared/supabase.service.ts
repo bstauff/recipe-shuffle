@@ -1,19 +1,9 @@
 import { Injectable } from '@angular/core';
 import { createClient } from '@supabase/supabase-js';
-import {
-  EMPTY,
-  Observable,
-  combineLatest,
-  exhaustMap,
-  from,
-  map,
-  of,
-} from 'rxjs';
+import { EMPTY, Observable, exhaustMap, from, map, of } from 'rxjs';
 import { AuthResponse } from './models/AuthResponse';
 import { Recipe } from '../recipe/models/recipe';
 import { Database } from '../../../lib/database.types';
-import { Ingredient } from '../recipe/models/ingredient';
-import { RecipeIngredient } from '../recipe/models/recipeingredient';
 
 @Injectable({
   providedIn: 'root',
@@ -76,7 +66,7 @@ export class SupabaseService {
   getRecipes(): Observable<Recipe[]> {
     const recipes = this.supabaseClient.from('recipe').select(
       `
-        recipe_key,
+        id,
         name,
         url
       `
@@ -91,28 +81,27 @@ export class SupabaseService {
         }
         return response.data?.map((recipe) => {
           return {
-            key: recipe.recipe_key,
+            id: recipe.id,
             name: recipe.name,
             url: recipe.url,
             recipeIngredients: [],
-            tags: [],
           };
         });
       })
     );
   }
 
-  getRecipe(recipeKey: string): Observable<Recipe> {
+  getRecipe(recipeId: number): Observable<Recipe> {
     const recipe = this.supabaseClient
       .from('recipe')
       .select(
         `
-        recipe_key,
+        id,
         name,
         url
       `
       )
-      .eq('recipe_key', recipeKey)
+      .eq('id', recipeId)
       .single();
 
     const recipe$ = from(recipe);
@@ -123,7 +112,7 @@ export class SupabaseService {
         }
 
         return {
-          key: response.data?.recipe_key,
+          id: response.data?.id,
           name: response.data?.name,
           url: response.data?.url,
           recipeIngredients: [],
@@ -132,202 +121,202 @@ export class SupabaseService {
     );
   }
 
-  async upsertRecipeAsync(recipe: Recipe) {
-    const session = await this.supabaseClient.auth.getSession();
+  // async upsertRecipeAsync(recipe: Recipe) {
+  //   const session = await this.supabaseClient.auth.getSession();
 
-    if (!session.data.session) {
-      throw new Error('no session');
-    }
+  //   if (!session.data.session) {
+  //     throw new Error('no session');
+  //   }
 
-    const userId = session.data.session.user.id;
+  //   const userId = session.data.session.user.id;
 
-    const upsertRecipeResponse = await this.supabaseClient
-      .from('recipe')
-      .upsert({
-        recipe_key: recipe.key,
-        name: recipe.name,
-        url: recipe.url,
-        user_id: userId,
-      })
-      .select();
+  //   const upsertRecipeResponse = await this.supabaseClient
+  //     .from('recipe')
+  //     .upsert({
+  //       recipe_key: recipe.key,
+  //       name: recipe.name,
+  //       url: recipe.url,
+  //       user_id: userId,
+  //     })
+  //     .select();
 
-    if (upsertRecipeResponse.error) {
-      throw new Error(upsertRecipeResponse.error.message);
-    }
+  //   if (upsertRecipeResponse.error) {
+  //     throw new Error(upsertRecipeResponse.error.message);
+  //   }
 
-    const ingredientsToUpsert = recipe.recipeIngredients.map(
-      (x) => x.ingredient
-    );
+  //   const ingredientsToUpsert = recipe.recipeIngredients.map(
+  //     (x) => x.ingredient
+  //   );
 
-    const upsertIngredientsResponse = await this.supabaseClient
-      .from('ingredient')
-      .upsert(
-        ingredientsToUpsert.map((x) => {
-          return {
-            key: x.key,
-            name: x.name,
-            units: x.units,
-            user_id: userId,
-          };
-        })
-      )
-      .select();
+  //   const upsertIngredientsResponse = await this.supabaseClient
+  //     .from('ingredient')
+  //     .upsert(
+  //       ingredientsToUpsert.map((x) => {
+  //         return {
+  //           key: x.key,
+  //           name: x.name,
+  //           units: x.units,
+  //           user_id: userId,
+  //         };
+  //       })
+  //     )
+  //     .select();
 
-    if (upsertIngredientsResponse.error) {
-      throw new Error(upsertIngredientsResponse.error.message);
-    }
+  //   if (upsertIngredientsResponse.error) {
+  //     throw new Error(upsertIngredientsResponse.error.message);
+  //   }
 
-    const recipeIngredientsToUpsert = recipe.recipeIngredients.map(
-      (recipeIngredient) => {
-        return {
-          ingredient_key: recipeIngredient.ingredient.key,
-          key: recipeIngredient.key,
-          quantity: recipeIngredient.quantity,
-          recipe_key: recipe.key,
-          user_id: userId,
-        };
-      }
-    );
+  //   const recipeIngredientsToUpsert = recipe.recipeIngredients.map(
+  //     (recipeIngredient) => {
+  //       return {
+  //         ingredient_key: recipeIngredient.ingredient.key,
+  //         key: recipeIngredient.key,
+  //         quantity: recipeIngredient.quantity,
+  //         recipe_key: recipe.key,
+  //         user_id: userId,
+  //       };
+  //     }
+  //   );
 
-    const upsertRecipeIngredientsResponse = await this.supabaseClient
-      .from('recipeingredient')
-      .upsert(recipeIngredientsToUpsert)
-      .select();
+  //   const upsertRecipeIngredientsResponse = await this.supabaseClient
+  //     .from('recipeingredient')
+  //     .upsert(recipeIngredientsToUpsert)
+  //     .select();
 
-    if (upsertRecipeIngredientsResponse.error) {
-      throw new Error(upsertRecipeIngredientsResponse.error.message);
-    }
+  //   if (upsertRecipeIngredientsResponse.error) {
+  //     throw new Error(upsertRecipeIngredientsResponse.error.message);
+  //   }
 
-    return recipe;
-  }
+  //   return recipe;
+  // }
 
-  upsertRecipe(recipe: Recipe): Observable<Recipe> {
-    const upsertRecipe$ = this.upsertRecipeEntity(recipe).pipe(
-      map((upsertRecipeResponse): Recipe => {
-        if (upsertRecipeResponse.error) {
-          throw new Error(upsertRecipeResponse.error.message);
-        }
-        return {
-          key: upsertRecipeResponse.data[0].recipe_key,
-          name: upsertRecipeResponse.data[0].name,
-          url: upsertRecipeResponse.data[0].url,
-          recipeIngredients: [],
-        };
-      })
-    );
+  // upsertRecipe(recipe: Recipe): Observable<Recipe> {
+  //   const upsertRecipe$ = this.upsertRecipeEntity(recipe).pipe(
+  //     map((upsertRecipeResponse): Recipe => {
+  //       if (upsertRecipeResponse.error) {
+  //         throw new Error(upsertRecipeResponse.error.message);
+  //       }
+  //       return {
+  //         key: upsertRecipeResponse.data[0].recipe_key,
+  //         name: upsertRecipeResponse.data[0].name,
+  //         url: upsertRecipeResponse.data[0].url,
+  //         recipeIngredients: [],
+  //       };
+  //     })
+  //   );
 
-    const upsertIngredients$ = this.upsertIngredients(
-      recipe.recipeIngredients.map((x) => x.ingredient)
-    ).pipe(
-      map((upsertIngredientsResponse): Ingredient[] => {
-        if (upsertIngredientsResponse.error) {
-          throw new Error(upsertIngredientsResponse.error.message);
-        }
-        return upsertIngredientsResponse.data.map((supaIngredient) => {
-          return {
-            key: supaIngredient.key,
-            name: supaIngredient.name,
-            units: supaIngredient.units,
-          };
-        });
-      })
-    );
+  //   const upsertIngredients$ = this.upsertIngredients(
+  //     recipe.recipeIngredients.map((x) => x.ingredient)
+  //   ).pipe(
+  //     map((upsertIngredientsResponse): Ingredient[] => {
+  //       if (upsertIngredientsResponse.error) {
+  //         throw new Error(upsertIngredientsResponse.error.message);
+  //       }
+  //       return upsertIngredientsResponse.data.map((supaIngredient) => {
+  //         return {
+  //           key: supaIngredient.key,
+  //           name: supaIngredient.name,
+  //           units: supaIngredient.units,
+  //         };
+  //       });
+  //     })
+  //   );
 
-    const upsertedRecipeIngredients$ = this.upsertRecipeIngredients(
-      recipe
-    ).pipe(
-      map((upsertedRecipeIngredientsResponse) => {
-        if (upsertedRecipeIngredientsResponse.error) {
-          throw new Error(upsertedRecipeIngredientsResponse.error.message);
-        }
+  //   const upsertedRecipeIngredients$ = this.upsertRecipeIngredients(
+  //     recipe
+  //   ).pipe(
+  //     map((upsertedRecipeIngredientsResponse) => {
+  //       if (upsertedRecipeIngredientsResponse.error) {
+  //         throw new Error(upsertedRecipeIngredientsResponse.error.message);
+  //       }
 
-        return upsertedRecipeIngredientsResponse.data.map((x) => {
-          return {
-            key: x.key,
-            quantity: x.quantity,
-            ingredient_key: x.ingredient_key,
-          };
-        });
-      })
-    );
-    return upsertRecipe$.pipe(
-      exhaustMap((upsertedRecipe) => {
-        return upsertIngredients$;
-      }),
-      exhaustMap((upsertedIngredients) => {
-        return upsertedRecipeIngredients$;
-      }),
-      exhaustMap((upsertedRecipeIngredients) => {
-        return of(recipe);
-      })
-    );
-  }
+  //       return upsertedRecipeIngredientsResponse.data.map((x) => {
+  //         return {
+  //           key: x.key,
+  //           quantity: x.quantity,
+  //           ingredient_key: x.ingredient_key,
+  //         };
+  //       });
+  //     })
+  //   );
+  //   return upsertRecipe$.pipe(
+  //     exhaustMap((upsertedRecipe) => {
+  //       return upsertIngredients$;
+  //     }),
+  //     exhaustMap((upsertedIngredients) => {
+  //       return upsertedRecipeIngredients$;
+  //     }),
+  //     exhaustMap((upsertedRecipeIngredients) => {
+  //       return of(recipe);
+  //     })
+  //   );
+  // }
 
-  private upsertRecipeEntity(recipe: Recipe) {
-    return this.getUserId().pipe(
-      exhaustMap((userId) => {
-        return from(
-          this.supabaseClient
-            .from('recipe')
-            .upsert({
-              recipe_key: recipe.key,
-              name: recipe.name,
-              url: recipe.url,
-              user_id: userId,
-            })
-            .select()
-        );
-      })
-    );
-  }
-  private upsertIngredients(ingredients: Ingredient[]) {
-    return this.getUserId().pipe(
-      exhaustMap((userId) => {
-        return from(
-          this.supabaseClient
-            .from('ingredient')
-            .upsert(
-              ingredients.map((x) => {
-                return {
-                  key: x.key,
-                  name: x.name,
-                  units: x.units,
-                  user_id: userId,
-                };
-              })
-            )
-            .select()
-        );
-      })
-    );
-  }
-  private upsertRecipeIngredients(recipe: Recipe) {
-    return this.getUserId().pipe(
-      exhaustMap((userId) => {
-        const recipeIngredientsToUpsert = recipe.recipeIngredients.map(
-          (recipeIngredient) => {
-            return {
-              ingredient_key: recipeIngredient.ingredient.key,
-              key: recipeIngredient.key,
-              quantity: recipeIngredient.quantity,
-              recipe_key: recipe.key,
-              user_id: userId,
-            };
-          }
-        );
-        return from(
-          this.supabaseClient
-            .from('recipeingredient')
-            .upsert(recipeIngredientsToUpsert)
-            .select()
-        );
-      })
-    );
-  }
+  // private upsertRecipeEntity(recipe: Recipe) {
+  //   return this.getUserId().pipe(
+  //     exhaustMap((userId) => {
+  //       return from(
+  //         this.supabaseClient
+  //           .from('recipe')
+  //           .upsert({
+  //             recipe_key: recipe.key,
+  //             name: recipe.name,
+  //             url: recipe.url,
+  //             user_id: userId,
+  //           })
+  //           .select()
+  //       );
+  //     })
+  //   );
+  // }
+  // private upsertIngredients(ingredients: Ingredient[]) {
+  //   return this.getUserId().pipe(
+  //     exhaustMap((userId) => {
+  //       return from(
+  //         this.supabaseClient
+  //           .from('ingredient')
+  //           .upsert(
+  //             ingredients.map((x) => {
+  //               return {
+  //                 key: x.key,
+  //                 name: x.name,
+  //                 units: x.units,
+  //                 user_id: userId,
+  //               };
+  //             })
+  //           )
+  //           .select()
+  //       );
+  //     })
+  //   );
+  // }
+  // private upsertRecipeIngredients(recipe: Recipe) {
+  //   return this.getUserId().pipe(
+  //     exhaustMap((userId) => {
+  //       const recipeIngredientsToUpsert = recipe.recipeIngredients.map(
+  //         (recipeIngredient) => {
+  //           return {
+  //             ingredient_key: recipeIngredient.ingredient.key,
+  //             key: recipeIngredient.key,
+  //             quantity: recipeIngredient.quantity,
+  //             recipe_key: recipe.key,
+  //             user_id: userId,
+  //           };
+  //         }
+  //       );
+  //       return from(
+  //         this.supabaseClient
+  //           .from('recipeingredient')
+  //           .upsert(recipeIngredientsToUpsert)
+  //           .select()
+  //       );
+  //     })
+  //   );
+  // }
 
   deleteRecipe(recipe: Recipe): Observable<never> {
     return from(
-      this.supabaseClient.from('recipe').delete().eq('key', recipe.key)
+      this.supabaseClient.from('recipe').delete().eq('id', recipe.id)
     ).pipe(
       exhaustMap((response) => {
         if (response.error) {

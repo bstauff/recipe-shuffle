@@ -16,8 +16,6 @@ import { Router } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { RecipeIngredient } from '../models/recipeingredient';
-import { Ingredient } from '../models/ingredient';
 import { badUrlValidator } from 'src/app/shared/form-validators/url-validator.directive';
 
 @Component({
@@ -37,9 +35,9 @@ import { badUrlValidator } from 'src/app/shared/form-validators/url-validator.di
 })
 export class EditRecipeComponent {
   @Input({ required: true })
-  set recipeKey(recipeKey: string) {
+  set recipeKey(recipeId: number) {
     this.recipeService
-      .getRecipe(recipeKey)
+      .getRecipe(recipeId)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (recipe) => {
@@ -52,7 +50,12 @@ export class EditRecipeComponent {
       });
   }
 
-  recipe: WritableSignal<Recipe> = signal(new Recipe('', null));
+  recipe: WritableSignal<Recipe> = signal({
+    id: -1,
+    name: '',
+    url: '',
+    recipeIngredients: [],
+  });
 
   ingredientForm = this.formBuilder.group({
     ingredientName: this.formBuilder.control('', Validators.required),
@@ -79,25 +82,25 @@ export class EditRecipeComponent {
     console.log('the recipe is: ', this.recipe());
   }
   onAddIngredient(): void {
-    if (
-      !this.ingredientForm.value.ingredientName ||
-      !this.ingredientForm.value.ingredientQuantity ||
-      !this.ingredientForm.value.ingredientUnits
-    ) {
-      throw new Error('bad ingredient form values!');
-    }
-    const updatedRecipe = { ...this.recipe() };
-    updatedRecipe.recipeIngredients.push(
-      new RecipeIngredient(
-        new Ingredient(
-          this.ingredientForm.value.ingredientName,
-          this.ingredientForm.value.ingredientUnits
-        ),
-        Number(this.ingredientForm.value.ingredientQuantity)
-      )
-    );
-    this.recipe.set(updatedRecipe);
-    console.log('updated recipe', updatedRecipe);
+    // if (
+    //   !this.ingredientForm.value.ingredientName ||
+    //   !this.ingredientForm.value.ingredientQuantity ||
+    //   !this.ingredientForm.value.ingredientUnits
+    // ) {
+    //   throw new Error('bad ingredient form values!');
+    // }
+    // const updatedRecipe = { ...this.recipe() };
+    // updatedRecipe.recipeIngredients.push(
+    //   new RecipeIngredient(
+    //     new Ingredient(
+    //       this.ingredientForm.value.ingredientName,
+    //       this.ingredientForm.value.ingredientUnits
+    //     ),
+    //     Number(this.ingredientForm.value.ingredientQuantity)
+    //   )
+    // );
+    // this.recipe.set(updatedRecipe);
+    // console.log('updated recipe', updatedRecipe);
   }
   onRecipeSave(): void {
     const recipe = this.recipe();
@@ -111,6 +114,6 @@ export class EditRecipeComponent {
 
     console.log('updated recipe is: ', recipe);
 
-    this.recipeService.upsertRecipe(recipe).subscribe();
+    // this.recipeService.upsertRecipe(recipe).subscribe();
   }
 }

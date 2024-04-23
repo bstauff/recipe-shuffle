@@ -6,7 +6,6 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { badUrlValidator } from 'src/app/shared/form-validators/url-validator.directive';
-import { Recipe } from '../models/recipe';
 import { RecipeService } from '../recipe.service';
 import { ErrorDisplayService } from 'src/app/shared/error-display.service';
 
@@ -43,21 +42,26 @@ export class AddRecipeComponent {
       console.error('null recipe name or value');
     }
 
-    const recipeName = this.recipeForm.get('name')?.value as string;
-    const recipeUrl = this.recipeForm.get('url')?.value;
-    const recipe = new Recipe(recipeName, recipeUrl);
+    // const recipeName = this.recipeForm.get('name')?.value as string;
+    // const recipeUrl = this.recipeForm.get('url')?.value;
+    // const recipe = {
+    //   id: -1,
+    //   name: recipeName,
+    //   url: recipeUrl,
+    //   recipeIngredients: [],
+    // };
 
     this.isAddRequestInProgress = true;
 
-    this.recipeService.upsertRecipe(recipe).subscribe({
-      next: () => {
-        this.isAddRequestInProgress = false;
-      },
-      error: (error: Error) => {
-        console.error('recipe add failed', error);
-        this.errorDisplayService.displayError(error.message);
-        this.isAddRequestInProgress = false;
-      },
-    });
+    // this.recipeService.upsertRecipe(recipe).subscribe({
+    //   next: () => {
+    //     this.isAddRequestInProgress = false;
+    //   },
+    //   error: (error: Error) => {
+    //     console.error('recipe add failed', error);
+    //     this.errorDisplayService.displayError(error.message);
+    //     this.isAddRequestInProgress = false;
+    //   },
+    // });
   }
 }

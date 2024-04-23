@@ -65,10 +65,10 @@ export class RecipeListComponent {
   onDelete(): void {
     console.warn('delete not implemented');
   }
-  onEdit(recipeKey: string): void {
-    console.log('navigating to edit for recipeKey', recipeKey);
+  onEdit(recipeId: number): void {
+    console.log('navigating to edit for recipeKey', recipeId);
     from(
-      this.router.navigate(['edit', recipeKey], { relativeTo: this.route })
+      this.router.navigate(['edit', recipeId], { relativeTo: this.route })
     ).subscribe({
       next: (value) => console.log('routing succeeded: ', value),
       error: (error) => console.error('routing failed', error),
