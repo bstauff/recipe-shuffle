@@ -1,9 +1,9 @@
 <div class="edit-recipe">
   <div class="edit-recipe__header">
-    <h1>Edit {{ this.recipe().name }}</h1>
+    <h1>Edit {{ recipe().name }}</h1>
   </div>
   <mat-divider></mat-divider>
-  <form [formGroup]="this.recipeForm" (submit)="onRecipeSave()">
+  <form [formGroup]="recipeForm" (submit)="onRecipeSave()">
     <div class="edit-recipe__basic-info">
       <h2>Basic Info</h2>
       <mat-form-field>
@@ -63,7 +63,7 @@
               type="submit"
               mat-mini-fab
               color="primary"
-              [disabled]="this.ingredientForm.invalid"
+              [disabled]="ingredientForm.invalid"
             >
               <mat-icon>add</mat-icon>
             </button>
@@ -83,7 +83,7 @@
           mat-raised-button
           color="primary"
           type="submit"
-          [disabled]="this.recipeForm.invalid"
+          [disabled]="recipeForm.invalid"
         >
           Save
         </button>
