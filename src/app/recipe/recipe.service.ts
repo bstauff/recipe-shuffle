@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Recipe } from './models/recipe';
-import { Observable, ReplaySubject, map, of } from 'rxjs';
+import { Observable, ReplaySubject, of } from 'rxjs';
 
 @Injectable({ providedIn: 'root' })
 export class RecipeService {
@@ -18,7 +18,9 @@ export class RecipeService {
     const storedRecipes = localStorage.getItem(this.STORAGE_KEY);
     if (storedRecipes) {
       const recipes: Recipe[] = JSON.parse(storedRecipes);
-      this.recipeCollection = new Map(recipes.map(recipe => [recipe.id!, recipe]));
+      this.recipeCollection = new Map(
+        recipes.map((recipe) => [recipe.id!, recipe])
+      );
       this.pushRecipesUpdated();
     }
   }
@@ -31,9 +33,7 @@ export class RecipeService {
   }
 
   private pushRecipesUpdated(): void {
-    this.recipesChanged.next(
-      Array.from(this.recipeCollection.values())
-    );
+    this.recipesChanged.next(Array.from(this.recipeCollection.values()));
   }
 
   upsertRecipe(recipe: Recipe): Observable<Recipe> {

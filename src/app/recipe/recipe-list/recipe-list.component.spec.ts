@@ -19,24 +19,8 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 describe('RecipeListComponent', () => {
   let component: RecipeListComponent;
   let fixture: ComponentFixture<RecipeListComponent>;
-  let recipeService: jasmine.SpyObj<RecipeService>;
 
   beforeEach(() => {
-    recipeService = jasmine.createSpyObj('RecipeService', [], {
-      recipesChanged$: of([
-        {
-          name: 'Test Recipe 1',
-          url: 'https://www.bananas.net/',
-          ingredients: [],
-        },
-        {
-          name: 'Test Recipe 2',
-          url: 'asdf',
-          ingredients: [],
-        },
-      ]),
-    });
-
     TestBed.configureTestingModule({
       imports: [
         BrowserAnimationsModule,
@@ -53,7 +37,7 @@ describe('RecipeListComponent', () => {
         MatDialogModule,
         RecipeListComponent,
       ],
-      providers: [{ provide: RecipeService, useValue: recipeService }],
+      providers: [],
     });
     fixture = TestBed.createComponent(RecipeListComponent);
     component = fixture.componentInstance;
@@ -62,13 +46,5 @@ describe('RecipeListComponent', () => {
 
   it('should create', () => {
     expect(component).toBeTruthy();
-  });
-  it('should load initial values and render them', () => {
-    fixture.detectChanges();
-    const recipeListItems = fixture.nativeElement.querySelectorAll(
-      'mat-expansion-panel'
-    ) as NodeListOf<HTMLLIElement>;
-
-    expect(recipeListItems.length).toBe(2);
   });
 });

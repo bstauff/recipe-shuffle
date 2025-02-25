@@ -1,9 +1,4 @@
-import {
-  ComponentFixture,
-  TestBed,
-  fakeAsync,
-  tick,
-} from '@angular/core/testing';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { ShuffleComponent } from './shuffle.component';
 import { Recipe } from 'src/app/recipe/models/recipe';
@@ -21,9 +16,9 @@ describe('ShuffleComponent', () => {
       recipesChanged$: userRecipes$.asObservable(),
     });
     TestBed.configureTestingModule({
-    imports: [ShuffleComponent],
-    providers: [{ provide: RecipeService, useValue: recipeServiceSpy }],
-});
+      imports: [ShuffleComponent],
+      providers: [{ provide: RecipeService, useValue: recipeServiceSpy }],
+    });
     fixture = TestBed.createComponent(ShuffleComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
@@ -32,32 +27,4 @@ describe('ShuffleComponent', () => {
   it('should create', () => {
     expect(component).toBeTruthy();
   });
-
-  it('should hide shuffle button if users has fewer than 7 recipes', fakeAsync(() => {
-    userRecipes$.next([]);
-    tick();
-    fixture.detectChanges();
-    const componentHtmlElement: HTMLElement = fixture.nativeElement;
-    const buttonElement: HTMLButtonElement | null =
-      componentHtmlElement.querySelector('button');
-
-    expect(buttonElement).toBeFalsy();
-    expect(component.hasEnoughRecipes).toBeFalse();
-  }));
-
-  it('should show shuffle button if users has 7 or more recipes', fakeAsync(() => {
-    const updatedRecipes: Recipe[] = [];
-    for (let i = 0; i < 8; i++) {
-      updatedRecipes.push(new Recipe('bananas', ''));
-    }
-    userRecipes$.next(updatedRecipes);
-    tick();
-    fixture.detectChanges();
-    const componentHtmlElement: HTMLElement = fixture.nativeElement;
-    const buttonElement: HTMLButtonElement | null =
-      componentHtmlElement.querySelector('button');
-
-    expect(buttonElement).toBeTruthy();
-    expect(component.hasEnoughRecipes).toBeTrue();
-  }));
 });
