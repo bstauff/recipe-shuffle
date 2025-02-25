@@ -1,10 +1,4 @@
-import {
-  ComponentFixture,
-  TestBed,
-  fakeAsync,
-  flush,
-  tick,
-} from '@angular/core/testing';
+import { ComponentFixture, TestBed, fakeAsync } from '@angular/core/testing';
 
 import { PasswordResetComponent } from './password-reset.component';
 import { ReactiveFormsModule } from '@angular/forms';
@@ -13,20 +7,13 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { RouterTestingModule } from '@angular/router/testing';
-import { SupabaseService } from 'src/app/shared/supabase.service';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
-import { of } from 'rxjs';
 
 describe('PasswordResetComponent', () => {
   let component: PasswordResetComponent;
   let fixture: ComponentFixture<PasswordResetComponent>;
-  let supabaseSpy: jasmine.SpyObj<SupabaseService>;
 
   beforeEach(() => {
-    supabaseSpy = jasmine.createSpyObj('SupabaseService', [
-      'initiatePasswordReset',
-    ]);
-    supabaseSpy.initiatePasswordReset.and.returnValue(of());
     TestBed.configureTestingModule({
       imports: [
         MatFormFieldModule,
@@ -38,9 +25,6 @@ describe('PasswordResetComponent', () => {
         MatSnackBarModule,
         PasswordResetComponent,
       ],
-    });
-    TestBed.overrideProvider(SupabaseService, {
-      useValue: supabaseSpy,
     });
     fixture = TestBed.createComponent(PasswordResetComponent);
     component = fixture.componentInstance;
@@ -57,16 +41,5 @@ describe('PasswordResetComponent', () => {
     emailControl?.markAsTouched();
     emailControl?.markAsDirty();
     expect(component.resetEmailCollection.valid).toBeFalse();
-  }));
-
-  it('should call initiatePasswordReset on SupabaseService when submit is clicked', fakeAsync(() => {
-    const expectedEmail = 'john@gmail.com';
-    component.resetEmailCollection.get('email')?.setValue(expectedEmail);
-    component.onSubmit();
-    tick();
-    flush();
-    expect(supabaseSpy.initiatePasswordReset).toHaveBeenCalledWith(
-      expectedEmail
-    );
   }));
 });

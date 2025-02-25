@@ -1,6 +1,10 @@
 import { Component } from '@angular/core';
-import { FormBuilder, FormControl, FormGroupDirective, NgForm, Validators, ReactiveFormsModule } from '@angular/forms';
-import { SupabaseService } from 'src/app/shared/supabase.service';
+import {
+  FormBuilder,
+  FormControl,
+  Validators,
+  ReactiveFormsModule,
+} from '@angular/forms';
 import { passwordsMatchValidator } from './register.passwords.validator';
 import { ErrorStateMatcher } from '@angular/material/core';
 import { MatButton } from '@angular/material/button';
@@ -9,18 +13,18 @@ import { MatInput } from '@angular/material/input';
 import { MatFormField, MatLabel, MatError } from '@angular/material/form-field';
 
 @Component({
-    selector: 'app-register',
-    templateUrl: './register.component.html',
-    styleUrls: ['./register.component.scss'],
-    imports: [
-        ReactiveFormsModule,
-        MatFormField,
-        MatLabel,
-        MatInput,
-        NgIf,
-        MatError,
-        MatButton,
-    ]
+  selector: 'app-register',
+  templateUrl: './register.component.html',
+  styleUrls: ['./register.component.scss'],
+  imports: [
+    ReactiveFormsModule,
+    MatFormField,
+    MatLabel,
+    MatInput,
+    NgIf,
+    MatError,
+    MatButton,
+  ],
 })
 export class RegisterComponent {
   passwordMismatchErrorStateMatcher = new PasswordMismatchErrorStateMatcher();
@@ -39,8 +43,7 @@ export class RegisterComponent {
   });
 
   constructor(
-    private formBuilder: FormBuilder,
-    private supabaseService: SupabaseService
+    private formBuilder: FormBuilder
   ) {}
 
   onSubmit() {
@@ -56,9 +59,6 @@ export class RegisterComponent {
 
     if (password !== confirmPassword) return;
 
-    this.supabaseService.signUpUser(email, password).subscribe({
-      error: (error) => console.error('sign up failed', error),
-    });
     this.registerForm.reset();
   }
   hasPasswordMatchError(): boolean | undefined {
@@ -75,7 +75,6 @@ export class RegisterComponent {
 export class PasswordMismatchErrorStateMatcher extends ErrorStateMatcher {
   override isErrorState(
     control: FormControl | null,
-    form: FormGroupDirective | NgForm | null
   ): boolean {
     if (control?.dirty && control.touched && control.invalid) {
       return true;

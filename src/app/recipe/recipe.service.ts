@@ -1,66 +1,64 @@
 import { Injectable } from '@angular/core';
 import { Recipe } from './models/recipe';
-import { Observable, ReplaySubject, map } from 'rxjs';
-import { SupabaseService } from '../shared/supabase.service';
+import { Observable, ReplaySubject, map, of } from 'rxjs';
 
 @Injectable({ providedIn: 'root' })
 export class RecipeService {
   private recipeCollection: Map<number, Recipe> = new Map<number, Recipe>();
+  private readonly STORAGE_KEY = 'recipes';
 
   private recipesChanged = new ReplaySubject<Recipe[]>(1);
   recipesChanged$: Observable<Recipe[]> = this.recipesChanged.asObservable();
 
-  constructor(private supabaseService: SupabaseService) {
-    supabaseService
-      .getRecipes()
-      .pipe(
-        map((recipes: Recipe[]) => {
-          return new Map(recipes.map((recipe) => [recipe.id!, recipe]));
-        })
-      )
-      .subscribe({
-        next: (recipes) => {
-          this.recipeCollection = recipes;
-          this.pushRecipesUpdated();
-        },
-        error: (error) =>
-          console.error('failed to fetch initial recipes', error),
-      });
+  constructor() {
+    this.loadFromLocalStorage();
+  }
+
+  private loadFromLocalStorage(): void {
+    const storedRecipes = localStorage.getItem(this.STORAGE_KEY);
+    if (storedRecipes) {
+      const recipes: Recipe[] = JSON.parse(storedRecipes);
+      this.recipeCollection = new Map(recipes.map(recipe => [recipe.id!, recipe]));
+      this.pushRecipesUpdated();
+    }
+  }
+
+  private saveToLocalStorage(): void {
+    localStorage.setItem(
+      this.STORAGE_KEY,
+      JSON.stringify([...this.recipeCollection.values()])
+    );
   }
 
   private pushRecipesUpdated(): void {
     this.recipesChanged.next(
-      Object.values([...this.recipeCollection.values()])
+      Array.from(this.recipeCollection.values())
     );
   }
 
-  // upsertRecipe(recipe: Recipe): Observable<Recipe> {
-  //   // upsert recipe
-  //   return this.supabaseService
-  //     .upsertRecipe(recipe)
-  //     .pipe(
-  //       tap((upsertedRecipe: Recipe) =>
-  //         this.updateRecipeInCollection(upsertedRecipe)
-  //       )
-  //     );
-  // }
-
-  getRecipe(recipeId: number): Observable<Recipe> {
-    return this.supabaseService.getRecipe(recipeId);
+  upsertRecipe(recipe: Recipe): Observable<Recipe> {
+    if (!recipe.id) {
+      recipe.id = Date.now();
+    }
+    this.recipeCollection.set(recipe.id, recipe);
+    this.saveToLocalStorage();
+    this.pushRecipesUpdated();
+    return of(recipe);
   }
 
-  private updateRecipeInCollection(recipe: Recipe) {
-    if (!recipe.id) {
-      throw new Error('no id on recipe');
-    }
-    if (this.recipeCollection.has(recipe.id)) {
-      const existingRecipe = this.recipeCollection.get(recipe.id) as Recipe;
-      existingRecipe.name = recipe.name;
-      existingRecipe.url = recipe.url;
-    } else {
-      this.recipeCollection.set(recipe.id, recipe);
-    }
+  getRecipe(recipeId: number): Observable<Recipe> {
+    const recipe = this.recipeCollection.get(recipeId);
+    return recipe ? of(recipe) : of();
+  }
 
+  deleteRecipe(recipeId: number): Observable<void> {
+    this.recipeCollection.delete(recipeId);
+    this.saveToLocalStorage();
     this.pushRecipesUpdated();
+    return of(void 0);
+  }
+
+  getRecipes(): Observable<Recipe[]> {
+    return of(Array.from(this.recipeCollection.values()));
   }
 }

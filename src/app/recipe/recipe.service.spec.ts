@@ -1,57 +1,64 @@
-import { of } from 'rxjs';
-import { SupabaseService } from '../shared/supabase.service';
+import { TestBed } from '@angular/core/testing';
+import { Recipe } from './models/recipe';
 import { RecipeService } from './recipe.service';
 
 describe('RecipeService', () => {
-  let supabaseSpy: jasmine.SpyObj<SupabaseService>;
   let recipeService: RecipeService;
-
-  const existingRecipe = {
-    key: '98755a3e-7c05-4a6a-be02-f42e6532c734',
-    name: 'Fruit Salad',
-    url: 'https://fruitsalad.net/',
-  };
-
-  const existingRecipes = [existingRecipe];
+  let localStorageSpy: jasmine.SpyObj<Storage>;
 
   beforeEach(() => {
-    supabaseSpy = jasmine.createSpyObj('SupabaseService', [
-      'getRecipes',
-      'deleteRecipe',
-      'deleteIngredients',
-      'upsertRecipe',
-    ]);
+    localStorageSpy = jasmine.createSpyObj('localStorage', ['getItem', 'setItem']);
+    spyOn(window.localStorage, 'getItem').and.callFake(localStorageSpy.getItem);
+    spyOn(window.localStorage, 'setItem').and.callFake(localStorageSpy.setItem);
 
-    supabaseSpy.getRecipes.and.returnValue(of(existingRecipes));
-    supabaseSpy.upsertRecipe.and.callFake((givenRecipe) => of(givenRecipe));
+    TestBed.configureTestingModule({
+      providers: [RecipeService]
+    });
 
-    recipeService = new RecipeService(supabaseSpy);
+    recipeService = TestBed.inject(RecipeService);
   });
 
-  it('should load recipes on construction', (done) => {
-    recipeService.recipesChanged$.subscribe({
-      next: (recipes) => {
-        expect(recipes.length).toBeGreaterThan(0);
-        expect(recipes[0].key).toBe(existingRecipe.key);
-        done();
-      },
+  it('should be created', () => {
+    expect(recipeService).toBeTruthy();
+  });
+
+  it('should load recipes from localStorage on init', () => {
+    const mockRecipes: Recipe[] = [
+      { id: 1, name: 'Test Recipe 1', url: 'http://test1.com' },
+      { id: 2, name: 'Test Recipe 2', url: 'http://test2.com' }
+    ];
+    localStorageSpy.getItem.and.returnValue(JSON.stringify(mockRecipes));
+
+    recipeService = TestBed.inject(RecipeService);
+
+    recipeService.getRecipes().subscribe(recipes => {
+      expect(recipes).toEqual(mockRecipes);
     });
   });
 
-  it('should add new recipes', (done) => {
-    const newRecipe = {
-      name: 'Potato Salad',
-      key: '3ce4a010-1594-44f4-851f-63cff4ec2116',
-      url: 'https://potatosalad.net/',
-    };
+  it('should save recipes to localStorage when upserting', () => {
+    const newRecipe: Recipe = { name: 'New Recipe', url: 'http://new.com' };
 
-    recipeService.addRecipe(newRecipe).subscribe();
+    recipeService.upsertRecipe(newRecipe).subscribe();
 
-    recipeService.recipesChanged$.subscribe({
-      next: (recipes) => {
-        expect(recipes.length).toBe(2);
-        done();
-      },
-    });
+    expect(localStorageSpy.setItem).toHaveBeenCalled();
+    const savedRecipes = JSON.parse(localStorageSpy.setItem.calls.mostRecent().args[1]);
+    expect(savedRecipes[0].name).toBe(newRecipe.name);
+    expect(savedRecipes[0].url).toBe(newRecipe.url);
+    expect(savedRecipes[0].id).toBeDefined();
+  });
+
+  it('should delete recipe and update localStorage', () => {
+    const mockRecipes: Recipe[] = [
+      { id: 1, name: 'Test Recipe 1', url: 'http://test1.com' }
+    ];
+    localStorageSpy.getItem.and.returnValue(JSON.stringify(mockRecipes));
+    recipeService = TestBed.inject(RecipeService);
+
+    recipeService.deleteRecipe(1).subscribe();
+
+    expect(localStorageSpy.setItem).toHaveBeenCalled();
+    const savedRecipes = JSON.parse(localStorageSpy.setItem.calls.mostRecent().args[1]);
+    expect(savedRecipes.length).toBe(0);
   });
 });

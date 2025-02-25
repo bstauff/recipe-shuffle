@@ -1,5 +1,4 @@
 import { Routes } from '@angular/router';
-import { LoginGuard } from './account/login.guard';
 import { RecipeListComponent } from './recipe/recipe-list/recipe-list.component';
 import { AccountComponent } from './account/account.component';
 import { LoginComponent } from './account/login/login.component';
@@ -13,12 +12,10 @@ export const routes: Routes = [
   {
     path: 'recipes',
     component: RecipeListComponent,
-    canActivate: [LoginGuard],
   },
   {
     path: 'recipes/edit/:recipeKey',
-    component: EditRecipeComponent,
-    canActivate: [LoginGuard],
+    component: EditRecipeComponent
   },
   {
     path: 'account',
@@ -45,7 +42,6 @@ export const routes: Routes = [
   {
     path: 'meal-plan',
     component: MealPlanComponent,
-    canActivate: [LoginGuard],
   },
   {
     path: '**',
