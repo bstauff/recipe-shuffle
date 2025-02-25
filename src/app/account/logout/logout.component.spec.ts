@@ -1,6 +1,5 @@
 import {
   TestBed,
-  fakeAsync,
   waitForAsync,
 } from '@angular/core/testing';
 import { LogoutComponent } from './logout.component';
