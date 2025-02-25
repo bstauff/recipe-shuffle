@@ -5,7 +5,6 @@ import { ShuffleComponent } from './shuffle/shuffle.component';
     selector: 'app-meal-plan',
     templateUrl: './meal-plan.component.html',
     styleUrls: ['./meal-plan.component.scss'],
-    standalone: true,
     imports: [ShuffleComponent]
 })
 export class MealPlanComponent {

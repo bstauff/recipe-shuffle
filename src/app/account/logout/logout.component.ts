@@ -8,8 +8,7 @@ import { MatButton } from '@angular/material/button';
     selector: 'app-logout',
     templateUrl: './logout.component.html',
     styleUrls: ['./logout.component.scss'],
-    standalone: true,
-    imports: [MatButton],
+    imports: [MatButton]
 })
 export class LogoutComponent implements OnDestroy {
   destroy$ = new Subject();

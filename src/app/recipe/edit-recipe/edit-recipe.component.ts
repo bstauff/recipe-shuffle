@@ -19,19 +19,18 @@ import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { badUrlValidator } from 'src/app/shared/form-validators/url-validator.directive';
 
 @Component({
-  selector: 'app-edit-recipe',
-  standalone: true,
-  imports: [
-    MatCardModule,
-    MatDividerModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatButtonModule,
-    MatIconModule,
-    ReactiveFormsModule,
-  ],
-  templateUrl: './edit-recipe.component.html',
-  styleUrl: './edit-recipe.component.scss',
+    selector: 'app-edit-recipe',
+    imports: [
+        MatCardModule,
+        MatDividerModule,
+        MatFormFieldModule,
+        MatInputModule,
+        MatButtonModule,
+        MatIconModule,
+        ReactiveFormsModule,
+    ],
+    templateUrl: './edit-recipe.component.html',
+    styleUrl: './edit-recipe.component.scss'
 })
 export class EditRecipeComponent {
   @Input({ required: true })

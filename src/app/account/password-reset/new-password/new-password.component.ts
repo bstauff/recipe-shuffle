@@ -15,7 +15,6 @@ import { MatFormField, MatLabel, MatError } from '@angular/material/form-field';
     selector: 'app-password-confirmation',
     templateUrl: './new-password.component.html',
     styleUrls: ['./new-password.component.scss'],
-    standalone: true,
     imports: [
         ReactiveFormsModule,
         MatFormField,
@@ -24,7 +23,7 @@ import { MatFormField, MatLabel, MatError } from '@angular/material/form-field';
         NgIf,
         MatError,
         MatButton,
-    ],
+    ]
 })
 export class NewPasswordComponent implements OnDestroy {
   passMismatchErrorStateMatcher = new PasswordMismatchErrorStateMatcher();

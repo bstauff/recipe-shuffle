@@ -12,7 +12,6 @@ import { MatFormField, MatLabel, MatError } from '@angular/material/form-field';
     selector: 'app-register',
     templateUrl: './register.component.html',
     styleUrls: ['./register.component.scss'],
-    standalone: true,
     imports: [
         ReactiveFormsModule,
         MatFormField,
@@ -21,7 +20,7 @@ import { MatFormField, MatLabel, MatError } from '@angular/material/form-field';
         NgIf,
         MatError,
         MatButton,
-    ],
+    ]
 })
 export class RegisterComponent {
   passwordMismatchErrorStateMatcher = new PasswordMismatchErrorStateMatcher();

@@ -5,7 +5,6 @@ import { RouterOutlet } from '@angular/router';
     selector: 'app-account',
     templateUrl: './account.component.html',
     styleUrls: ['./account.component.scss'],
-    standalone: true,
-    imports: [RouterOutlet],
+    imports: [RouterOutlet]
 })
 export class AccountComponent {}

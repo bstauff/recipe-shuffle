@@ -12,7 +12,6 @@ import { MatFormField, MatLabel, MatError } from '@angular/material/form-field';
     selector: 'app-password-reset',
     templateUrl: './password-reset.component.html',
     styleUrls: ['./password-reset.component.scss'],
-    standalone: true,
     imports: [
         ReactiveFormsModule,
         MatFormField,
@@ -21,7 +20,7 @@ import { MatFormField, MatLabel, MatError } from '@angular/material/form-field';
         NgIf,
         MatError,
         MatButton,
-    ],
+    ]
 })
 export class PasswordResetComponent implements OnDestroy {
   resetEmailCollection: FormGroup = this.formBuilder.group({

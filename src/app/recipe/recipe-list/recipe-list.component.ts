@@ -19,24 +19,23 @@ import { MatList } from '@angular/material/list';
 import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
-  selector: 'app-recipe-list',
-  templateUrl: './recipe-list.component.html',
-  styleUrls: ['./recipe-list.component.scss'],
-  standalone: true,
-  imports: [
-    MatList,
-    MatFabButton,
-    MatIcon,
-    MatDivider,
-    MatAccordion,
-    NgFor,
-    MatExpansionPanel,
-    MatExpansionPanelHeader,
-    MatExpansionPanelTitle,
-    MatExpansionPanelActionRow,
-    MatIconButton,
-    AsyncPipe,
-  ],
+    selector: 'app-recipe-list',
+    templateUrl: './recipe-list.component.html',
+    styleUrls: ['./recipe-list.component.scss'],
+    imports: [
+        MatList,
+        MatFabButton,
+        MatIcon,
+        MatDivider,
+        MatAccordion,
+        NgFor,
+        MatExpansionPanel,
+        MatExpansionPanelHeader,
+        MatExpansionPanelTitle,
+        MatExpansionPanelActionRow,
+        MatIconButton,
+        AsyncPipe,
+    ]
 })
 export class RecipeListComponent {
   isShowingAdd = false;

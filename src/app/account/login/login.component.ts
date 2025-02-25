@@ -11,7 +11,6 @@ import { NgIf } from '@angular/common';
     selector: 'app-login',
     templateUrl: './login.component.html',
     styleUrls: ['./login.component.scss'],
-    standalone: true,
     imports: [
         NgIf,
         MatError,
@@ -21,7 +20,7 @@ import { NgIf } from '@angular/common';
         MatInput,
         MatButton,
         RouterLink,
-    ],
+    ]
 })
 export class LoginComponent {
   loginForm = this.formBuilder.group({

@@ -10,18 +10,17 @@ import { RecipeService } from '../recipe.service';
 import { ErrorDisplayService } from 'src/app/shared/error-display.service';
 
 @Component({
-  selector: 'app-add-recipe',
-  standalone: true,
-  imports: [
-    MatButtonModule,
-    MatCardModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatProgressSpinnerModule,
-    ReactiveFormsModule,
-  ],
-  templateUrl: './add-recipe.component.html',
-  styleUrl: './add-recipe.component.scss',
+    selector: 'app-add-recipe',
+    imports: [
+        MatButtonModule,
+        MatCardModule,
+        MatFormFieldModule,
+        MatInputModule,
+        MatProgressSpinnerModule,
+        ReactiveFormsModule,
+    ],
+    templateUrl: './add-recipe.component.html',
+    styleUrl: './add-recipe.component.scss'
 })
 export class AddRecipeComponent {
   recipeForm = this.formBuilder.group({

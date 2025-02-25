@@ -10,7 +10,6 @@ import { NgIf, NgFor } from '@angular/common';
     selector: 'app-shuffle',
     templateUrl: './shuffle.component.html',
     styleUrls: ['./shuffle.component.scss'],
-    standalone: true,
     imports: [
         NgIf,
         MatButton,
@@ -19,7 +18,7 @@ import { NgIf, NgFor } from '@angular/common';
         MatCardTitle,
         MatCardSubtitle,
         MatCardContent,
-    ],
+    ]
 })
 export class ShuffleComponent implements OnInit, OnDestroy {
   hasEnoughRecipes = false;

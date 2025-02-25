@@ -11,7 +11,6 @@ import { MatToolbar } from '@angular/material/toolbar';
     selector: 'app-root',
     templateUrl: './app.component.html',
     styleUrls: ['./app.component.scss'],
-    standalone: true,
     imports: [
         MatToolbar,
         MatIconButton,
@@ -24,7 +23,7 @@ import { MatToolbar } from '@angular/material/toolbar';
         LogoutComponent,
         MatSidenavContent,
         RouterOutlet,
-    ],
+    ]
 })
 export class AppComponent {
   title = 'recipe-shuffle';
