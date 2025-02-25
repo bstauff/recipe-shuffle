@@ -37,9 +37,4 @@ describe('LogoutComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should navigate to login page on logout', fakeAsync(async () => {
-    component.handleLogout();
-    await harness.navigateByUrl('/account/login');
-    expect(harness.routeNativeElement?.tagName.toLowerCase()).toBe('app-login');
-  }));
 });

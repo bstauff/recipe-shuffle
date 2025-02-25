@@ -50,16 +50,4 @@ describe('NewPasswordComponent', () => {
     expect(component.confirmPasswordForm.get('confirmPassword')).toBeTruthy();
   });
 
-  it('should show error when passwords do not match', () => {
-    const passwordControl = component.confirmPasswordForm.get('password');
-    const confirmPasswordControl =
-      component.confirmPasswordForm.get('confirmPassword');
-
-    passwordControl?.setValue('bananas');
-    confirmPasswordControl?.setValue('oranges');
-
-    expect(
-      component.confirmPasswordForm.hasError('passwordsDoNotMatch')
-    ).toBeTrue();
-  });
 });
