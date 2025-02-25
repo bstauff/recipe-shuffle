@@ -2,11 +2,23 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Subject, takeUntil } from 'rxjs';
 import { Recipe } from 'src/app/recipe/models/recipe';
 import { RecipeService } from 'src/app/recipe/recipe.service';
+import { MatCard, MatCardTitle, MatCardSubtitle, MatCardContent } from '@angular/material/card';
+import { MatButton } from '@angular/material/button';
+import { NgIf, NgFor } from '@angular/common';
 
 @Component({
-  selector: 'app-shuffle',
-  templateUrl: './shuffle.component.html',
-  styleUrls: ['./shuffle.component.scss'],
+    selector: 'app-shuffle',
+    templateUrl: './shuffle.component.html',
+    styleUrls: ['./shuffle.component.scss'],
+    imports: [
+        NgIf,
+        MatButton,
+        NgFor,
+        MatCard,
+        MatCardTitle,
+        MatCardSubtitle,
+        MatCardContent,
+    ]
 })
 export class ShuffleComponent implements OnInit, OnDestroy {
   hasEnoughRecipes = false;

@@ -27,9 +27,9 @@ describe('MealPlanComponent', () => {
     });
 
     TestBed.configureTestingModule({
-      declarations: [MealPlanComponent, ShuffleComponent],
-      providers: [{ provide: RecipeService, useValue: recipeService }],
-    });
+    imports: [MealPlanComponent, ShuffleComponent],
+    providers: [{ provide: RecipeService, useValue: recipeService }],
+});
 
     fixture = TestBed.createComponent(MealPlanComponent);
     component = fixture.componentInstance;

@@ -1,137 +1,118 @@
-import { Component, Inject, OnInit, ViewChild } from '@angular/core';
+import {
+  Component,
+  DestroyRef,
+  Input,
+  WritableSignal,
+  signal,
+} from '@angular/core';
 import { Recipe } from '../models/recipe';
-import { FormBuilder, Validators } from '@angular/forms';
-import { Ingredient } from '../models/ingredient';
+import { MatCardModule } from '@angular/material/card';
 import { RecipeService } from '../recipe.service';
-import { MatTable } from '@angular/material/table';
-import { MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { COMMA, ENTER } from '@angular/cdk/keycodes';
-import { MatChipEditedEvent, MatChipInputEvent } from '@angular/material/chips';
-import { Tag } from '../models/tag';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { MatDividerModule } from '@angular/material/divider';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { Router } from '@angular/router';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { badUrlValidator } from 'src/app/shared/form-validators/url-validator.directive';
 
 @Component({
-  selector: 'app-edit-recipe',
-  templateUrl: './edit-recipe.component.html',
-  styleUrls: ['./edit-recipe.component.scss'],
+    selector: 'app-edit-recipe',
+    imports: [
+        MatCardModule,
+        MatDividerModule,
+        MatFormFieldModule,
+        MatInputModule,
+        MatButtonModule,
+        MatIconModule,
+        ReactiveFormsModule,
+    ],
+    templateUrl: './edit-recipe.component.html',
+    styleUrl: './edit-recipe.component.scss'
 })
-export class EditRecipeComponent implements OnInit {
-  @ViewChild(MatTable)
-  table: MatTable<Ingredient[]> | undefined;
+export class EditRecipeComponent {
+  @Input({ required: true })
+  set recipeKey(recipeId: number) {
+    this.recipeService
+      .getRecipe(recipeId)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (recipe) => {
+          this.recipe.set(recipe);
+          this.recipeForm.patchValue({
+            recipeName: recipe.name,
+            recipeUrl: recipe.url,
+          });
+        },
+      });
+  }
 
-  displayedColumns: string[] = ['name', 'quantity', 'deleteButton'];
-  updatedIngredients: Ingredient[] = [];
-  deletedIngredients: Ingredient[] = [];
+  recipe: WritableSignal<Recipe> = signal({
+    id: -1,
+    name: '',
+    url: '',
+    recipeIngredients: [],
+  });
 
-  recipeTags: string[] = [];
-
-  readonly separatorKeyCodes = [ENTER, COMMA] as const;
-  addOnBlur = true;
+  ingredientForm = this.formBuilder.group({
+    ingredientName: this.formBuilder.control('', Validators.required),
+    ingredientQuantity: this.formBuilder.control('', Validators.required),
+    ingredientUnits: this.formBuilder.control('', Validators.required),
+  });
 
   recipeForm = this.formBuilder.group({
-    name: this.formBuilder.control('', { validators: [Validators.required] }),
-    url: this.formBuilder.control('', { validators: [Validators.required] }),
-    tag: this.formBuilder.control('', { validators: [] }),
-    ingredient: this.formBuilder.group({
-      name: this.formBuilder.control('', { validators: [Validators.required] }),
-      quantity: this.formBuilder.control('', {
-        validators: [Validators.required],
-      }),
-    }),
+    recipeName: this.formBuilder.control('', Validators.required),
+    recipeUrl: this.formBuilder.control('', badUrlValidator),
   });
 
   constructor(
-    private formBuilder: FormBuilder,
     private recipeService: RecipeService,
-    @Inject(MAT_DIALOG_DATA) public recipe: Recipe
+    private destroyRef: DestroyRef,
+    private router: Router,
+    private formBuilder: FormBuilder
   ) {}
 
-  ngOnInit(): void {
-    this.recipeForm.patchValue(this.recipe);
-    this.updatedIngredients = this.recipe.ingredients.slice();
+  onCancel(): void {
+    this.router.navigateByUrl('../');
   }
-
-  onSubmit(): void {
-    const updatedRecipe = this.recipeForm.value as Recipe;
-
-    this.recipe.name = updatedRecipe.name;
-    this.recipe.url = updatedRecipe.url;
-
-    console.log('updated tags', this.recipeTags);
-
-    const updatedTags = this.recipeTags.map((x) => new Tag(x));
-
-    this.recipe.tags = updatedTags;
-
-    this.recipe.ingredients = this.updatedIngredients.slice();
-
-    this.recipeService.upsertRecipe(this.recipe);
-    this.recipeService.deleteIngredients(this.deletedIngredients);
-
-    this.deletedIngredients = [];
-    this.recipeForm.reset();
+  onSave(): void {
+    console.log('the recipe is: ', this.recipe());
   }
-
   onAddIngredient(): void {
-    if (this.recipeForm.get('ingredient')?.invalid) {
-      return;
-    }
-
-    const ingredientName = this.recipeForm.value?.ingredient?.name;
-    const ingredientCount = this.recipeForm.value?.ingredient?.quantity;
-
-    if (!ingredientName || !ingredientCount) {
-      return;
-    }
-
-    const ingredient = new Ingredient(ingredientName, Number(ingredientCount));
-
-    this.updatedIngredients.push(ingredient);
-
-    this.recipeForm.get('ingredient')?.reset();
-
-    this.table?.renderRows();
+    // if (
+    //   !this.ingredientForm.value.ingredientName ||
+    //   !this.ingredientForm.value.ingredientQuantity ||
+    //   !this.ingredientForm.value.ingredientUnits
+    // ) {
+    //   throw new Error('bad ingredient form values!');
+    // }
+    // const updatedRecipe = { ...this.recipe() };
+    // updatedRecipe.recipeIngredients.push(
+    //   new RecipeIngredient(
+    //     new Ingredient(
+    //       this.ingredientForm.value.ingredientName,
+    //       this.ingredientForm.value.ingredientUnits
+    //     ),
+    //     Number(this.ingredientForm.value.ingredientQuantity)
+    //   )
+    // );
+    // this.recipe.set(updatedRecipe);
+    // console.log('updated recipe', updatedRecipe);
   }
+  onRecipeSave(): void {
+    const recipe = this.recipe();
 
-  onDelete(index: number): void {
-    this.updatedIngredients.splice(index, 1);
-    this.deletedIngredients.push(this.recipe.ingredients[index]);
-
-    this.table?.renderRows();
-  }
-
-  onAddTag(event: MatChipInputEvent): void {
-    const value = (event.value || '').trim();
-
-    this.addTag(value);
-
-    event.chipInput?.clear();
-  }
-
-  addTag(tag: string): void {
-    if (tag) {
-      this.recipeTags.push(tag);
-    }
-  }
-
-  editTag(tag: string, event: MatChipEditedEvent) {
-    const value = event.value.trim();
-
-    if (!value) {
-      this.removeTag(tag);
-      return;
+    if (!this.recipeForm.value.recipeName) {
+      throw new Error('bad recipe form values!');
     }
 
-    const index = this.recipeTags.indexOf(tag);
-    if (index >= 0) {
-      this.recipeTags[index] = event.value;
-    }
-  }
+    recipe.name = this.recipeForm.value.recipeName;
+    recipe.url = this.recipeForm.value.recipeUrl;
 
-  removeTag(tag: string): void {
-    const index = this.recipeTags.indexOf(tag);
+    console.log('updated recipe is: ', recipe);
 
-    if (index >= 0) {
-      this.recipeTags.splice(index, 1);
-    }
+    // this.recipeService.upsertRecipe(recipe).subscribe();
   }
 }

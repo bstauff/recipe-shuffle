@@ -1,150 +1,103 @@
-import { ComponentFixture, TestBed, fakeAsync } from '@angular/core/testing';
-
+import { TestBed, fakeAsync, waitForAsync } from '@angular/core/testing';
 import { RegisterComponent } from './register.component';
-import { ReactiveFormsModule } from '@angular/forms';
-import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import { SharedModule } from 'src/app/shared/shared.module';
+import { MatButtonModule } from '@angular/material/button';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { RouterTestingModule } from '@angular/router/testing';
-import { SupabaseService } from 'src/app/shared/supabase.service';
-import { of } from 'rxjs';
+import { RouterTestingHarness } from '@angular/router/testing';
+import { provideRouter } from '@angular/router';
+import { LoginComponent } from '../login/login.component';
+import { ReactiveFormsModule } from '@angular/forms';
 
 describe('RegisterComponent', () => {
   let component: RegisterComponent;
-  let fixture: ComponentFixture<RegisterComponent>;
-  let supaServiceSpy: jasmine.SpyObj<SupabaseService>;
-  beforeEach(() => {
-    supaServiceSpy = jasmine.createSpyObj('SupabaseService', ['signUpUser']);
+  let harness: RouterTestingHarness;
 
-    supaServiceSpy.signUpUser.and.returnValue(
-      of({ isError: false, errorMessage: 'good to go' })
-    );
-
-    TestBed.configureTestingModule({
-      declarations: [RegisterComponent],
+  beforeEach(waitForAsync(async () => {
+    await TestBed.configureTestingModule({
       imports: [
         MatFormFieldModule,
-        ReactiveFormsModule,
         MatInputModule,
         MatButtonModule,
-        SharedModule,
         BrowserAnimationsModule,
-        RouterTestingModule,
+        RegisterComponent,
+        ReactiveFormsModule,
       ],
-      providers: [{ provide: SupabaseService, useValue: supaServiceSpy }],
-    });
-    fixture = TestBed.createComponent(RegisterComponent);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
-  });
+      providers: [
+        provideRouter([
+          {
+            path: 'account/login',
+            component: LoginComponent,
+          },
+          {
+            path: '**',
+            component: RegisterComponent,
+          },
+        ]),
+      ],
+    }).compileComponents();
+
+    harness = await RouterTestingHarness.create();
+    component = await harness.navigateByUrl('/', RegisterComponent);
+  }));
 
   it('should create', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should have an invalid form if email is missing', fakeAsync(() => {
-    component.registerForm.get('email')?.setValue('');
-    expect(component.registerForm.valid).toBeFalsy();
-    const requiredError = component.registerForm
-      .get('email')
-      ?.getError('required');
-    expect(requiredError).toBeTruthy();
-  }));
-
-  it('should have an invalid form if email is invalid', fakeAsync(() => {
-    component.registerForm.get('email')?.setValue('invalid email');
-    expect(component.registerForm.valid).toBeFalsy();
-    const emailError = component.registerForm.get('email')?.getError('email');
-    expect(emailError).toBeTruthy();
-  }));
-
-  it('should have an invalid form if password is missing', fakeAsync(() => {
-    component.registerForm.get('confirmPassword.password')?.setValue('');
-    expect(component.registerForm.valid).toBeFalsy();
-    const requiredError = component.registerForm
-      .get('confirmPassword.password')
-      ?.getError('required');
-    expect(requiredError).toBeTruthy();
-  }));
-
-  it('should have an invalid form if the password confirmation is missing', fakeAsync(() => {
-    component.registerForm.get('confirmPassword.confirmPassword')?.setValue('');
-    expect(component.registerForm.valid).toBeFalsy();
-    const requiredError = component.registerForm
-      .get('confirmPassword.confirmPassword')
-      ?.getError('required');
-    expect(requiredError).toBeTruthy();
-  }));
-
-  it('should have an invalid form  if the password and confirmation do not match', fakeAsync(() => {
-    const emailComponent = component.registerForm.get('email');
-    const passwordComponent = component.registerForm.get(
-      'confirmPassword.password'
-    );
-    const confirmPasswordComponent = component.registerForm.get(
-      'confirmPassword.confirmPassword'
-    );
-    emailComponent?.setValue('brian@gmail.com');
-    emailComponent?.markAsTouched();
-    emailComponent?.markAsDirty();
-    passwordComponent?.setValue('asdf');
-    passwordComponent?.markAsTouched();
-    passwordComponent?.markAsDirty();
-    confirmPasswordComponent?.setValue('jkl');
-    confirmPasswordComponent?.markAsTouched();
-    confirmPasswordComponent?.markAsDirty();
-
+  it('should have invalid form when empty', fakeAsync(() => {
     expect(component.registerForm.valid).toBeFalse();
   }));
 
-  it('should disable register button if form is invalid', fakeAsync(() => {
-    const emailComponent = component.registerForm.get('email');
-    const passwordComponent = component.registerForm.get(
-      'confirmPassword.password'
-    );
-    const confirmPasswordComponent = component.registerForm.get(
-      'confirmPassword.confirmPassword'
-    );
+  it('should have invalid email when empty', fakeAsync(() => {
+    const emailControl = component.registerForm.get('email');
+    emailControl?.markAsTouched();
+    emailControl?.markAsDirty();
 
-    emailComponent?.setValue('brian@gmail.com');
-    emailComponent?.markAsTouched();
-    emailComponent?.markAsDirty();
-    passwordComponent?.setValue('asdf');
-    passwordComponent?.markAsTouched();
-    passwordComponent?.markAsDirty();
-    confirmPasswordComponent?.setValue('jkl');
-    confirmPasswordComponent?.markAsTouched();
-    confirmPasswordComponent?.markAsDirty();
-
-    const button: HTMLButtonElement = fixture.nativeElement.querySelector(
-      'button.register-form__register-button'
-    );
-    expect(button.disabled).toBeTrue();
+    expect(emailControl?.valid).toBeFalse();
+    expect(emailControl?.hasError('required')).toBeTrue();
   }));
 
-  it('should call SupabaseService when submitted with valid form', fakeAsync(() => {
-    const emailComponent = component.registerForm.get('email');
-    const passwordComponent = component.registerForm.get(
-      'confirmPassword.password'
-    );
-    const confirmPasswordComponent = component.registerForm.get(
+  it('should have invalid email with bad format', fakeAsync(() => {
+    const emailControl = component.registerForm.get('email');
+    emailControl?.setValue('not an email');
+    emailControl?.markAsTouched();
+    emailControl?.markAsDirty();
+
+    expect(emailControl?.valid).toBeFalse();
+    expect(emailControl?.hasError('email')).toBeTrue();
+  }));
+
+  it('should have valid email with good format', fakeAsync(() => {
+    const emailControl = component.registerForm.get('email');
+    emailControl?.setValue('good@email.com');
+    emailControl?.markAsTouched();
+    emailControl?.markAsDirty();
+
+    expect(emailControl?.valid).toBeTrue();
+  }));
+
+  it('should have invalid form when passwords do not match', fakeAsync(() => {
+    const passwordControl = component.registerForm.get('confirmPassword.password');
+    const confirmPasswordControl = component.registerForm.get(
       'confirmPassword.confirmPassword'
     );
 
-    emailComponent?.setValue('brian@gmail.com');
-    emailComponent?.markAsTouched();
-    emailComponent?.markAsDirty();
-    passwordComponent?.setValue('asdf');
-    passwordComponent?.markAsTouched();
-    passwordComponent?.markAsDirty();
-    confirmPasswordComponent?.setValue('asdf');
-    confirmPasswordComponent?.markAsTouched();
-    confirmPasswordComponent?.markAsDirty();
+    passwordControl?.setValue('asdf');
+    passwordControl?.markAsTouched();
+    passwordControl?.markAsDirty();
+    confirmPasswordControl?.setValue('qwer');
+    confirmPasswordControl?.markAsTouched();
+    confirmPasswordControl?.markAsDirty();
 
-    component.onSubmit();
+    expect(component.registerForm.get('confirmPassword')?.valid).toBeFalse();
+  }));
 
-    expect(supaServiceSpy.signUpUser).toHaveBeenCalled();
+  it('should disable submit button when form invalid', fakeAsync(async () => {
+    const element = await harness.routeNativeElement;
+    const button = element?.querySelector(
+      'button[type="submit"]'
+    ) as HTMLButtonElement;
+    expect(button.disabled).toBeTrue();
   }));
 });

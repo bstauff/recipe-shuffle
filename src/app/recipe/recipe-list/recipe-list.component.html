@@ -27,18 +27,18 @@
           </div>
           <div class="recipe-panel__body__ingredients">
             <h4>Ingredients</h4>
-            <mat-list>
+            <!-- <mat-list>
               <mat-list-item *ngFor="let ingredient of recipe.ingredients">
                 {{ ingredient.name }}
               </mat-list-item>
-            </mat-list>
+            </mat-list> -->
           </div>
         </div>
         <mat-action-row>
-          <button mat-icon-button color="primary" (click)="onEdit(recipe)">
+          <button mat-icon-button color="primary" (click)="onEdit(recipe.id!)">
             <mat-icon>edit</mat-icon>
           </button>
-          <button mat-icon-button color="warn" (click)="onDelete(recipe)">
+          <button mat-icon-button color="warn" (click)="onDelete()">
             <mat-icon>delete</mat-icon>
           </button>
         </mat-action-row>
