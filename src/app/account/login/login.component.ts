@@ -1,10 +1,12 @@
-import { Component } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
-import { Router, RouterLink } from '@angular/router';
+import { Router, RouterLink, ActivatedRoute } from '@angular/router';
 import { MatButton } from '@angular/material/button';
 import { MatInput } from '@angular/material/input';
 import { MatError, MatFormField, MatLabel } from '@angular/material/form-field';
 import { NgIf } from '@angular/common';
+import { AuthService } from '../../shared/auth.service';
+import { switchMap, tap } from 'rxjs/operators';
 
 @Component({
   selector: 'app-login',
@@ -21,7 +23,15 @@ import { NgIf } from '@angular/common';
     RouterLink,
   ],
 })
-export class LoginComponent {
+export class LoginComponent implements OnInit {
+  loginError = '';
+  returnUrl: string = '/recipes';
+
+  private formBuilder = inject(FormBuilder);
+  private router = inject(Router);
+  private route = inject(ActivatedRoute);
+  private authService = inject(AuthService);
+
   loginForm = this.formBuilder.group({
     email: this.formBuilder.control('', [
       Validators.required,
@@ -30,12 +40,10 @@ export class LoginComponent {
     password: this.formBuilder.control('', [Validators.required]),
   });
 
-  loginError = '';
-
-  constructor(
-    private formBuilder: FormBuilder,
-    private router: Router
-  ) {}
+  ngOnInit(): void {
+    // Get return url from route parameters or default to '/recipes'
+    this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/recipes';
+  }
 
   onSubmit() {
     const { email, password } = this.loginForm.value;
@@ -43,6 +51,23 @@ export class LoginComponent {
     if (!email || !password) {
       return;
     }
+
+    this.authService.login(email, password).pipe(
+      switchMap(() => this.authService.isEmailVerified$),
+      tap(isVerified => {
+        if (!isVerified) {
+          // If email is not verified, redirect to verification page
+          this.router.navigate(['/email-verification']);
+        } else {
+          // If email is verified, redirect to the return URL
+          this.router.navigateByUrl(this.returnUrl);
+        }
+      })
+    ).subscribe({
+      error: (error) => {
+        this.loginError = error.message || 'Failed to login. Please try again.';
+      },
+    });
   }
 
   emailHasError(): boolean | undefined {

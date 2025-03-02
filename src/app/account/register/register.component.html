@@ -5,6 +5,9 @@
     class="register-form"
   >
     <h1>Register</h1>
+    <p class="verification-notice">
+      After registration, you'll need to verify your email address before accessing all features.
+    </p>
     <mat-form-field>
       <mat-label>Email</mat-label>
       <input
@@ -48,15 +51,19 @@
         >
       </mat-form-field>
     </div>
+    <div *ngIf="registerError" class="error-message">
+      {{ registerError }}
+    </div>
     <div class="register-form__register-button">
       <button
         type="submit"
         mat-raised-button
         color="primary"
-        [disabled]="!registerForm.valid"
+        [disabled]="!registerForm.valid || isLoading"
         class="register-form__register-button"
       >
-        Register
+        <span *ngIf="!isLoading">Register</span>
+        <span *ngIf="isLoading">Registering...</span>
       </button>
     </div>
   </form>
