@@ -1,11 +1,11 @@
 import { Component } from '@angular/core';
-import { LogoutComponent } from './account/logout/logout.component';
 import { RouterLink, RouterOutlet } from '@angular/router';
 import { MatNavList, MatListItem } from '@angular/material/list';
 import { MatSidenavContainer, MatSidenav, MatSidenavContent } from '@angular/material/sidenav';
 import { MatIcon } from '@angular/material/icon';
 import { MatIconButton } from '@angular/material/button';
 import { MatToolbar } from '@angular/material/toolbar';
+import { UserStatusComponent } from './shared/user-status/user-status.component';
 
 @Component({
     selector: 'app-root',
@@ -20,9 +20,9 @@ import { MatToolbar } from '@angular/material/toolbar';
         MatNavList,
         MatListItem,
         RouterLink,
-        LogoutComponent,
         MatSidenavContent,
         RouterOutlet,
+        UserStatusComponent,
     ]
 })
 export class AppComponent {

@@ -1,8 +1,10 @@
-<mat-toolbar color="primary">
+<mat-toolbar color="primary" class="toolbar">
   <button mat-icon-button (click)="sidenav.toggle()">
     <mat-icon>menu</mat-icon>
   </button>
   <span>Recipe Shuffle</span>
+  <span class="toolbar-spacer"></span>
+  <app-user-status></app-user-status>
 </mat-toolbar>
 <mat-sidenav-container>
   <mat-sidenav #sidenav class="sidenav" fixedInViewport="true">
@@ -11,7 +13,6 @@
       <a mat-list-item href="/shopping-list">Shopping List</a>
       <a mat-list-item routerLink="/meal-plan">Meal Plan</a>
     </mat-nav-list>
-    <app-logout></app-logout>
   </mat-sidenav>
   <mat-sidenav-content>
     <router-outlet></router-outlet>
