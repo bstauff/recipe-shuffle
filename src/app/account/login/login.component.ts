@@ -6,6 +6,7 @@ import { MatInput } from '@angular/material/input';
 import { MatError, MatFormField, MatLabel } from '@angular/material/form-field';
 import { NgIf } from '@angular/common';
 import { AuthService } from '../../shared/auth.service';
+import { switchMap, tap } from 'rxjs/operators';
 
 @Component({
   selector: 'app-login',
@@ -51,10 +52,18 @@ export class LoginComponent implements OnInit {
       return;
     }
 
-    this.authService.login(email, password).subscribe({
-      next: () => {
-        this.router.navigateByUrl(this.returnUrl);
-      },
+    this.authService.login(email, password).pipe(
+      switchMap(() => this.authService.isEmailVerified$),
+      tap(isVerified => {
+        if (!isVerified) {
+          // If email is not verified, redirect to verification page
+          this.router.navigate(['/email-verification']);
+        } else {
+          // If email is verified, redirect to the return URL
+          this.router.navigateByUrl(this.returnUrl);
+        }
+      })
+    ).subscribe({
       error: (error) => {
         this.loginError = error.message || 'Failed to login. Please try again.';
       },

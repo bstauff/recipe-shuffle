@@ -13,6 +13,7 @@ import { NgIf } from '@angular/common';
 import { MatInput } from '@angular/material/input';
 import { MatFormField, MatLabel, MatError } from '@angular/material/form-field';
 import { AuthService } from '../../shared/auth.service';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-register',
@@ -32,6 +33,7 @@ export class RegisterComponent {
   private formBuilder = inject(FormBuilder);
   private authService = inject(AuthService);
   private router = inject(Router);
+  private snackBar = inject(MatSnackBar);
 
   passwordMismatchErrorStateMatcher = new PasswordMismatchErrorStateMatcher();
   registerForm = this.formBuilder.group({
@@ -49,6 +51,7 @@ export class RegisterComponent {
   });
 
   registerError = '';
+  isLoading = false;
 
   onSubmit() {
     const email = this.registerForm.get('email')?.value;
@@ -60,11 +63,23 @@ export class RegisterComponent {
     if (!email || !password) return;
     if (password !== confirmPassword) return;
 
+    this.isLoading = true;
+    this.registerError = '';
+
     this.authService.register(email, password).subscribe({
       next: () => {
-        this.router.navigate(['/recipes']);
+        this.isLoading = false;
+        // Show success message about verification email
+        this.snackBar.open(
+          'Registration successful! Please check your email to verify your account.',
+          'Close',
+          { duration: 8000 }
+        );
+        // Navigate to email verification page
+        this.router.navigate(['/email-verification']);
       },
       error: (error) => {
+        this.isLoading = false;
         this.registerError =
           error.message || 'Failed to register. Please try again.';
       },
