@@ -1,16 +1,18 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import {
   FormBuilder,
   FormControl,
   Validators,
   ReactiveFormsModule,
 } from '@angular/forms';
+import { Router } from '@angular/router';
 import { passwordsMatchValidator } from './register.passwords.validator';
 import { ErrorStateMatcher } from '@angular/material/core';
 import { MatButton } from '@angular/material/button';
 import { NgIf } from '@angular/common';
 import { MatInput } from '@angular/material/input';
 import { MatFormField, MatLabel, MatError } from '@angular/material/form-field';
+import { AuthService } from '../../shared/auth.service';
 
 @Component({
   selector: 'app-register',
@@ -27,6 +29,10 @@ import { MatFormField, MatLabel, MatError } from '@angular/material/form-field';
   ],
 })
 export class RegisterComponent {
+  private formBuilder = inject(FormBuilder);
+  private authService = inject(AuthService);
+  private router = inject(Router);
+
   passwordMismatchErrorStateMatcher = new PasswordMismatchErrorStateMatcher();
   registerForm = this.formBuilder.group({
     email: this.formBuilder.control('', [
@@ -42,25 +48,29 @@ export class RegisterComponent {
     ),
   });
 
-  constructor(
-    private formBuilder: FormBuilder
-  ) {}
+  registerError = '';
 
   onSubmit() {
     const email = this.registerForm.get('email')?.value;
-
     const password = this.registerForm.get('confirmPassword.password')?.value;
-
     const confirmPassword = this.registerForm.get(
       'confirmPassword.confirmPassword'
     )?.value;
 
     if (!email || !password) return;
-
     if (password !== confirmPassword) return;
 
-    this.registerForm.reset();
+    this.authService.register(email, password).subscribe({
+      next: () => {
+        this.router.navigate(['/recipes']);
+      },
+      error: (error) => {
+        this.registerError =
+          error.message || 'Failed to register. Please try again.';
+      },
+    });
   }
+
   hasPasswordMatchError(): boolean | undefined {
     return (
       this.registerForm
@@ -73,9 +83,7 @@ export class RegisterComponent {
 }
 
 export class PasswordMismatchErrorStateMatcher extends ErrorStateMatcher {
-  override isErrorState(
-    control: FormControl | null,
-  ): boolean {
+  override isErrorState(control: FormControl | null): boolean {
     if (control?.dirty && control.touched && control.invalid) {
       return true;
     } else if (

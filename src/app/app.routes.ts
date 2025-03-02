@@ -7,15 +7,18 @@ import { PasswordResetComponent } from './account/password-reset/password-reset.
 import { RegisterComponent } from './account/register/register.component';
 import { MealPlanComponent } from './meal-plan/meal-plan.component';
 import { EditRecipeComponent } from './recipe/edit-recipe/edit-recipe.component';
+import { authGuard } from './shared/auth.guard';
 
 export const routes: Routes = [
   {
     path: 'recipes',
     component: RecipeListComponent,
+    canActivate: [authGuard]
   },
   {
     path: 'recipes/edit/:recipeKey',
-    component: EditRecipeComponent
+    component: EditRecipeComponent,
+    canActivate: [authGuard]
   },
   {
     path: 'account',
@@ -42,6 +45,7 @@ export const routes: Routes = [
   {
     path: 'meal-plan',
     component: MealPlanComponent,
+    canActivate: [authGuard]
   },
   {
     path: '**',
