@@ -16,12 +16,12 @@ export const routes: Routes = [
   {
     path: 'recipes',
     component: RecipeListComponent,
-    canActivate: [authGuard, emailVerifiedGuard]
+    canActivate: [],
   },
   {
     path: 'recipes/edit/:recipeKey',
     component: EditRecipeComponent,
-    canActivate: [authGuard, emailVerifiedGuard]
+    canActivate: [],
   },
   {
     path: 'account',
@@ -52,12 +52,12 @@ export const routes: Routes = [
   {
     path: 'email-verification',
     component: EmailVerificationComponent,
-    canActivate: [authGuard]
+    canActivate: [authGuard],
   },
   {
     path: 'meal-plan',
     component: MealPlanComponent,
-    canActivate: [authGuard, emailVerifiedGuard]
+    canActivate: [authGuard, emailVerifiedGuard],
   },
   {
     path: '**',
