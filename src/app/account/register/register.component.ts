@@ -11,6 +11,7 @@ import { MatButton } from '@angular/material/button';
 import { NgIf } from '@angular/common';
 import { MatInput } from '@angular/material/input';
 import { MatFormField, MatLabel, MatError } from '@angular/material/form-field';
+import { MatCard, MatCardActions, MatCardContent, MatCardFooter, MatCardHeader, MatCardTitle } from '@angular/material/card';
 
 @Component({
   selector: 'app-register',
@@ -18,6 +19,12 @@ import { MatFormField, MatLabel, MatError } from '@angular/material/form-field';
   styleUrls: ['./register.component.scss'],
   imports: [
     ReactiveFormsModule,
+    MatCard,
+    MatCardContent,
+    MatCardHeader,
+    MatCardTitle,
+    MatCardActions,
+    MatCardFooter,
     MatFormField,
     MatLabel,
     MatInput,

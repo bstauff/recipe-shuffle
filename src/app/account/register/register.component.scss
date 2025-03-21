@@ -1,42 +1,25 @@
 .register-container {
+  width: 80%;
+  max-width: 25rem;
+  margin: 0 auto;
   display: flex;
-  justify-content: center;
-  align-items: center;
   height: 100%;
+  flex-direction: column;
+  justify-content: center;
 }
 
 .register-form {
   display: flex;
   flex-direction: column;
-  width: 100%;
-  max-width: 400px;
-  padding: 2rem;
-  border-radius: 8px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  background-color: white;
+  justify-content: center;
+  align-content: center;
 }
-
 .register-form__password {
   display: flex;
   flex-direction: column;
 }
 
 .register-form__register-button {
-  margin-top: 1rem;
-  align-self: flex-end;
-}
-
-.verification-notice {
-  margin-bottom: 1rem;
-  padding: 0.75rem;
-  background-color: #e3f2fd;
-  border-radius: 4px;
-  font-size: 0.9rem;
-  color: #0d47a1;
-}
-
-.error-message {
-  color: #f44336;
-  margin: 0.5rem 0;
-  font-size: 0.9rem;
+  display: flex;
+  justify-content: center;
 }

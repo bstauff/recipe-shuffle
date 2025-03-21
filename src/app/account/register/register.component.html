@@ -1,70 +1,75 @@
 <div class="register-container">
-  <form
-    (ngSubmit)="onSubmit()"
-    [formGroup]="registerForm"
-    class="register-form"
-  >
-    <h1>Register</h1>
-    <p class="verification-notice">
-      After registration, you'll need to verify your email address before accessing all features.
-    </p>
-    <mat-form-field>
-      <mat-label>Email</mat-label>
-      <input
-        type="email"
-        id="email"
-        required
-        formControlName="email"
-        matInput
-      />
-      <mat-error *ngIf="registerForm.get('email')?.hasError('required')">
-        Email is required
-      </mat-error>
-      <mat-error *ngIf="registerForm.get('email')?.hasError('email')">
-        Email is invalid
-      </mat-error>
-    </mat-form-field>
-    <div class="register-form__password" formGroupName="confirmPassword">
-      <mat-form-field>
-        <mat-label>Password</mat-label>
-        <input
-          type="password"
-          id="password"
-          required
-          formControlName="password"
-          [errorStateMatcher]="passwordMismatchErrorStateMatcher"
-          matInput
-        />
-      </mat-form-field>
-      <mat-form-field>
-        <mat-label>Confirm Password</mat-label>
-        <input
-          type="password"
-          id="confirmPassword"
-          required
-          formControlName="confirmPassword"
-          [errorStateMatcher]="passwordMismatchErrorStateMatcher"
-          matInput
-        />
-        <mat-error *ngIf="hasPasswordMatchError()"
-          >Passwords do not match</mat-error
-        >
-      </mat-form-field>
-    </div>
-    <div *ngIf="registerError" class="error-message">
-      {{ registerError }}
-    </div>
-    <div class="register-form__register-button">
-      <button
-        type="submit"
-        mat-raised-button
-        color="primary"
-        [disabled]="!registerForm.valid || isLoading"
-        class="register-form__register-button"
+  <mat-card appearance="outlined">
+    <mat-card-header>
+      <mat-card-title>Register</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <form
+        (ngSubmit)="onSubmit()"
+        [formGroup]="registerForm"
+        class="register-form"
       >
-        <span *ngIf="!isLoading">Register</span>
-        <span *ngIf="isLoading">Registering...</span>
-      </button>
-    </div>
-  </form>
+        <mat-form-field>
+          <mat-label>Email</mat-label>
+          <input
+            type="email"
+            id="email"
+            required
+            formControlName="email"
+            matInput
+          />
+          <mat-error *ngIf="registerForm.get('email')?.hasError('required')">
+            Email is required
+          </mat-error>
+          <mat-error *ngIf="registerForm.get('email')?.hasError('email')">
+            Email is invalid
+          </mat-error>
+        </mat-form-field>
+        <div class="register-form__password" formGroupName="confirmPassword">
+          <mat-form-field>
+            <mat-label>Password</mat-label>
+            <input
+              type="password"
+              id="password"
+              required
+              formControlName="password"
+              [errorStateMatcher]="passwordMismatchErrorStateMatcher"
+              matInput
+            />
+          </mat-form-field>
+          <mat-form-field>
+            <mat-label>Confirm Password</mat-label>
+            <input
+              type="password"
+              id="confirmPassword"
+              required
+              formControlName="confirmPassword"
+              [errorStateMatcher]="passwordMismatchErrorStateMatcher"
+              matInput
+            />
+            <mat-error *ngIf="hasPasswordMatchError()"
+              >Passwords do not match</mat-error
+            >
+          </mat-form-field>
+        </div>
+        <div *ngIf="registerError" class="error-message">
+          {{ registerError }}
+        </div>
+        <mat-card-actions>
+          <div class="register-form__register-button">
+            <button
+              type="submit"
+              mat-raised-button
+              color="primary"
+              [disabled]="!registerForm.valid || isLoading"
+              class="register-form__register-button"
+            >
+              <span *ngIf="!isLoading">Register</span>
+              <span *ngIf="isLoading">Registering...</span>
+            </button>
+          </div>
+        </mat-card-actions>
+      </form>
+    </mat-card-content>
+  </mat-card>
 </div>
