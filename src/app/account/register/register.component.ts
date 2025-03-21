@@ -11,7 +11,14 @@ import { MatButton } from '@angular/material/button';
 import { NgIf } from '@angular/common';
 import { MatInput } from '@angular/material/input';
 import { MatFormField, MatLabel, MatError } from '@angular/material/form-field';
-import { MatCard, MatCardActions, MatCardContent, MatCardFooter, MatCardHeader, MatCardTitle } from '@angular/material/card';
+import {
+  MatCard,
+  MatCardActions,
+  MatCardContent,
+  MatCardHeader,
+  MatCardTitle,
+} from '@angular/material/card';
+import { AuthService } from 'src/app/shared/auth.service';
 
 @Component({
   selector: 'app-register',
@@ -24,7 +31,6 @@ import { MatCard, MatCardActions, MatCardContent, MatCardFooter, MatCardHeader, 
     MatCardHeader,
     MatCardTitle,
     MatCardActions,
-    MatCardFooter,
     MatFormField,
     MatLabel,
     MatInput,
@@ -35,6 +41,7 @@ import { MatCard, MatCardActions, MatCardContent, MatCardFooter, MatCardHeader, 
 })
 export class RegisterComponent {
   private formBuilder = inject(FormBuilder);
+  private authService = inject(AuthService);
 
   passwordMismatchErrorStateMatcher = new PasswordMismatchErrorStateMatcher();
   registerForm = this.formBuilder.group({
@@ -66,6 +73,14 @@ export class RegisterComponent {
 
     this.isLoading = true;
     this.registerError = '';
+    this.authService.register(email, password).subscribe({
+      next: (response) => {
+        console.log('register returned!');
+        console.log(response);
+        this.registerError = '';
+        this.isLoading = false;
+      },
+    });
   }
 
   hasPasswordMatchError(): boolean | undefined {
