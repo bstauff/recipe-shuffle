@@ -5,6 +5,14 @@ import { MatButton } from '@angular/material/button';
 import { MatInput } from '@angular/material/input';
 import { MatError, MatFormField, MatLabel } from '@angular/material/form-field';
 import { NgIf } from '@angular/common';
+import {
+  MatCard,
+  MatCardActions,
+  MatCardContent,
+  MatCardFooter,
+  MatCardHeader,
+  MatCardTitle,
+} from '@angular/material/card';
 
 @Component({
   selector: 'app-login',
@@ -18,6 +26,12 @@ import { NgIf } from '@angular/common';
     MatLabel,
     MatInput,
     MatButton,
+    MatCard,
+    MatCardContent,
+    MatCardHeader,
+    MatCardTitle,
+    MatCardActions,
+    MatCardFooter,
     RouterLink,
   ],
 })
