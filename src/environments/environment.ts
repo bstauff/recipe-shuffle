@@ -1,5 +1,5 @@
 export const environment = {
   supabaseUrl: '',
   supabaseKey: '',
-  production: true,
+  production: false,
 };
