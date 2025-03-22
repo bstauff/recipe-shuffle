@@ -18,7 +18,7 @@ import {
   MatCardHeader,
   MatCardTitle,
 } from '@angular/material/card';
-import { AuthService } from 'src/app/shared/auth.service';
+import { AuthService } from 'src/app/shared/auth/auth.service';
 
 @Component({
   selector: 'app-register',
@@ -73,7 +73,7 @@ export class RegisterComponent {
 
     this.isLoading = true;
     this.registerError = '';
-    this.authService.register(email, password).subscribe({
+    this.authService.register({email, password}).subscribe({
       next: (response) => {
         console.log('register returned!');
         console.log(response);

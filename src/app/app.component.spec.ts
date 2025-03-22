@@ -9,7 +9,7 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { AuthService } from './shared/auth.service';
+import { AuthService } from './shared/auth/auth.service';
 import { of } from 'rxjs';
 import { provideRouter } from '@angular/router';
 

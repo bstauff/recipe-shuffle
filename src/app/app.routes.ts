@@ -7,7 +7,7 @@ import { PasswordResetComponent } from './account/password-reset/password-reset.
 import { RegisterComponent } from './account/register/register.component';
 import { MealPlanComponent } from './meal-plan/meal-plan.component';
 import { EditRecipeComponent } from './recipe/edit-recipe/edit-recipe.component';
-import { authGuard } from './shared/auth.guard';
+import { authGuard } from './shared/auth/auth.guard';
 
 export const routes: Routes = [
   {
