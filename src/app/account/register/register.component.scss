@@ -1,11 +1,9 @@
 .register-container {
-  width: 80%;
-  max-width: 25rem;
-  margin: 0 auto;
+  width: 25rem;
   display: flex;
-  height: 100%;
   flex-direction: column;
   justify-content: center;
+  box-shadow: var(--mat-sys-level4);
 }
 
 .register-form {
@@ -22,4 +20,14 @@
 .register-form__register-button {
   display: flex;
   justify-content: center;
+}
+
+.error-message {
+  background-color: var(--mat-sys-error);
+  display: flex;
+  justify-content: center;
+  vertical-align: middle;
+}
+.error-message__text {
+  color: var(--mat-sys-on-error);
 }
