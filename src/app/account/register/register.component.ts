@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnDestroy, signal } from '@angular/core';
 import {
   FormBuilder,
   FormControl,
@@ -19,6 +19,9 @@ import {
   MatCardTitle,
 } from '@angular/material/card';
 import { AuthService } from 'src/app/shared/auth/auth.service';
+import { UserDetails } from 'src/app/shared/auth/models/user-details.model';
+import { MatIcon } from '@angular/material/icon';
+import { Subject, takeUntil } from 'rxjs';
 
 @Component({
   selector: 'app-register',
@@ -32,6 +35,7 @@ import { AuthService } from 'src/app/shared/auth/auth.service';
     MatCardTitle,
     MatCardActions,
     MatFormField,
+    MatIcon,
     MatLabel,
     MatInput,
     NgIf,
@@ -39,9 +43,14 @@ import { AuthService } from 'src/app/shared/auth/auth.service';
     MatButton,
   ],
 })
-export class RegisterComponent {
+export class RegisterComponent implements OnDestroy {
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
   private formBuilder = inject(FormBuilder);
   private authService = inject(AuthService);
+  private destroy$ = new Subject<void>();
 
   passwordMismatchErrorStateMatcher = new PasswordMismatchErrorStateMatcher();
   registerForm = this.formBuilder.group({
@@ -58,8 +67,10 @@ export class RegisterComponent {
     ),
   });
 
-  registerError = '';
-  isLoading = false;
+  protected readonly RegistrationState = RegistrationState;
+
+  registrationState = signal<RegistrationState>(RegistrationState.None);
+  registeredEmail = signal('');
 
   onSubmit() {
     const email = this.registerForm.get('email')?.value;
@@ -71,16 +82,32 @@ export class RegisterComponent {
     if (!email || !password) return;
     if (password !== confirmPassword) return;
 
-    this.isLoading = true;
-    this.registerError = '';
-    this.authService.register({email, password}).subscribe({
-      next: (response) => {
-        console.log('register returned!');
-        console.log(response);
-        this.registerError = '';
-        this.isLoading = false;
-      },
-    });
+    this.registrationState.set(RegistrationState.Loading);
+
+    this.authService
+      .register({ email, password })
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (response) => {
+          if (!response) {
+            this.registrationFailed();
+          } else {
+            this.registrationSuccess(response);
+          }
+        },
+        error: () => {
+          this.registrationFailed();
+        },
+      });
+  }
+
+  private registrationSuccess(response: UserDetails) {
+    this.registrationState.set(RegistrationState.Success);
+    this.registeredEmail.set(response.email || '');
+  }
+  private registrationFailed() {
+    this.registrationState.set(RegistrationState.Error);
+    this.registerForm.reset();
   }
 
   hasPasswordMatchError(): boolean | undefined {
@@ -108,4 +135,11 @@ export class PasswordMismatchErrorStateMatcher extends ErrorStateMatcher {
 
     return false;
   }
+}
+
+enum RegistrationState {
+  Loading = 'loading',
+  Success = 'success',
+  Error = 'error',
+  None = 'none',
 }

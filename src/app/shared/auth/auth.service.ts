@@ -1,13 +1,7 @@
 import { AuthResponse } from '@supabase/supabase-js';
 import { SupabaseService } from '../supabase.service';
 import { inject, Injectable } from '@angular/core';
-import {
-  BehaviorSubject,
-  catchError,
-  map,
-  Observable,
-  throwError,
-} from 'rxjs';
+import { BehaviorSubject, catchError, map, Observable, throwError } from 'rxjs';
 import { UserDetails } from './models/user-details.model';
 import { Registration } from './models/registration.model';
 
@@ -20,14 +14,11 @@ export class AuthService {
   readonly user$ = this._user$.asObservable();
   private readonly supabaseService = inject(SupabaseService);
 
-  register(
-    registration: Registration
-  ): Observable<UserDetails | undefined> {
+  register(registration: Registration): Observable<UserDetails | undefined> {
     return this.supabaseService.register(registration).pipe(
       map((response: AuthResponse) => {
         if (response.error) throw response.error;
         if (!response.data.user) throw new Error('User not found');
-        if (!response.data.session) throw new Error('Session not found');
 
         return {
           id: response.data.user?.id,

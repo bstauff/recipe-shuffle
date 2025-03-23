@@ -6,6 +6,13 @@
   box-shadow: var(--mat-sys-level4);
 }
 
+.success-message {
+  height: 20rem;
+}
+.success-message__text {
+  color: var(--mat-sys-on-primary);
+}
+
 .register-form {
   display: flex;
   flex-direction: column;
@@ -17,9 +24,10 @@
   flex-direction: column;
 }
 
-.register-form__register-button {
+.register-form__button-container {
   display: flex;
   justify-content: center;
+  width: 100%;
 }
 
 .error-message {
