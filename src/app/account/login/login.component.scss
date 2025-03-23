@@ -1,18 +1,22 @@
 .login-container {
-    width: 80%;
-    max-width: 25rem;
-    margin: 0 auto;    
+  width: 80%;
+  max-width: 25rem;
+  margin: 0 auto;
+  display: flex;
+  height: 100%;
+  flex-direction: column;
+  justify-content: center;
 }
 
 .login-form {
-    display: flex;
-    flex-direction: column;
-    gap: .5em;
-    justify-content: center;
-    align-content: center;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5em;
+  justify-content: center;
+  align-content: center;
 }
 
 .login-form__login-button {
-    display: flex;
-    justify-content: center;
+  display: flex;
+  justify-content: center;
 }

@@ -1,19 +1,27 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnDestroy, signal } from '@angular/core';
 import {
   FormBuilder,
   FormControl,
   Validators,
   ReactiveFormsModule,
 } from '@angular/forms';
-import { Router } from '@angular/router';
 import { passwordsMatchValidator } from './register.passwords.validator';
 import { ErrorStateMatcher } from '@angular/material/core';
 import { MatButton } from '@angular/material/button';
 import { NgIf } from '@angular/common';
 import { MatInput } from '@angular/material/input';
 import { MatFormField, MatLabel, MatError } from '@angular/material/form-field';
-import { AuthService } from '../../shared/auth.service';
-import { MatSnackBar } from '@angular/material/snack-bar';
+import {
+  MatCard,
+  MatCardActions,
+  MatCardContent,
+  MatCardHeader,
+  MatCardTitle,
+} from '@angular/material/card';
+import { AuthService } from 'src/app/shared/auth/auth.service';
+import { UserDetails } from 'src/app/shared/auth/models/user-details.model';
+import { MatIcon } from '@angular/material/icon';
+import { Subject, takeUntil } from 'rxjs';
 
 @Component({
   selector: 'app-register',
@@ -21,7 +29,13 @@ import { MatSnackBar } from '@angular/material/snack-bar';
   styleUrls: ['./register.component.scss'],
   imports: [
     ReactiveFormsModule,
+    MatCard,
+    MatCardContent,
+    MatCardHeader,
+    MatCardTitle,
+    MatCardActions,
     MatFormField,
+    MatIcon,
     MatLabel,
     MatInput,
     NgIf,
@@ -29,11 +43,14 @@ import { MatSnackBar } from '@angular/material/snack-bar';
     MatButton,
   ],
 })
-export class RegisterComponent {
+export class RegisterComponent implements OnDestroy {
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
   private formBuilder = inject(FormBuilder);
   private authService = inject(AuthService);
-  private router = inject(Router);
-  private snackBar = inject(MatSnackBar);
+  private destroy$ = new Subject<void>();
 
   passwordMismatchErrorStateMatcher = new PasswordMismatchErrorStateMatcher();
   registerForm = this.formBuilder.group({
@@ -50,8 +67,10 @@ export class RegisterComponent {
     ),
   });
 
-  registerError = '';
-  isLoading = false;
+  protected readonly RegistrationState = RegistrationState;
+
+  registrationState = signal<RegistrationState>(RegistrationState.None);
+  registeredEmail = signal('');
 
   onSubmit() {
     const email = this.registerForm.get('email')?.value;
@@ -63,27 +82,32 @@ export class RegisterComponent {
     if (!email || !password) return;
     if (password !== confirmPassword) return;
 
-    this.isLoading = true;
-    this.registerError = '';
+    this.registrationState.set(RegistrationState.Loading);
 
-    this.authService.register(email, password).subscribe({
-      next: () => {
-        this.isLoading = false;
-        // Show success message about verification email
-        this.snackBar.open(
-          'Registration successful! Please check your email to verify your account.',
-          'Close',
-          { duration: 8000 }
-        );
-        // Navigate to email verification page
-        this.router.navigate(['/email-verification']);
-      },
-      error: (error) => {
-        this.isLoading = false;
-        this.registerError =
-          error.message || 'Failed to register. Please try again.';
-      },
-    });
+    this.authService
+      .register({ email, password })
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (response) => {
+          if (!response) {
+            this.registrationFailed();
+          } else {
+            this.registrationSuccess(response);
+          }
+        },
+        error: () => {
+          this.registrationFailed();
+        },
+      });
+  }
+
+  private registrationSuccess(response: UserDetails) {
+    this.registrationState.set(RegistrationState.Success);
+    this.registeredEmail.set(response.email || '');
+  }
+  private registrationFailed() {
+    this.registrationState.set(RegistrationState.Error);
+    this.registerForm.reset();
   }
 
   hasPasswordMatchError(): boolean | undefined {
@@ -111,4 +135,11 @@ export class PasswordMismatchErrorStateMatcher extends ErrorStateMatcher {
 
     return false;
   }
+}
+
+enum RegistrationState {
+  Loading = 'loading',
+  Success = 'success',
+  Error = 'error',
+  None = 'none',
 }
