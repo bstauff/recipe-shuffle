@@ -1,15 +1,20 @@
 import { TestBed } from "@angular/core/testing";
 import { authGuard } from "./auth.guard";
 import { AuthService } from "./auth.service";
-import { of } from "rxjs";
-import { CanActivateFn } from "@angular/router";
+import { BehaviorSubject, from, of } from "rxjs";
 import { SupabaseService } from "../supabase.service";
 import { vi } from "vitest";
+import {
+	ActivatedRouteSnapshot,
+	provideRouter,
+	RouterStateSnapshot,
+} from "@angular/router";
+import { RecipeListComponent } from "src/app/recipe/recipe-list/recipe-list.component";
 
 describe("AuthGuard", () => {
 	vi.mock(import("./auth.service"), () => {
 		const AuthService = vi.fn();
-		AuthService.prototype.$isLoggedIn = vi.fn();
+		AuthService.prototype.isLoggedIn$ = vi.fn();
 		return { AuthService };
 	});
 	const authServiceMock = new AuthService();
@@ -32,7 +37,15 @@ describe("AuthGuard", () => {
 
 	it("should do stuff", () => {
 		TestBed.runInInjectionContext(() => {
-			// authGuard(activatedRouteSnapshot, routeStateSnapshot);
+			// Create simple mock instances for the guard arguments
+			const mockActivatedRouteSnapshot = new ActivatedRouteSnapshot();
+
+			// RouterStateSnapshot often needs at least a URL. Provide a dummy one.
+			const mockRouterStateSnapshot = {
+				url: "/protected/route",
+			} as RouterStateSnapshot;
+
+			authGuard(mockActivatedRouteSnapshot, mockRouterStateSnapshot);
 		});
 		expect(true).toBe(true);
 	});
