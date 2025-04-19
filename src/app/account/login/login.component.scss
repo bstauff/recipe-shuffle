@@ -1,17 +1,14 @@
 .login-container {
-  width: 80%;
-  max-width: 25rem;
-  margin: 0 auto;
+  width: 25rem;
   display: flex;
-  height: 100%;
   flex-direction: column;
   justify-content: center;
+  box-shadow: var(--mat-sys-level4);
 }
 
 .login-form {
   display: flex;
   flex-direction: column;
-  gap: 0.5em;
   justify-content: center;
   align-content: center;
 }
@@ -19,4 +16,12 @@
 .login-form__login-button {
   display: flex;
   justify-content: center;
+  width: 100%;
+}
+.login-form-footer {
+  display: flex;
+  flex-direction: column;
+  align-content: center;
+  justify-content: center;
+  text-align: center;
 }

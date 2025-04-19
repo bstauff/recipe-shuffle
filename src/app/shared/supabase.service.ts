@@ -1,32 +1,44 @@
-import { Injectable } from '@angular/core';
+import { Injectable } from "@angular/core";
 import {
-  AuthResponse,
-  createClient,
-  SupabaseClient,
-} from '@supabase/supabase-js';
-import { BehaviorSubject, from, Observable } from 'rxjs';
-import { environment } from 'src/environments/environment';
+	AuthResponse,
+	AuthTokenResponsePassword,
+	createClient,
+	SupabaseClient,
+} from "@supabase/supabase-js";
+import { BehaviorSubject, from, Observable, tap } from "rxjs";
+import { environment } from "src/environments/environment";
 
 @Injectable({
-  providedIn: 'root',
+	providedIn: "root",
 })
 export class SupabaseService {
-  private supabase: SupabaseClient;
+	private supabase: SupabaseClient = createClient(
+		environment.supabaseUrl,
+		environment.supabaseKey,
+	);
 
-  private _user$ = new BehaviorSubject(null);
-  readonly user$ = this._user$.asObservable();
+	private _user$ = new BehaviorSubject<string | null>(null);
+	readonly user$: Observable<string | null> = this._user$.asObservable();
 
-  constructor() {
-    this.supabase = createClient(
-      environment.supabaseUrl,
-      environment.supabaseKey
-    );
-  }
+	constructor() {}
 
-  register(credentials: {
-    email: string;
-    password: string;
-  }): Observable<AuthResponse> {
-    return from(this.supabase.auth.signUp(credentials));
-  }
+	register(credentials: {
+		email: string;
+		password: string;
+	}): Observable<AuthResponse> {
+		return from(this.supabase.auth.signUp(credentials));
+	}
+
+	login(credentials: {
+		email: string;
+		password: string;
+	}): Observable<AuthTokenResponsePassword> {
+		return from(this.supabase.auth.signInWithPassword(credentials)).pipe(
+			tap((signInResponse) => {
+				if (!signInResponse.error) {
+					this._user$.next(signInResponse.data.user.id);
+				}
+			}),
+		);
+	}
 }
