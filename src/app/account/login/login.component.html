@@ -4,7 +4,9 @@
       <mat-card-title>Login</mat-card-title>
     </mat-card-header>
     <mat-card-content>
-      <mat-error *ngIf="loginError">{{ loginError }}</mat-error>
+      @if (loginError) {
+        <mat-error>{{ loginError }}</mat-error>
+      }
       <form (ngSubmit)="onSubmit()" [formGroup]="loginForm" class="login-form">
         <mat-form-field>
           <mat-label>Email</mat-label>
@@ -15,9 +17,9 @@
             formControlName="email"
             matInput
           />
-          <mat-error *ngIf="emailHasError()">{{
-            getEmailErrorMessage()
-          }}</mat-error>
+          @if (emailHasError()) {
+            <mat-error>{{getEmailErrorMessage()}}</mat-error>
+          }
         </mat-form-field>
         <mat-form-field>
           <mat-label>Password</mat-label>
@@ -28,9 +30,11 @@
             formControlName="password"
             matInput
           />
-          <mat-error *ngIf="emailHasError()">{{
-            getEmailErrorMessage()
-          }}</mat-error>
+          @if (passwordHasError()) {
+            <mat-error *ngIf="passwordHasError()">{{
+              getPasswordErrorMessage()
+            }}</mat-error>
+          }
         </mat-form-field>
         <mat-card-actions>
           <div class="login-form__login-button">
@@ -45,7 +49,7 @@
             </button>
           </div>
         </mat-card-actions>
-        <mat-card-footer>
+        <mat-card-footer class="login-form-footer">
           <div class="mat-caption">
             Don't have an account?
             <a routerLink="../register">Please Register</a>
