@@ -7,14 +7,19 @@ import { Registration } from "./models/registration.model";
 
 @Injectable({ providedIn: "root" })
 export class AuthService {
-	private readonly _isLoggedIn$ = new BehaviorSubject(false);
-	readonly isLoggedIn$ = this._isLoggedIn$.asObservable();
-
-	private readonly _user$ = new BehaviorSubject(null);
-	readonly user$ = this._user$.asObservable();
 	private readonly supabaseService = inject(SupabaseService);
+	readonly user$: Observable<string | null> = this.supabaseService.user$;
 
-	wtf() {}
+	login(email: string, password: string): Observable<string> {
+		return this.supabaseService.login({ email, password }).pipe(
+			map((authResponse) => {
+				if (authResponse.error) {
+					throw authResponse.error;
+				}
+				return authResponse.data.user.id;
+			}),
+		);
+	}
 
 	register(registration: Registration): Observable<UserDetails | undefined> {
 		return this.supabaseService.register(registration).pipe(
