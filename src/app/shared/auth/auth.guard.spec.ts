@@ -1,15 +1,14 @@
-import { TestBed } from "@angular/core/testing";
+import { fakeAsync, TestBed } from "@angular/core/testing";
 import { authGuard } from "./auth.guard";
 import { AuthService } from "./auth.service";
-import { BehaviorSubject, from, of } from "rxjs";
 import { SupabaseService } from "../supabase.service";
-import { vi } from "vitest";
+import { Observable, of } from "rxjs";
+import { expect, vi } from "vitest";
 import {
 	ActivatedRouteSnapshot,
-	provideRouter,
+	Router,
 	RouterStateSnapshot,
 } from "@angular/router";
-import { RecipeListComponent } from "src/app/recipe/recipe-list/recipe-list.component";
 
 describe("AuthGuard", () => {
 	vi.mock(import("./auth.service"), () => {
@@ -17,36 +16,82 @@ describe("AuthGuard", () => {
 		AuthService.prototype.isLoggedIn$ = vi.fn();
 		return { AuthService };
 	});
-	const authServiceMock = new AuthService();
+	let authService: AuthService;
 
-	vi.mock(import("../supabase.service"), () => {
-		const SupabaseService = vi.fn();
-		SupabaseService.prototype.$user = vi.fn();
-		return { SupabaseService };
+	vi.mock("@angular/router", () => {
+		const Router = vi.fn();
+		Router.prototype.navigate = vi.fn();
+
+		const ActivatedRouteSnapshot = vi.fn();
+		const RouterStateSnapshot = vi.fn();
+
+		return { Router, ActivatedRouteSnapshot, RouterStateSnapshot };
 	});
-	const supabaseMock = new SupabaseService();
+	let router: Router;
 
 	beforeEach(() => {
+		authService = new AuthService();
+		router = new Router();
 		TestBed.configureTestingModule({
 			providers: [
-				{ provide: AuthService, useValue: authServiceMock },
-				{ provide: SupabaseService, useValue: supabaseMock },
+				{ provide: AuthService, useValue: authService },
+				{ provide: SupabaseService, useValue: SupabaseService },
+				{ provide: Router, useValue: router },
 			],
 		});
 	});
 
-	it("should do stuff", () => {
-		TestBed.runInInjectionContext(() => {
-			// Create simple mock instances for the guard arguments
-			const mockActivatedRouteSnapshot = new ActivatedRouteSnapshot();
+	it("should call router navigate when user not logged in", fakeAsync(() => {
+		// return false so the router will be called
+		vi.spyOn(authService, "isLoggedIn$", "get").mockReturnValue(of(false));
 
-			// RouterStateSnapshot often needs at least a URL. Provide a dummy one.
+		TestBed.runInInjectionContext(() => {
+			// These aren't really used by the guard; they can be anything
+			const mockActivatedRouteSnapshot = new ActivatedRouteSnapshot();
 			const mockRouterStateSnapshot = {
 				url: "/protected/route",
 			} as RouterStateSnapshot;
 
-			authGuard(mockActivatedRouteSnapshot, mockRouterStateSnapshot);
+			vi.spyOn(router, "navigate").mockReturnValue(Promise.resolve(true));
+			const authGuardFn = authGuard(
+				mockActivatedRouteSnapshot,
+				mockRouterStateSnapshot,
+			);
+
+			const authGuard$ = authGuardFn as Observable<Boolean>;
+			authGuard$.subscribe({
+				next: (wasSuccessful) => {
+					expect(wasSuccessful).toBeTruthy();
+					expect(router.navigate).toHaveBeenCalled();
+				},
+			});
 		});
-		expect(true).toBe(true);
-	});
+	}));
+
+	it("should return true when user is logged in", fakeAsync(() => {
+		// return false so the router will be called
+		vi.spyOn(authService, "isLoggedIn$", "get").mockReturnValue(of(true));
+
+		TestBed.runInInjectionContext(() => {
+			// These aren't really used by the guard; they can be anything
+			const mockActivatedRouteSnapshot = new ActivatedRouteSnapshot();
+			const mockRouterStateSnapshot = {
+				url: "/protected/route",
+			} as RouterStateSnapshot;
+
+			vi.spyOn(router, "navigate").mockReturnValue(Promise.resolve(true));
+			const authGuardFn = authGuard(
+				mockActivatedRouteSnapshot,
+				mockRouterStateSnapshot,
+			);
+
+			const authGuard$ = authGuardFn as Observable<Boolean>;
+			authGuard$.subscribe({
+				next: (wasSuccessful) => {
+					expect(wasSuccessful).toBeTruthy();
+					expect(router.navigate).not.toHaveBeenCalled();
+				},
+			});
+		});
+	}));
 });
