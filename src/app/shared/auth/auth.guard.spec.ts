@@ -13,7 +13,7 @@ import {
 describe("AuthGuard", () => {
 	vi.mock(import("./auth.service"), () => {
 		const AuthService = vi.fn();
-		AuthService.prototype.isLoggedIn$ = vi.fn();
+		AuthService.prototype.user$ = vi.fn();
 		return { AuthService };
 	});
 	let authService: AuthService;
@@ -43,7 +43,7 @@ describe("AuthGuard", () => {
 
 	it("should call router navigate when user not logged in", fakeAsync(() => {
 		// return false so the router will be called
-		vi.spyOn(authService, "isLoggedIn$", "get").mockReturnValue(of(false));
+		vi.spyOn(authService, "user$", "get").mockReturnValue(of(null));
 
 		TestBed.runInInjectionContext(() => {
 			// These aren't really used by the guard; they can be anything
@@ -58,7 +58,7 @@ describe("AuthGuard", () => {
 				mockRouterStateSnapshot,
 			);
 
-			const authGuard$ = authGuardFn as Observable<Boolean>;
+			const authGuard$ = authGuardFn as Observable<boolean>;
 			authGuard$.subscribe({
 				next: (wasSuccessful) => {
 					expect(wasSuccessful).toBeTruthy();
@@ -70,7 +70,9 @@ describe("AuthGuard", () => {
 
 	it("should return true when user is logged in", fakeAsync(() => {
 		// return false so the router will be called
-		vi.spyOn(authService, "isLoggedIn$", "get").mockReturnValue(of(true));
+		vi.spyOn(authService, "user$", "get").mockReturnValue(
+			of("some-cool-user-name"),
+		);
 
 		TestBed.runInInjectionContext(() => {
 			// These aren't really used by the guard; they can be anything
@@ -85,7 +87,7 @@ describe("AuthGuard", () => {
 				mockRouterStateSnapshot,
 			);
 
-			const authGuard$ = authGuardFn as Observable<Boolean>;
+			const authGuard$ = authGuardFn as Observable<boolean>;
 			authGuard$.subscribe({
 				next: (wasSuccessful) => {
 					expect(wasSuccessful).toBeTruthy();

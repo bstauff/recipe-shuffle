@@ -1,7 +1,7 @@
 import { AuthResponse } from "@supabase/supabase-js";
 import { SupabaseService } from "../supabase.service";
 import { inject, Injectable } from "@angular/core";
-import { BehaviorSubject, catchError, map, Observable, throwError } from "rxjs";
+import { catchError, map, Observable, throwError } from "rxjs";
 import { UserDetails } from "./models/user-details.model";
 import { Registration } from "./models/registration.model";
 

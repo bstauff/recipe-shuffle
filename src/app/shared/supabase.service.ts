@@ -5,15 +5,7 @@ import {
 	createClient,
 	SupabaseClient,
 } from "@supabase/supabase-js";
-import {
-	BehaviorSubject,
-	combineLatest,
-	from,
-	map,
-	merge,
-	Observable,
-	tap,
-} from "rxjs";
+import { BehaviorSubject, from, Observable, tap } from "rxjs";
 import { environment } from "src/environments/environment";
 
 @Injectable({
