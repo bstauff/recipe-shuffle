@@ -1,11 +1,11 @@
 import { Injectable } from "@angular/core";
 import {
-	AuthResponse,
-	AuthTokenResponsePassword,
+	type AuthResponse,
+	type AuthTokenResponsePassword,
 	createClient,
-	SupabaseClient,
+	type SupabaseClient,
 } from "@supabase/supabase-js";
-import { BehaviorSubject, from, Observable, tap } from "rxjs";
+import { BehaviorSubject, from, type Observable, tap } from "rxjs";
 import { environment } from "src/environments/environment";
 
 @Injectable({
@@ -20,7 +20,23 @@ export class SupabaseService {
 	private _user$ = new BehaviorSubject<string | null>(null);
 	readonly user$: Observable<string | null> = this._user$.asObservable();
 
-	constructor() {}
+	loadSession() {
+		return from(this.supabase.auth.getSession()).pipe(
+			tap((session) => {
+				if (session.error) {
+					console.error(
+						`Unable to load session data. ${session.error.message}`,
+						session.error,
+					);
+				} else if (!session.data.session) {
+					console.info("Unable to load session data from local storage");
+				} else {
+					console.log(`got session=${session.data.session.user.id}`);
+					this._user$.next(session.data.session.user.id);
+				}
+			}),
+		);
+	}
 
 	register(credentials: {
 		email: string;
