@@ -1,5 +1,6 @@
 import { Injectable } from "@angular/core";
 import {
+	AuthError,
 	type AuthResponse,
 	type AuthTokenResponsePassword,
 	createClient,
@@ -54,6 +55,25 @@ export class SupabaseService {
 				if (!signInResponse.error) {
 					this._user$.next(signInResponse.data.user.id);
 				}
+			}),
+		);
+	}
+	sendPasswordResetEmail(
+		email: string,
+		redirectTo: string | undefined,
+	): Observable<
+		| {
+				data: object;
+				error: null;
+		  }
+		| {
+				data: null;
+				error: AuthError;
+		  }
+	> {
+		return from(
+			this.supabase.auth.resetPasswordForEmail(email, {
+				redirectTo: redirectTo,
 			}),
 		);
 	}

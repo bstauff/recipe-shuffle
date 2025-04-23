@@ -1,4 +1,4 @@
-import { Component, OnDestroy } from "@angular/core";
+import { Component, inject, OnDestroy } from "@angular/core";
 import {
 	FormBuilder,
 	FormGroup,
@@ -6,7 +6,7 @@ import {
 	ReactiveFormsModule,
 } from "@angular/forms";
 import { MatSnackBar } from "@angular/material/snack-bar";
-import { Subject } from "rxjs";
+import { Subject, takeUntil } from "rxjs";
 import { MatButton } from "@angular/material/button";
 import { NgIf } from "@angular/common";
 import {
@@ -18,6 +18,7 @@ import {
 } from "@angular/material/card";
 import { MatInput } from "@angular/material/input";
 import { MatFormField, MatLabel, MatError } from "@angular/material/form-field";
+import { AuthService } from "src/app/shared/auth/auth.service";
 
 @Component({
 	selector: "app-password-reset",
@@ -45,6 +46,8 @@ export class PasswordResetComponent implements OnDestroy {
 		]),
 	});
 
+	private authService = inject(AuthService);
+
 	private destroy$ = new Subject();
 
 	constructor(
@@ -56,7 +59,22 @@ export class PasswordResetComponent implements OnDestroy {
 		this.destroy$.complete();
 	}
 
-	onSubmit(): void {}
+	onSubmit(): void {
+		const formValue = this.resetEmailCollection.value as { email: string };
+		if (formValue) {
+			this.authService
+				.sendPasswordResetEmail(formValue.email)
+				.pipe(takeUntil(this.destroy$))
+				.subscribe({
+					next: () => this.notifyUserEmailSent(),
+				});
+		} else {
+			throw new Error("form had bad email value");
+		}
+
+		this.resetEmailCollection.reset();
+	}
+
 	private notifyUserEmailSent(): void {
 		this.snackBar.open("Password reset email sent");
 		this.resetEmailCollection.reset();
@@ -64,13 +82,13 @@ export class PasswordResetComponent implements OnDestroy {
 
 	hasMissingEmailError(): boolean {
 		return (
-			this.resetEmailCollection.touched &&
+			this.resetEmailCollection.dirty &&
 			(this.resetEmailCollection.get("email")?.hasError("required") ?? false)
 		);
 	}
 	hasEmailFormatError(): boolean {
 		return (
-			this.resetEmailCollection.touched &&
+			this.resetEmailCollection.dirty &&
 			(this.resetEmailCollection.get("email")?.hasError("email") ?? false)
 		);
 	}
