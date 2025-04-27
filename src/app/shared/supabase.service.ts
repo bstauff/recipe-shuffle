@@ -1,12 +1,21 @@
 import { Injectable } from "@angular/core";
 import {
+	AuthError,
 	type AuthResponse,
 	type AuthTokenResponsePassword,
 	createClient,
 	type SupabaseClient,
 } from "@supabase/supabase-js";
-import { BehaviorSubject, from, type Observable, tap } from "rxjs";
+import {
+	BehaviorSubject,
+	from,
+	map,
+	type Observable,
+	tap,
+	throwError,
+} from "rxjs";
 import { environment } from "src/environments/environment";
+import type { SupabaseUser } from "./models/supabase-user";
 
 @Injectable({
 	providedIn: "root",
@@ -17,8 +26,8 @@ export class SupabaseService {
 		environment.supabaseKey,
 	);
 
-	private _user$ = new BehaviorSubject<string | null>(null);
-	readonly user$: Observable<string | null> = this._user$.asObservable();
+	private _user$ = new BehaviorSubject<SupabaseUser | null>(null);
+	readonly user$: Observable<SupabaseUser | null> = this._user$.asObservable();
 
 	loadSession() {
 		return from(this.supabase.auth.getSession()).pipe(
@@ -29,10 +38,14 @@ export class SupabaseService {
 						session.error,
 					);
 				} else if (!session.data.session) {
-					console.info("Unable to load session data from local storage");
+					console.error("Unable to load session data from local storage");
 				} else {
-					console.log(`got session=${session.data.session.user.id}`);
-					this._user$.next(session.data.session.user.id);
+					const user = {
+						id: session.data.session.user.id,
+						email: session.data.session.user.email,
+						confirmedAt: session.data.session.user.confirmed_at,
+					};
+					this._user$.next(user);
 				}
 			}),
 		);
@@ -52,8 +65,28 @@ export class SupabaseService {
 		return from(this.supabase.auth.signInWithPassword(credentials)).pipe(
 			tap((signInResponse) => {
 				if (!signInResponse.error) {
-					this._user$.next(signInResponse.data.user.id);
+					const user = {
+						id: signInResponse.data.session.user.id,
+						email: signInResponse.data.session.user.email,
+						confirmedAt: signInResponse.data.session.user.confirmed_at,
+					};
+					this._user$.next(user);
 				}
+			}),
+		);
+	}
+	logout(): Observable<void> {
+		const signOutObservable = from(this.supabase.auth.signOut());
+		return signOutObservable.pipe(
+			tap((response) => {
+				console.log("supabase logout response");
+				console.log(response);
+			}),
+			map((response: { error: AuthError | null }) => {
+				if (response.error) {
+					throw response.error;
+				}
+				return;
 			}),
 		);
 	}

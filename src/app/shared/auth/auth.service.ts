@@ -1,14 +1,14 @@
-import { AuthResponse } from "@supabase/supabase-js";
+import type { AuthResponse } from "@supabase/supabase-js";
 import { SupabaseService } from "../supabase.service";
 import { inject, Injectable } from "@angular/core";
-import { catchError, map, Observable, throwError } from "rxjs";
-import { UserDetails } from "./models/user-details.model";
-import { Registration } from "./models/registration.model";
+import { catchError, map, type Observable, throwError } from "rxjs";
+import type { UserDetails } from "./models/user-details.model";
+import type { Registration } from "./models/registration.model";
 
 @Injectable({ providedIn: "root" })
 export class AuthService {
 	private readonly supabaseService = inject(SupabaseService);
-	readonly user$: Observable<string | null> = this.supabaseService.user$;
+	readonly user$: Observable<UserDetails | null> = this.supabaseService.user$;
 
 	login(email: string, password: string): Observable<string> {
 		return this.supabaseService.login({ email, password }).pipe(
@@ -19,6 +19,9 @@ export class AuthService {
 				return authResponse.data.user.id;
 			}),
 		);
+	}
+	logout(): Observable<void> {
+		return this.supabaseService.logout();
 	}
 
 	register(registration: Registration): Observable<UserDetails | undefined> {
