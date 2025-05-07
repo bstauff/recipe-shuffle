@@ -1,11 +1,4 @@
-import {
-	Component,
-	inject,
-	OnDestroy,
-	OnInit,
-	Signal,
-	signal,
-} from "@angular/core";
+import { Component, inject, OnDestroy, OnInit, Signal } from "@angular/core";
 import { Router, RouterLink, RouterOutlet } from "@angular/router";
 import { MatNavList, MatListItem } from "@angular/material/list";
 import {
@@ -18,9 +11,9 @@ import { MatIconButton } from "@angular/material/button";
 import { MatMenuModule } from "@angular/material/menu";
 import { MatToolbar } from "@angular/material/toolbar";
 import { AuthService } from "./shared/auth/auth.service";
-import { catchError, exhaustMap, map, Subject, takeUntil, tap } from "rxjs";
+import { Subject, takeUntil } from "rxjs";
 import { toSignal } from "@angular/core/rxjs-interop";
-import { UserDetails } from "./shared/auth/models/user-details.model";
+import type { UserDetails } from "./shared/auth/models/user-details.model";
 
 @Component({
 	selector: "app-root",
@@ -68,14 +61,14 @@ export class AppComponent implements OnInit, OnDestroy {
 	}
 
 	onLogoutClicked(): void {
-		console.log("logout clicked");
 		this.authService
 			.logout()
-			.pipe(
-				takeUntil(this.destroy$),
-				tap(() => console.log("logout done!")),
-				exhaustMap(() => this.router.navigate(["/recipes"])),
-			)
-			.subscribe({ error: (error) => console.error(error) });
+			.pipe(takeUntil(this.destroy$))
+			.subscribe({
+				next: () => {
+					this.router.navigate(["account", "login"]);
+				},
+				error: (error) => console.error(error),
+			});
 	}
 }
